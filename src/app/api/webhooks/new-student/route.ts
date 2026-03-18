@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server'
 import { Resend } from 'resend'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
 const ADMIN_EMAIL = 'mplandry77@gmail.com'
-const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET
 
 export async function POST(request: Request) {
+  const resend = new Resend(process.env.RESEND_API_KEY)
+  const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET
   // Verify the request is from Supabase
   const secret = request.headers.get('x-webhook-secret')
   if (!secret || secret !== WEBHOOK_SECRET) {
