@@ -26,7 +26,7 @@ export async function POST(request: Request) {
     timeStyle: 'short',
   })
 
-  await fetch('https://api.resend.com/emails', {
+  const emailRes = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${RESEND_API_KEY}`,
@@ -65,6 +65,12 @@ export async function POST(request: Request) {
       `,
     }),
   })
+
+  const emailData = await emailRes.json()
+  if (!emailRes.ok) {
+    console.error('Resend error:', emailData)
+    return NextResponse.json({ error: 'Email failed', details: emailData }, { status: 500 })
+  }
 
   return NextResponse.json({ ok: true })
 }
