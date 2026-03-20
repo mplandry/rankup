@@ -10,6 +10,8 @@ export default function QuestionsPage() {
   const [questions, setQuestions] = useState<any[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const perPage = 50;
   const router = useRouter();
 
   useEffect(() => {
@@ -69,6 +71,9 @@ export default function QuestionsPage() {
       !search || q.question_text.toLowerCase().includes(search.toLowerCase()),
   );
 
+  const totalPages = Math.ceil(filtered.length / perPage);
+  const paginated = filtered.slice((page - 1) * perPage, page * perPage);
+
   if (loading) return null;
   const userName =
     user?.user_metadata?.full_name ||
@@ -122,7 +127,10 @@ export default function QuestionsPage() {
           type='text'
           placeholder='Search question text...'
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setPage(1);
+          }}
           style={{
             width: "100%",
             padding: "9px 12px",
@@ -171,7 +179,7 @@ export default function QuestionsPage() {
               </tr>
             </thead>
             <tbody>
-              {filtered.slice(0, 50).map((q) => (
+              {paginated.map((q) => (
                 <tr key={q.id}>
                   <td
                     style={{
@@ -250,17 +258,63 @@ export default function QuestionsPage() {
               ))}
             </tbody>
           </table>
-          {filtered.length > 50 && (
-            <div
-              style={{
-                padding: "12px 16px",
-                fontSize: 13,
-                color: "var(--text-muted)",
-              }}
-            >
-              Showing 50 of {filtered.length} questions
+
+          {/* Pagination */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              padding: "14px 16px",
+              borderTop: "1px solid var(--border)",
+            }}
+          >
+            <div style={{ fontSize: 13, color: "var(--text-muted)" }}>
+              Showing {(page - 1) * perPage + 1}–
+              {Math.min(page * perPage, filtered.length)} of {filtered.length}{" "}
+              questions
             </div>
-          )}
+            <div style={{ display: "flex", gap: 8 }}>
+              <button
+                onClick={() => setPage((p) => p - 1)}
+                disabled={page === 1}
+                style={{
+                  padding: "6px 14px",
+                  background: "transparent",
+                  border: "1px solid var(--border)",
+                  borderRadius: 7,
+                  fontSize: 13,
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  opacity: page === 1 ? 0.4 : 1,
+                }}
+              >
+                ← Prev
+              </button>
+              <span
+                style={{ padding: "6px 12px", fontSize: 13, fontWeight: 600 }}
+              >
+                Page {page} of {totalPages}
+              </span>
+              <button
+                onClick={() => setPage((p) => p + 1)}
+                disabled={page === totalPages}
+                style={{
+                  padding: "6px 14px",
+                  background: "var(--red)",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: 7,
+                  fontSize: 13,
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  opacity: page === totalPages ? 0.4 : 1,
+                }}
+              >
+                Next →
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
