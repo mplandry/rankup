@@ -22,16 +22,47 @@ export default function QuestionsPage() {
         return;
       }
       setUser(session.user);
-      const { data } = await supabase
-        .from("questions")
-        .select("*")
-        .eq("is_active", true)
-        .order("question_number", { ascending: true });
-      setQuestions(data || []);
+      await loadQuestions();
       setLoading(false);
     };
     init();
   }, []);
+
+  const loadQuestions = async () => {
+    const { data } = await supabase
+      .from("questions")
+      .select("*")
+      .eq("is_active", true)
+      .order("question_number", { ascending: true });
+    setQuestions(data || []);
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Remove this question?")) return;
+    await supabase.from("questions").update({ is_active: false }).eq("id", id);
+    await loadQuestions();
+  };
+
+  const handleRemoveDupes = async () => {
+    const seen = new Set<string>();
+    const dupes: string[] = [];
+    questions.forEach((q) => {
+      const key = q.question_text.trim().toLowerCase();
+      if (seen.has(key)) dupes.push(q.id);
+      else seen.add(key);
+    });
+    if (dupes.length === 0) {
+      alert("No duplicates found!");
+      return;
+    }
+    if (!confirm(`Remove ${dupes.length} duplicate question(s)?`)) return;
+    await supabase
+      .from("questions")
+      .update({ is_active: false })
+      .in("id", dupes);
+    await loadQuestions();
+    alert(`Removed ${dupes.length} duplicate(s).`);
+  };
 
   const filtered = questions.filter(
     (q) =>
@@ -55,14 +86,38 @@ export default function QuestionsPage() {
           maxWidth: 1100,
         }}
       >
-        <div style={{ fontSize: 26, fontWeight: 700, marginBottom: 4 }}>
-          Questions
-        </div>
         <div
-          style={{ fontSize: 13, color: "var(--text-muted)", marginBottom: 20 }}
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "flex-start",
+            marginBottom: 20,
+          }}
         >
-          {questions.length} active questions
+          <div>
+            <div style={{ fontSize: 26, fontWeight: 700, marginBottom: 2 }}>
+              Questions
+            </div>
+            <div style={{ fontSize: 13, color: "var(--text-muted)" }}>
+              {questions.length} active questions
+            </div>
+          </div>
+          <button
+            onClick={handleRemoveDupes}
+            style={{
+              padding: "9px 18px",
+              background: "transparent",
+              border: "1px solid var(--border)",
+              borderRadius: 8,
+              fontSize: 13.5,
+              fontWeight: 600,
+              cursor: "pointer",
+            }}
+          >
+            Remove Duplicates
+          </button>
         </div>
+
         <input
           type='text'
           placeholder='Search question text...'
@@ -77,6 +132,7 @@ export default function QuestionsPage() {
             marginBottom: 20,
           }}
         />
+
         <div
           style={{
             background: "var(--white)",
@@ -94,6 +150,7 @@ export default function QuestionsPage() {
                   "DIFFICULTY",
                   "STUDY",
                   "EXAM",
+                  "DELETE",
                 ].map((h) => (
                   <th
                     key={h}
@@ -166,6 +223,28 @@ export default function QuestionsPage() {
                     }}
                   >
                     {q.exam_eligible ? "Yes" : "No"}
+                  </td>
+                  <td
+                    style={{
+                      padding: "13px 16px",
+                      borderBottom: "1px solid var(--border)",
+                    }}
+                  >
+                    <button
+                      onClick={() => handleDelete(q.id)}
+                      style={{
+                        padding: "4px 10px",
+                        background: "var(--red-light)",
+                        color: "var(--red)",
+                        border: "1px solid #f1948a",
+                        borderRadius: 6,
+                        fontSize: 12,
+                        fontWeight: 600,
+                        cursor: "pointer",
+                      }}
+                    >
+                      Remove
+                    </button>
                   </td>
                 </tr>
               ))}
