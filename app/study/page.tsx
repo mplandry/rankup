@@ -99,7 +99,6 @@ export default function StudyPage() {
       setSelected(null);
       setRevealed(false);
     } else {
-      // Save session
       const score = Math.round(
         (newResults.filter((r) => r.correct).length / newResults.length) * 100,
       );
@@ -114,6 +113,8 @@ export default function StudyPage() {
     }
   };
 
+  const currentQ = sessionQs[idx];
+  const isCorrect = revealed && selected === currentQ?.correct_answer;
   const userName =
     user?.user_metadata?.full_name ||
     user?.email?.split("@")[0] ||
@@ -375,7 +376,7 @@ export default function StudyPage() {
           </>
         )}
 
-        {state === "session" && sessionQs.length > 0 && (
+        {state === "session" && sessionQs.length > 0 && currentQ && (
           <>
             <div
               style={{
@@ -386,8 +387,9 @@ export default function StudyPage() {
               }}
             >
               <div>
-                <span style={{ fontWeight: 700 }}>Question {idx + 1}</span>{" "}
+                <span style={{ fontWeight: 700 }}>Question {idx + 1}</span>
                 <span style={{ color: "var(--text-muted)" }}>
+                  {" "}
                   of {sessionQs.length}
                 </span>
               </div>
@@ -424,6 +426,7 @@ export default function StudyPage() {
                 }}
               />
             </div>
+
             <div
               style={{
                 background: "var(--white)",
@@ -440,8 +443,8 @@ export default function StudyPage() {
                   marginBottom: 10,
                 }}
               >
-                {sessionQs[idx].book_title} · Ch. {sessionQs[idx].chapter}
-                {sessionQs[idx].topic ? ` · ${sessionQs[idx].topic}` : ""}
+                {currentQ.book_title} &middot; Ch. {currentQ.chapter}
+                {currentQ.topic ? ` · ${currentQ.topic}` : ""}
               </div>
               <div
                 style={{
@@ -451,7 +454,7 @@ export default function StudyPage() {
                   marginBottom: 24,
                 }}
               >
-                {sessionQs[idx].question_text}
+                {currentQ.question_text}
               </div>
               <div
                 style={{ display: "flex", flexDirection: "column", gap: 10 }}
@@ -459,19 +462,19 @@ export default function StudyPage() {
                 {(["A", "B", "C", "D"] as const).map((l) => {
                   const answerKey =
                     `answer_${l.toLowerCase()}` as keyof Question;
-                  let bg = "transparent";
                   let border = "var(--border)";
+                  let bg = "transparent";
                   if (revealed) {
-                    if (l === sessionQs[idx].correct_answer) {
-                      bg = "var(--green-light)";
+                    if (l === currentQ.correct_answer) {
                       border = "var(--green)";
+                      bg = "var(--green-light)";
                     } else if (l === selected) {
-                      bg = "var(--red-light)";
                       border = "var(--red)";
+                      bg = "var(--red-light)";
                     }
                   } else if (l === selected) {
-                    bg = "var(--red-light)";
                     border = "var(--red)";
+                    bg = "var(--red-light)";
                   }
                   return (
                     <div
@@ -506,40 +509,54 @@ export default function StudyPage() {
                       >
                         {l}
                       </span>
-                      <span>{sessionQs[idx][answerKey] as string}</span>
+                      <span>{currentQ[answerKey] as string}</span>
                     </div>
                   );
                 })}
               </div>
+
               {revealed && (
                 <div
                   style={{
-                    background:
-                      selected === sessionQs[idx].correct_answer
-                        ? "var(--green-light)"
-                        : "var(--red-light)",
-                    border: `1px solid ${selected === sessionQs[idx].correct_answer ? "#a9dfbf" : "#f1948a"}`,
+                    background: isCorrect
+                      ? "var(--green-light)"
+                      : "var(--red-light)",
+                    border: `1px solid ${isCorrect ? "#a9dfbf" : "#f1948a"}`,
                     borderRadius: 10,
                     padding: "14px 16px",
                     marginTop: 16,
                     fontSize: 13.5,
-                    color:
-                      selected === sessionQs[idx].correct_answer
-                        ? "var(--green)"
-                        : "var(--red)",
+                    color: isCorrect ? "var(--green)" : "var(--red)",
                     lineHeight: 1.5,
                   }}
                 >
                   <strong>
-                    {selected === sessionQs[idx].correct_answer
+                    {isCorrect
                       ? "✓ Correct!"
-                      : "✗ Incorrect."}
-                  </strong>{" "}
-                  {sessionQs[idx].explanation ||
-                    `The correct answer is ${sessionQs[idx].correct_answer}.`}
+                      : `✗ Incorrect. The correct answer is ${currentQ.correct_answer}.`}
+                  </strong>
+                  {currentQ.explanation && <span> {currentQ.explanation}</span>}
+                  {currentQ.page_start && (
+                    <span
+                      style={{
+                        display: "block",
+                        marginTop: 8,
+                        fontSize: 12,
+                        fontWeight: 600,
+                        opacity: 0.85,
+                      }}
+                    >
+                      📖 Reference: Page {currentQ.page_start}
+                      {currentQ.page_end &&
+                      currentQ.page_end !== currentQ.page_start
+                        ? `–${currentQ.page_end}`
+                        : ""}
+                    </span>
+                  )}
                 </div>
               )}
             </div>
+
             <div
               style={{ display: "flex", justifyContent: "flex-end", gap: 10 }}
             >
@@ -668,25 +685,30 @@ export default function StudyPage() {
               <table style={{ width: "100%", borderCollapse: "collapse" }}>
                 <thead>
                   <tr style={{ background: "#fafbfc" }}>
-                    {["#", "Question", "Your Answer", "Correct", "Result"].map(
-                      (h) => (
-                        <th
-                          key={h}
-                          style={{
-                            padding: "12px 16px",
-                            textAlign: "left",
-                            fontSize: 11,
-                            fontWeight: 700,
-                            color: "var(--text-muted)",
-                            textTransform: "uppercase",
-                            letterSpacing: "0.05em",
-                            borderBottom: "1px solid var(--border)",
-                          }}
-                        >
-                          {h}
-                        </th>
-                      ),
-                    )}
+                    {[
+                      "#",
+                      "Question",
+                      "Your Answer",
+                      "Correct",
+                      "Page Ref",
+                      "Result",
+                    ].map((h) => (
+                      <th
+                        key={h}
+                        style={{
+                          padding: "12px 16px",
+                          textAlign: "left",
+                          fontSize: 11,
+                          fontWeight: 700,
+                          color: "var(--text-muted)",
+                          textTransform: "uppercase",
+                          letterSpacing: "0.05em",
+                          borderBottom: "1px solid var(--border)",
+                        }}
+                      >
+                        {h}
+                      </th>
+                    ))}
                   </tr>
                 </thead>
                 <tbody>
@@ -697,6 +719,7 @@ export default function StudyPage() {
                           padding: "13px 16px",
                           fontSize: 13.5,
                           color: "var(--text-muted)",
+                          borderBottom: "1px solid var(--border)",
                         }}
                       >
                         {i + 1}
@@ -706,11 +729,17 @@ export default function StudyPage() {
                           padding: "13px 16px",
                           fontSize: 13.5,
                           maxWidth: 300,
+                          borderBottom: "1px solid var(--border)",
                         }}
                       >
                         {r.q.question_text.substring(0, 80)}…
                       </td>
-                      <td style={{ padding: "13px 16px" }}>
+                      <td
+                        style={{
+                          padding: "13px 16px",
+                          borderBottom: "1px solid var(--border)",
+                        }}
+                      >
                         <span
                           style={{
                             background: "var(--bg)",
@@ -723,7 +752,12 @@ export default function StudyPage() {
                           {r.selected || "—"}
                         </span>
                       </td>
-                      <td style={{ padding: "13px 16px" }}>
+                      <td
+                        style={{
+                          padding: "13px 16px",
+                          borderBottom: "1px solid var(--border)",
+                        }}
+                      >
                         <span
                           style={{
                             background: "var(--green-light)",
@@ -737,7 +771,24 @@ export default function StudyPage() {
                           {r.q.correct_answer}
                         </span>
                       </td>
-                      <td style={{ padding: "13px 16px" }}>
+                      <td
+                        style={{
+                          padding: "13px 16px",
+                          borderBottom: "1px solid var(--border)",
+                          fontSize: 12,
+                          color: "var(--text-muted)",
+                        }}
+                      >
+                        {r.q.page_start
+                          ? `p.${r.q.page_start}${r.q.page_end && r.q.page_end !== r.q.page_start ? `–${r.q.page_end}` : ""}`
+                          : "—"}
+                      </td>
+                      <td
+                        style={{
+                          padding: "13px 16px",
+                          borderBottom: "1px solid var(--border)",
+                        }}
+                      >
                         {r.correct ? (
                           <span
                             style={{ color: "var(--green)", fontWeight: 700 }}
