@@ -21,52 +21,58 @@ export default function StudentsPage() {
         return;
       }
       setUser(session.user);
-
-      const { data: profiles } = await supabase
-        .from("profiles")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      // Get exam stats for each student
-      const studentsWithStats = await Promise.all(
-        (profiles || []).map(async (p) => {
-          const { data: sessions } = await supabase
-            .from("exam_sessions")
-            .select("score, completed_at")
-            .eq("user_id", p.id)
-            .eq("mode", "exam")
-            .order("completed_at", { ascending: false });
-
-          const scores = (sessions || [])
-            .map((s) => s.score)
-            .filter((s) => s !== null);
-          const avgScore = scores.length
-            ? Math.round(
-                scores.reduce((a: number, b: number) => a + b, 0) /
-                  scores.length,
-              )
-            : null;
-          const bestScore = scores.length ? Math.max(...scores) : null;
-          const lastActive =
-            sessions && sessions.length > 0
-              ? new Date(sessions[0].completed_at).toLocaleDateString()
-              : "Never";
-
-          return {
-            ...p,
-            exams: scores.length,
-            avg_score: avgScore !== null ? `${avgScore}%` : "—",
-            best_score: bestScore !== null ? `${bestScore}%` : "—",
-            last_active: lastActive,
-          };
-        }),
-      );
-
-      setStudents(studentsWithStats);
+      await loadStudents();
       setLoading(false);
     };
     init();
   }, []);
+
+  const loadStudents = async () => {
+    const { data: profiles } = await supabase
+      .from("profiles")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    const studentsWithStats = await Promise.all(
+      (profiles || []).map(async (p) => {
+        const { data: sessions } = await supabase
+          .from("exam_sessions")
+          .select("score, completed_at")
+          .eq("user_id", p.id)
+          .eq("mode", "exam")
+          .order("completed_at", { ascending: false });
+
+        const scores = (sessions || [])
+          .map((s: any) => s.score)
+          .filter((s: any) => s !== null);
+        const avgScore = scores.length
+          ? Math.round(
+              scores.reduce((a: number, b: number) => a + b, 0) / scores.length,
+            )
+          : null;
+        const bestScore = scores.length ? Math.max(...scores) : null;
+        const lastActive =
+          sessions && sessions.length > 0
+            ? new Date(sessions[0].completed_at).toLocaleDateString()
+            : "Never";
+
+        return {
+          ...p,
+          exams: scores.length,
+          avg_score: avgScore !== null ? `${avgScore}%` : "—",
+          best_score: bestScore !== null ? `${bestScore}%` : "—",
+          last_active: lastActive,
+        };
+      }),
+    );
+    setStudents(studentsWithStats);
+  };
+
+  const handleDelete = async (id: string, name: string) => {
+    if (!confirm(`Remove ${name} from the system?`)) return;
+    await supabase.from("profiles").delete().eq("id", id);
+    await loadStudents();
+  };
 
   if (loading) return null;
   const userName =
@@ -116,6 +122,7 @@ export default function StudentsPage() {
                   "AVG SCORE",
                   "BEST SCORE",
                   "LAST ACTIVE",
+                  "DELETE",
                 ].map((h) => (
                   <th
                     key={h}
@@ -139,7 +146,7 @@ export default function StudentsPage() {
               {students.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={6}
+                    colSpan={7}
                     style={{
                       padding: "24px 16px",
                       textAlign: "center",
@@ -211,6 +218,30 @@ export default function StudentsPage() {
                       }}
                     >
                       {s.last_active}
+                    </td>
+                    <td
+                      style={{
+                        padding: "13px 16px",
+                        borderBottom: "1px solid var(--border)",
+                      }}
+                    >
+                      <button
+                        onClick={() =>
+                          handleDelete(s.id, s.full_name || s.email)
+                        }
+                        style={{
+                          padding: "4px 10px",
+                          background: "var(--red-light)",
+                          color: "var(--red)",
+                          border: "1px solid #f1948a",
+                          borderRadius: 6,
+                          fontSize: 12,
+                          fontWeight: 600,
+                          cursor: "pointer",
+                        }}
+                      >
+                        Remove
+                      </button>
                     </td>
                   </tr>
                 ))
