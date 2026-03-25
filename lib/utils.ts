@@ -8,9 +8,7 @@ export function shuffleArray<T>(array: T[]): T[] {
 }
 
 export function formatTime(seconds: number): string {
-  const m = Math.floor(seconds / 60)
-    .toString()
-    .padStart(2, "0");
+  const m = Math.floor(seconds / 60).toString().padStart(2, "0");
   const s = (seconds % 60).toString().padStart(2, "0");
   return `${m}:${s}`;
 }
@@ -23,11 +21,37 @@ export function formatDate(dateString: string): string {
   });
 }
 
+export type ShuffledAnswer = { letter: "A" | "B" | "C" | "D"; text: string };
+
+/** Shuffles answer choices for display and returns the new correct letter. */
+export function shuffleAnswers(
+  answers: { a: string; b: string; c: string; d: string },
+  correctLetter: string
+): { choices: ShuffledAnswer[]; correctLetter: "A" | "B" | "C" | "D" } {
+  const labels = ["A", "B", "C", "D"] as const;
+  const original = [
+    { letter: "A" as const, text: answers.a },
+    { letter: "B" as const, text: answers.b },
+    { letter: "C" as const, text: answers.c },
+    { letter: "D" as const, text: answers.d },
+  ];
+  const correctText = original.find(
+    (o) => o.letter === correctLetter.toUpperCase()
+  )?.text ?? "";
+
+  const shuffled = shuffleArray(original);
+  const choices: ShuffledAnswer[] = shuffled.map((item, i) => ({
+    letter: labels[i],
+    text: item.text,
+  }));
+  const newCorrect = choices.find((c) => c.text === correctText)?.letter ?? "A";
+  return { choices, correctLetter: newCorrect };
+}
+
 export function parseCSV(text: string): Record<string, string>[] {
   const lines: string[] = [];
   let current = "";
   let inQuote = false;
-
   for (let i = 0; i < text.length; i++) {
     const ch = text[i];
     if (ch === '"') {
@@ -62,9 +86,8 @@ export function parseCSV(text: string): Record<string, string>[] {
   };
 
   const headers = parseRow(lines[0]).map((h) =>
-    h.replace(/^"|"$/g, "").toLowerCase().trim(),
+    h.replace(/^"|"$/g, "").toLowerCase().trim()
   );
-
   const rows: Record<string, string>[] = [];
   for (let i = 1; i < lines.length; i++) {
     if (!lines[i].trim()) continue;
