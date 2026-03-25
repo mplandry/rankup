@@ -21,6 +21,8 @@ export default function ExamPage() {
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const sessionQsRef = useRef<Question[]>([]);
   const answersRef = useRef<Record<number, string>>({});
+  // Store shuffled correct letters in a ref so handleSubmit can access them
+  const correctLettersRef = useRef<string[]>([]);
   const router = useRouter();
 
   useEffect(() => {
@@ -29,10 +31,8 @@ export default function ExamPage() {
       if (!session) { router.push("/login"); return; }
       setUser(session.user);
       const { data } = await supabase
-        .from("questions")
-        .select("*")
-        .eq("is_active", true)
-        .eq("exam_eligible", true);
+        .from("questions").select("*")
+        .eq("is_active", true).eq("exam_eligible", true);
       setQuestions(data || []);
     };
     init();
@@ -42,18 +42,16 @@ export default function ExamPage() {
     if (timerRef.current) clearInterval(timerRef.current);
     const qs = sessionQsRef.current;
     const ans = answersRef.current;
-    // Compare against shuffled correct letters stored per question
-    const correct = qs.filter((_, i) => ans[i] !== undefined && ans[i] === ans[`correct_${i}`]).length;
+    const correctLetters = correctLettersRef.current;
+    const correct = qs.filter((_, i) => ans[i] !== undefined && ans[i] === correctLetters[i]).length;
     const finalScore = Math.round((correct / qs.length) * 100);
     setScore(finalScore);
     setState("results");
     const { data: { session } } = await supabase.auth.getSession();
     if (session) {
       await supabase.from("exam_sessions").insert({
-        user_id: session.user.id,
-        mode: "exam",
-        score: finalScore,
-        total_questions: qs.length,
+        user_id: session.user.id, mode: "exam",
+        score: finalScore, total_questions: qs.length,
         completed_at: new Date().toISOString(),
       });
     }
@@ -61,12 +59,15 @@ export default function ExamPage() {
 
   // Pre-shuffle answers for every question in the session
   const shuffledChoices = useMemo(() => {
-    return sessionQs.map((q) =>
+    const choices = sessionQs.map((q) =>
       shuffleAnswers(
         { a: q.answer_a, b: q.answer_b, c: q.answer_c, d: q.answer_d },
         q.correct_answer
       )
     );
+    // Keep ref in sync so handleSubmit can score correctly
+    correctLettersRef.current = choices.map((c) => c.correctLetter);
+    return choices;
   }, [sessionQs]);
 
   const startExam = () => {
@@ -101,20 +102,16 @@ export default function ExamPage() {
   }, []);
 
   if (!user) return null;
-
   const userName = user.user_metadata?.full_name || user.email?.split("@")[0] || "Firefighter";
 
-  // Calculate score correctly using shuffled correct letters
   const calcCorrect = () =>
-    sessionQs.filter((_, i) => {
-      const shuffled = shuffledChoices[i];
-      return shuffled && answers[i] === shuffled.correctLetter;
-    }).length;
+    sessionQs.filter((_, i) => answers[i] === shuffledChoices[i]?.correctLetter).length;
 
   return (
     <div style={{ display: "flex" }}>
       <Sidebar userName={userName} userEmail={user.email ?? ""} />
       <div style={{ marginLeft: "var(--sidebar-w)", flex: 1, padding: "36px 40px", maxWidth: 1100 }}>
+
         {state === "configure" && (
           <>
             <div style={{ fontSize: 26, fontWeight: 700, marginBottom: 4 }}>Exam Mode</div>
@@ -259,4 +256,4 @@ export default function ExamPage() {
       </div>
     </div>
   );
-                                                     }
+                        }
