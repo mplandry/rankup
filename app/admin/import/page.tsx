@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
+import type { User } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase";
 import Sidebar from "@/components/Sidebar";
 import { parseCSV } from "@/lib/utils";
@@ -11,7 +12,7 @@ const CSV_TEMPLATE = [
 ].join("\n");
 
 export default function ImportPage() {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [drag, setDrag] = useState(false);
   const [status, setStatus] = useState<{
     type: "success" | "error";
@@ -33,7 +34,7 @@ export default function ImportPage() {
       setUser(session.user);
     };
     init();
-  }, []);
+  }, [router]);
 
   const handleDownloadTemplate = () => {
     const blob = new Blob([CSV_TEMPLATE], { type: "text/csv" });
@@ -50,10 +51,14 @@ export default function ImportPage() {
       setStatus({ type: "error", msg: "Please select a valid CSV file." });
       return;
     }
+    if (!user) return;
+
     setImporting(true);
     setStatus(null);
+
     const text = await file.text();
     const rows = parseCSV(text);
+
     if (rows.length === 0) {
       setStatus({
         type: "error",
@@ -69,8 +74,8 @@ export default function ImportPage() {
       edition: r.edition || null,
       chapter: r.chapter || "",
       topic: r.topic || null,
-      page_start: r.page_start ? parseInt(r.page_start) : null,
-      page_end: r.page_end ? parseInt(r.page_end) : null,
+      page_start: r.page_start ? parseInt(r.page_start, 10) : null,
+      page_end: r.page_end ? parseInt(r.page_end, 10) : null,
       question_text: r.question_text || "",
       answer_a: r.answer_a || "",
       answer_b: r.answer_b || "",
@@ -92,6 +97,7 @@ export default function ImportPage() {
     let imported = 0;
     let skipped = 0;
     const batchSize = 50;
+
     for (let i = 0; i < questions.length; i += batchSize) {
       const batch = questions.slice(i, i + batchSize);
       const { error } = await supabase.from("questions").upsert(batch, {
@@ -114,13 +120,13 @@ export default function ImportPage() {
   if (!user) return null;
 
   const userName =
-    user?.user_metadata?.full_name ||
-    user?.email?.split("@")[0] ||
+    user.user_metadata?.full_name ||
+    user.email?.split("@")[0] ||
     "Firefighter";
 
   return (
     <div style={{ display: "flex" }}>
-      <Sidebar userName={userName} userEmail={user?.email || ""} />
+      <Sidebar userName={userName} userEmail={user.email ?? ""} />
       <div
         style={{
           marginLeft: "var(--sidebar-w)",
@@ -180,12 +186,12 @@ export default function ImportPage() {
                 transition: "all 0.15s",
               }}
               onMouseEnter={(e) => {
-                (e.currentTarget as HTMLButtonElement).style.background = "var(--blue)";
-                (e.currentTarget as HTMLButtonElement).style.color = "white";
+                e.currentTarget.style.background = "var(--blue)";
+                e.currentTarget.style.color = "white";
               }}
               onMouseLeave={(e) => {
-                (e.currentTarget as HTMLButtonElement).style.background = "white";
-                (e.currentTarget as HTMLButtonElement).style.color = "var(--blue)";
+                e.currentTarget.style.background = "white";
+                e.currentTarget.style.color = "var(--blue)";
               }}
             >
               ⬇ Download Template
@@ -205,11 +211,12 @@ export default function ImportPage() {
             question_text,answer_a,answer_b,answer_c,answer_d,correct_answer,book_title,chapter
           </div>
           <div style={{ fontSize: 12, color: "#555", lineHeight: 1.5 }}>
-            Optional columns: question_id, edition, topic, page_start, page_end,
-            explanation, study_eligible, exam_eligible, difficulty, is_active
+            Optional columns: question_id, edition, topic, page_start,
+            page_end, explanation, study_eligible, exam_eligible, difficulty,
+            is_active
             <br />
-            <strong style={{ color: "var(--red)" }}>correct_answer</strong> must
-            be A, B, C, or D. Headers are case-insensitive.
+            <strong style={{ color: "var(--red)" }}>correct_answer</strong>{" "}
+            must be A, B, C, or D. Headers are case-insensitive.
             <br />
             <strong style={{ color: "var(--green)" }}>
               Duplicates are automatically skipped
@@ -226,12 +233,15 @@ export default function ImportPage() {
                 status.type === "success"
                   ? "var(--green-light)"
                   : "var(--red-light)",
-              border: `1px solid ${status.type === "success" ? "#a9dfbf" : "#f1948a"}`,
+              border: `1px solid ${
+                status.type === "success" ? "#a9dfbf" : "#f1948a"
+              }`,
               borderRadius: 10,
               padding: "12px 16px",
               marginBottom: 16,
               fontSize: 14,
-              color: status.type === "success" ? "var(--green)" : "var(--red)",
+              color:
+                status.type === "success" ? "var(--green)" : "var(--red)",
               fontWeight: 600,
             }}
           >
@@ -263,7 +273,13 @@ export default function ImportPage() {
             transition: "all 0.15s",
           }}
         >
-          <div style={{ fontSize: 32, marginBottom: 12, color: "var(--text-muted)" }}>
+          <div
+            style={{
+              fontSize: 32,
+              marginBottom: 12,
+              color: "var(--text-muted)",
+            }}
+          >
             ⬆️
           </div>
           <div style={{ fontWeight: 600, fontSize: 14, marginBottom: 4 }}>
@@ -274,8 +290,8 @@ export default function ImportPage() {
           </div>
           <input
             ref={fileRef}
-            type='file'
-            accept='.csv'
+            type="file"
+            accept=".csv"
             style={{ display: "none" }}
             onChange={(e) => {
               const f = e.target.files?.[0];
@@ -286,4 +302,4 @@ export default function ImportPage() {
       </div>
     </div>
   );
-                    }
+            }
