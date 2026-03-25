@@ -7,26 +7,27 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export type Question = {
   id: string;
-  source_id: string;
+  source_id: string | null;
   book_title: string;
-  edition: string;
+  edition: string | null;
   chapter: string;
-  topic: string;
-  page_start: number;
-  page_end: number;
+  topic: string | null;
+  page_start: number | null;
+  page_end: number | null;
   question_text: string;
   answer_a: string;
   answer_b: string;
   answer_c: string;
   answer_d: string;
   correct_answer: string;
-  explanation: string;
+  explanation: string | null;
   study_eligible: boolean;
   exam_eligible: boolean;
   difficulty: string;
   is_active: boolean;
   created_at: string;
-  question_number: number;
+  question_number: number | null;
+  created_by: string | null;
 };
 
 export type Profile = {
