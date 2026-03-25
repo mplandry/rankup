@@ -50,39 +50,44 @@ export default function StudyPage() {
     setFiltered(f);
   }, [book, chapter, topic, difficulty, questions]);
 
-  const books = [...new Set(questions.map((q) => q.book_title))].sort();
+  // useMemo so dropdowns update reactively when book/chapter state changes
+  const books = useMemo(() =>
+    [...new Set(questions.map((q) => q.book_title))].sort()
+  , [questions]);
 
-  // Chapters filtered by selected book, sorted numerically
-  const chapters = [...new Set(
-    questions
-      .filter((q) => book === "all" || q.book_title === book)
-      .map((q) => String(q.chapter))
-  )].sort((a, b) => {
-    const aNum = parseFloat(a);
-    const bNum = parseFloat(b);
-    if (!isNaN(aNum) && !isNaN(bNum)) return aNum - bNum;
-    return a.localeCompare(b);
-  });
+  const chapters = useMemo(() =>
+    [...new Set(
+      questions
+        .filter((q) => book === "all" || q.book_title === book)
+        .map((q) => String(q.chapter))
+    )].sort((a, b) => {
+      const aNum = parseFloat(a);
+      const bNum = parseFloat(b);
+      if (!isNaN(aNum) && !isNaN(bNum)) return aNum - bNum;
+      return a.localeCompare(b);
+    })
+  , [questions, book]);
 
-  // Topics filtered by selected book AND chapter
-  const topics: string[] = [...new Set(
-    questions
-      .filter((q) =>
-        (book === "all" || q.book_title === book) &&
-        (chapter === "all" || String(q.chapter) === chapter)
-      )
-      .map((q) => q.topic)
-      .filter((t): t is string => typeof t === "string" && t.length > 0)
-  )].sort();
+  const topics = useMemo(() =>
+    [...new Set(
+      questions
+        .filter((q) =>
+          (book === "all" || q.book_title === book) &&
+          (chapter === "all" || String(q.chapter) === chapter)
+        )
+        .map((q) => q.topic)
+        .filter((t): t is string => typeof t === "string" && t.length > 0)
+    )].sort()
+  , [questions, book, chapter]);
 
-  const shuffledChoices = useMemo(() => {
-    return sessionQs.map((q) =>
+  const shuffledChoices = useMemo(() =>
+    sessionQs.map((q) =>
       shuffleAnswers(
         { a: q.answer_a, b: q.answer_b, c: q.answer_c, d: q.answer_d },
         q.correct_answer
       )
-    );
-  }, [sessionQs]);
+    )
+  , [sessionQs]);
 
   const startSession = () => {
     const qs = shuffleArray(filtered).slice(0, Math.min(count, filtered.length));
@@ -328,4 +333,4 @@ export default function StudyPage() {
       </div>
     </div>
   );
-                  }
+                        }
