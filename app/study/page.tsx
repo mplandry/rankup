@@ -33,10 +33,8 @@ export default function StudyPage() {
       if (!session) { router.push("/login"); return; }
       setUser(session.user);
       const { data } = await supabase
-        .from("questions")
-        .select("*")
-        .eq("is_active", true)
-        .eq("study_eligible", true);
+        .from("questions").select("*")
+        .eq("is_active", true).eq("study_eligible", true);
       setQuestions(data || []);
       setFiltered(data || []);
     };
@@ -46,22 +44,36 @@ export default function StudyPage() {
   useEffect(() => {
     let f = questions;
     if (book !== "all") f = f.filter((q) => q.book_title === book);
-    if (chapter !== "all") f = f.filter((q) => q.chapter === chapter);
+    if (chapter !== "all") f = f.filter((q) => String(q.chapter) === chapter);
     if (topic !== "all") f = f.filter((q) => q.topic === topic);
     if (difficulty !== "all") f = f.filter((q) => q.difficulty === difficulty);
     setFiltered(f);
   }, [book, chapter, topic, difficulty, questions]);
 
-  const books = [...new Set(questions.map((q) => q.book_title))];
+  const books = [...new Set(questions.map((q) => q.book_title))].sort();
+
+  // Chapters filtered by selected book, sorted numerically
   const chapters = [...new Set(
-    questions.filter((q) => book === "all" || q.book_title === book).map((q) => q.chapter)
-  )];
-  const topics = [...new Set(
     questions
-      .filter((q) => (book === "all" || q.book_title === book) && (chapter === "all" || q.chapter === chapter))
+      .filter((q) => book === "all" || q.book_title === book)
+      .map((q) => String(q.chapter))
+  )].sort((a, b) => {
+    const aNum = parseFloat(a);
+    const bNum = parseFloat(b);
+    if (!isNaN(aNum) && !isNaN(bNum)) return aNum - bNum;
+    return a.localeCompare(b);
+  });
+
+  // Topics filtered by selected book AND chapter
+  const topics: string[] = [...new Set(
+    questions
+      .filter((q) =>
+        (book === "all" || q.book_title === book) &&
+        (chapter === "all" || String(q.chapter) === chapter)
+      )
       .map((q) => q.topic)
       .filter((t): t is string => typeof t === "string" && t.length > 0)
-  )];
+  )].sort();
 
   const shuffledChoices = useMemo(() => {
     return sessionQs.map((q) =>
@@ -95,9 +107,7 @@ export default function StudyPage() {
       const score = Math.round((newResults.filter((r) => r.correct).length / newResults.length) * 100);
       if (user) {
         supabase.from("exam_sessions").insert({
-          user_id: user.id,
-          mode: "study",
-          score,
+          user_id: user.id, mode: "study", score,
           total_questions: newResults.length,
           completed_at: new Date().toISOString(),
         });
@@ -111,7 +121,6 @@ export default function StudyPage() {
   const isCorrect = revealed && selected === currentShuffled?.correctLetter;
 
   if (!user) return null;
-
   const userName = user.user_metadata?.full_name || user.email?.split("@")[0] || "Firefighter";
 
   return (
@@ -319,4 +328,4 @@ export default function StudyPage() {
       </div>
     </div>
   );
-      }
+                  }
