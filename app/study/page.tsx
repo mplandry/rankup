@@ -8,6 +8,7 @@ import { shuffleArray, shuffleAnswers } from "@/lib/utils";
 import type { Question } from "@/lib/supabase";
 
 type StudyState = "configure" | "session" | "results";
+type Result = { q: Question; selected: string | null; correct: boolean };
 
 export default function StudyPage() {
   const [user, setUser] = useState<User | null>(null);
@@ -15,7 +16,7 @@ export default function StudyPage() {
   const [filtered, setFiltered] = useState<Question[]>([]);
   const [sessionQs, setSessionQs] = useState<Question[]>([]);
   const [state, setState] = useState<StudyState>("configure");
-  const [results, setResults] = useState<{ q: Question; selected: string | null; correct: boolean }[]>([]);
+  const [results, setResults] = useState<Result[]>([]);
   const [idx, setIdx] = useState(0);
   const [selected, setSelected] = useState<string | null>(null);
   const [revealed, setRevealed] = useState(false);
@@ -52,10 +53,16 @@ export default function StudyPage() {
   }, [book, chapter, topic, difficulty, questions]);
 
   const books = [...new Set(questions.map((q) => q.book_title))];
-  const chapters = [...new Set(questions.filter((q) => book === "all" || q.book_title === book).map((q) => q.chapter))];
-  const topics = [...new Set(questions.filter((q) => (book === "all" || q.book_title === book) && (chapter === "all" || q.chapter === chapter)).map((q) => q.topic).filter(Boolean))];
+  const chapters = [...new Set(
+    questions.filter((q) => book === "all" || q.book_title === book).map((q) => q.chapter)
+  )];
+  const topics = [...new Set(
+    questions
+      .filter((q) => (book === "all" || q.book_title === book) && (chapter === "all" || q.chapter === chapter))
+      .map((q) => q.topic)
+      .filter((t): t is string => typeof t === "string" && t.length > 0)
+  )];
 
-  // Pre-shuffle answers for every question in the session
   const shuffledChoices = useMemo(() => {
     return sessionQs.map((q) =>
       shuffleAnswers(
@@ -77,8 +84,8 @@ export default function StudyPage() {
 
   const handleNext = () => {
     const shuffled = shuffledChoices[idx];
-    const correct = selected === shuffled?.correctLetter;
-    const newResults = [...results, { q: sessionQs[idx], selected, correct }];
+    const correct = selected !== null && selected === shuffled?.correctLetter;
+    const newResults: Result[] = [...results, { q: sessionQs[idx], selected, correct }];
     setResults(newResults);
     if (idx + 1 < sessionQs.length) {
       setIdx((i) => i + 1);
@@ -131,7 +138,7 @@ export default function StudyPage() {
                   <label style={{ fontSize: 13, fontWeight: 600, display: "block", marginBottom: 6 }}>Book / Reference</label>
                   <select value={book} onChange={(e) => { setBook(e.target.value); setChapter("all"); setTopic("all"); }}
                     style={{ width: "100%", padding: "9px 12px", border: "1px solid var(--border)", borderRadius: 8, fontSize: 13.5 }}>
-                    <option value='all'>All books</option>
+                    <option value="all">All books</option>
                     {books.map((b) => <option key={b} value={b}>{b}</option>)}
                   </select>
                 </div>
@@ -139,7 +146,7 @@ export default function StudyPage() {
                   <label style={{ fontSize: 13, fontWeight: 600, display: "block", marginBottom: 6 }}>Chapter</label>
                   <select value={chapter} onChange={(e) => { setChapter(e.target.value); setTopic("all"); }}
                     style={{ width: "100%", padding: "9px 12px", border: "1px solid var(--border)", borderRadius: 8, fontSize: 13.5 }}>
-                    <option value='all'>All chapters</option>
+                    <option value="all">All chapters</option>
                     {chapters.map((c) => <option key={c} value={c}>Chapter {c}</option>)}
                   </select>
                 </div>
@@ -147,7 +154,7 @@ export default function StudyPage() {
                   <label style={{ fontSize: 13, fontWeight: 600, display: "block", marginBottom: 6 }}>Topic</label>
                   <select value={topic} onChange={(e) => setTopic(e.target.value)}
                     style={{ width: "100%", padding: "9px 12px", border: "1px solid var(--border)", borderRadius: 8, fontSize: 13.5 }}>
-                    <option value='all'>All topics</option>
+                    <option value="all">All topics</option>
                     {topics.map((t) => <option key={t} value={t}>{t}</option>)}
                   </select>
                 </div>
@@ -155,10 +162,10 @@ export default function StudyPage() {
                   <label style={{ fontSize: 13, fontWeight: 600, display: "block", marginBottom: 6 }}>Difficulty</label>
                   <select value={difficulty} onChange={(e) => setDifficulty(e.target.value)}
                     style={{ width: "100%", padding: "9px 12px", border: "1px solid var(--border)", borderRadius: 8, fontSize: 13.5 }}>
-                    <option value='all'>All difficulties</option>
-                    <option value='easy'>Easy</option>
-                    <option value='medium'>Medium</option>
-                    <option value='hard'>Hard</option>
+                    <option value="all">All difficulties</option>
+                    <option value="easy">Easy</option>
+                    <option value="medium">Medium</option>
+                    <option value="hard">Hard</option>
                   </select>
                 </div>
               </div>
@@ -166,7 +173,7 @@ export default function StudyPage() {
                 <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 8 }}>
                   Number of Questions: <strong>{Math.min(count, filtered.length)}</strong>
                 </div>
-                <input type='range' min={5} max={Math.min(50, filtered.length || 50)} value={count}
+                <input type="range" min={5} max={Math.min(50, filtered.length || 50)} value={count}
                   onChange={(e) => setCount(+e.target.value)}
                   style={{ width: "100%", accentColor: "var(--red)" }} />
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "var(--text-muted)", marginTop: 4 }}>
@@ -312,4 +319,4 @@ export default function StudyPage() {
       </div>
     </div>
   );
-            }
+      }
