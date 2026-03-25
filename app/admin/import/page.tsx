@@ -1,10 +1,14 @@
 "use client";
-
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import Sidebar from "@/components/Sidebar";
 import { parseCSV } from "@/lib/utils";
+
+const CSV_TEMPLATE = [
+  "question_text,answer_a,answer_b,answer_c,answer_d,correct_answer,book_title,chapter,question_id,edition,topic,page_start,page_end,explanation,study_eligible,exam_eligible,difficulty,is_active",
+  "What part of an I-beam resists most bending?,Web,Flange,Column,Joint,B,Building Construction Related to the Fire Service,3,,,Structural Systems,80,80,Flanges resist bending stress.,TRUE,TRUE,easy,TRUE",
+].join("\n");
 
 export default function ImportPage() {
   const [user, setUser] = useState<any>(null);
@@ -31,6 +35,16 @@ export default function ImportPage() {
     init();
   }, []);
 
+  const handleDownloadTemplate = () => {
+    const blob = new Blob([CSV_TEMPLATE], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "rankup_import_template.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   const processFile = async (file: File) => {
     if (!file || !file.name.endsWith(".csv")) {
       setStatus({ type: "error", msg: "Please select a valid CSV file." });
@@ -38,10 +52,8 @@ export default function ImportPage() {
     }
     setImporting(true);
     setStatus(null);
-
     const text = await file.text();
     const rows = parseCSV(text);
-
     if (rows.length === 0) {
       setStatus({
         type: "error",
@@ -51,7 +63,6 @@ export default function ImportPage() {
       return;
     }
 
-    // Map CSV rows to Supabase schema
     const questions = rows.map((r) => ({
       source_id: r.question_id || r.source_id || null,
       book_title: r.book_title || "",
@@ -68,24 +79,22 @@ export default function ImportPage() {
       correct_answer: (r.correct_answer || "").toUpperCase(),
       explanation: r.explanation || null,
       study_eligible: ["true", "yes", "1"].includes(
-        (r.study_eligible || "true").toLowerCase(),
+        (r.study_eligible || "true").toLowerCase()
       ),
       exam_eligible: ["true", "yes", "1"].includes(
-        (r.exam_eligible || "true").toLowerCase(),
+        (r.exam_eligible || "true").toLowerCase()
       ),
       difficulty: r.difficulty || "medium",
       is_active: true,
       created_by: user.id,
     }));
 
-    // Insert in batches of 50, skip duplicates
     let imported = 0;
     let skipped = 0;
     const batchSize = 50;
-
     for (let i = 0; i < questions.length; i += batchSize) {
       const batch = questions.slice(i, i + batchSize);
-      const { data, error } = await supabase.from("questions").upsert(batch, {
+      const { error } = await supabase.from("questions").upsert(batch, {
         onConflict: "question_text",
         ignoreDuplicates: true,
       });
@@ -95,12 +104,15 @@ export default function ImportPage() {
 
     setStatus({
       type: "success",
-      msg: `Successfully imported ${imported} questions! ${skipped > 0 ? `(${skipped} skipped as duplicates)` : ""}`,
+      msg: `Successfully imported ${imported} questions!${
+        skipped > 0 ? ` (${skipped} skipped as duplicates)` : ""
+      }`,
     });
     setImporting(false);
   };
 
   if (!user) return null;
+
   const userName =
     user?.user_metadata?.full_name ||
     user?.email?.split("@")[0] ||
@@ -142,13 +154,42 @@ export default function ImportPage() {
         >
           <div
             style={{
-              fontWeight: 700,
-              fontSize: 13,
-              color: "var(--blue)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
               marginBottom: 8,
             }}
           >
-            Required CSV Format
+            <div style={{ fontWeight: 700, fontSize: 13, color: "var(--blue)" }}>
+              Required CSV Format
+            </div>
+            <button
+              onClick={handleDownloadTemplate}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+                fontSize: 12,
+                fontWeight: 600,
+                color: "var(--blue)",
+                background: "white",
+                border: "1px solid #b3d7f0",
+                borderRadius: 6,
+                padding: "5px 12px",
+                cursor: "pointer",
+                transition: "all 0.15s",
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.background = "var(--blue)";
+                (e.currentTarget as HTMLButtonElement).style.color = "white";
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.background = "white";
+                (e.currentTarget as HTMLButtonElement).style.color = "var(--blue)";
+              }}
+            >
+              ⬇ Download Template
+            </button>
           </div>
           <div
             style={{
@@ -165,7 +206,7 @@ export default function ImportPage() {
           </div>
           <div style={{ fontSize: 12, color: "#555", lineHeight: 1.5 }}>
             Optional columns: question_id, edition, topic, page_start, page_end,
-            explanation, study_eligible, exam_eligible, difficulty
+            explanation, study_eligible, exam_eligible, difficulty, is_active
             <br />
             <strong style={{ color: "var(--red)" }}>correct_answer</strong> must
             be A, B, C, or D. Headers are case-insensitive.
@@ -222,13 +263,7 @@ export default function ImportPage() {
             transition: "all 0.15s",
           }}
         >
-          <div
-            style={{
-              fontSize: 32,
-              marginBottom: 12,
-              color: "var(--text-muted)",
-            }}
-          >
+          <div style={{ fontSize: 32, marginBottom: 12, color: "var(--text-muted)" }}>
             ⬆️
           </div>
           <div style={{ fontWeight: 600, fontSize: 14, marginBottom: 4 }}>
@@ -251,4 +286,4 @@ export default function ImportPage() {
       </div>
     </div>
   );
-}
+                    }
