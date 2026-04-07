@@ -7,6 +7,7 @@ import Sidebar from "@/components/Sidebar";
 
 export default function ProgressPage() {
   const [user, setUser] = useState<any>(null);
+  const [userRole, setUserRole] = useState<string>("student");
   const [sessions, setSessions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
@@ -21,6 +22,9 @@ export default function ProgressPage() {
         return;
       }
       setUser(session.user);
+
+      const { data: profile } = await supabase.from("profiles").select("role").eq("id", session.user.id).single();
+      setUserRole(profile?.role || "student");
       const { data } = await supabase
         .from("exam_sessions")
         .select("*")
@@ -50,7 +54,7 @@ export default function ProgressPage() {
 
   return (
     <div style={{ display: "flex" }}>
-      <Sidebar userName={userName} userEmail={user?.email || ""} />
+      <Sidebar userName={userName} userEmail={user?.email || ""} userRole={userRole} />
       <div
         style={{
           marginLeft: "var(--sidebar-w)",
