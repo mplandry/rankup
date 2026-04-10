@@ -16,43 +16,66 @@ export default async function StudyPage() {
 
   const userExamType = profile?.exam_type;
 
-  // Base filter for exam_type
-  const examTypeFilter = (query: any) =>
-    userExamType ? query.in("exam_type", [userExamType, "both"]) : query;
-
   // Fetch distinct books, chapters, topics filtered by exam_type
   const [booksRes, chaptersRes, topicsRes] = await Promise.all([
-    examTypeFilter(
-      supabase
-        .from("questions")
-        .select("book_title")
-        .eq("is_active", true)
-        .eq("study_eligible", true),
-    ),
-    examTypeFilter(
-      supabase
-        .from("questions")
-        .select("chapter")
-        .eq("is_active", true)
-        .eq("study_eligible", true),
-    ),
-    examTypeFilter(
-      supabase
-        .from("questions")
-        .select("topic")
-        .eq("is_active", true)
-        .eq("study_eligible", true),
-    ),
+    userExamType
+      ? supabase
+          .from("questions")
+          .select("book_title")
+          .eq("is_active", true)
+          .eq("study_eligible", true)
+          .in("exam_type", [userExamType, "both"])
+      : supabase
+          .from("questions")
+          .select("book_title")
+          .eq("is_active", true)
+          .eq("study_eligible", true),
+    userExamType
+      ? supabase
+          .from("questions")
+          .select("chapter")
+          .eq("is_active", true)
+          .eq("study_eligible", true)
+          .in("exam_type", [userExamType, "both"])
+      : supabase
+          .from("questions")
+          .select("chapter")
+          .eq("is_active", true)
+          .eq("study_eligible", true),
+    userExamType
+      ? supabase
+          .from("questions")
+          .select("topic")
+          .eq("is_active", true)
+          .eq("study_eligible", true)
+          .in("exam_type", [userExamType, "both"])
+      : supabase
+          .from("questions")
+          .select("topic")
+          .eq("is_active", true)
+          .eq("study_eligible", true),
   ]);
 
   const books = [
-    ...new Set((booksRes.data || []).map((r) => r.book_title).filter(Boolean)),
+    ...new Set(
+      (booksRes.data || [])
+        .map((r: { book_title: string }) => r.book_title)
+        .filter(Boolean),
+    ),
   ].sort();
   const chapters = [
-    ...new Set((chaptersRes.data || []).map((r) => r.chapter).filter(Boolean)),
+    ...new Set(
+      (chaptersRes.data || [])
+        .map((r: { chapter: string }) => r.chapter)
+        .filter(Boolean),
+    ),
   ].sort();
   const topics = [
-    ...new Set((topicsRes.data || []).map((r) => r.topic).filter(Boolean)),
+    ...new Set(
+      (topicsRes.data || [])
+        .map((r: { topic: string }) => r.topic)
+        .filter(Boolean),
+    ),
   ].sort();
 
   return (
