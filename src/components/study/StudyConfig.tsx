@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { BookOpen, Loader2, ChevronDown } from "lucide-react";
+import { createPortal } from "react-dom";
 import { DEFAULT_STUDY_COUNT } from "@/lib/constants";
 
 interface Props {
@@ -171,7 +172,37 @@ function CustomSelect({
   options: { value: string; label: string }[];
 }) {
   const [open, setOpen] = useState(false);
+  const [dropdownStyle, setDropdownStyle] = useState({});
+  const buttonRef = useRef<HTMLButtonElement>(null);
   const ref = useRef<HTMLDivElement>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const updatePosition = useCallback(() => {
+    if (buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      setDropdownStyle({
+        position: "fixed",
+        top: rect.bottom + 4,
+        left: rect.left,
+        width: rect.width,
+        zIndex: 99999,
+        background: "white",
+        border: "1px solid #e5e7eb",
+        borderRadius: 8,
+        boxShadow: "0 4px 16px rgba(0,0,0,0.15)",
+        maxHeight: 240,
+        overflowY: "auto",
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (open) updatePosition();
+  }, [open, updatePosition]);
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
@@ -185,11 +216,12 @@ function CustomSelect({
   const selected = options.find((o) => o.value === value);
 
   return (
-    <div ref={ref} style={{ position: "relative", zIndex: 50 }}>
+    <div ref={ref}>
       <label className='block text-sm font-medium text-gray-700 mb-1'>
         {label}
       </label>
       <button
+        ref={buttonRef}
         type='button'
         onClick={() => setOpen(!open)}
         className='w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 bg-white flex items-center justify-between text-left'
@@ -202,44 +234,34 @@ function CustomSelect({
         />
       </button>
 
-      {open && (
-        <div
-          style={{
-            position: "absolute",
-            zIndex: 9999,
-            width: "100%",
-            marginTop: 4,
-            background: "white",
-            border: "1px solid #e5e7eb",
-            borderRadius: 8,
-            boxShadow: "0 4px 16px rgba(0,0,0,0.12)",
-            maxHeight: 240,
-            overflowY: "auto",
-          }}
-        >
-          <div
-            className='px-3 py-2 text-sm text-gray-400 hover:bg-gray-50 cursor-pointer'
-            onClick={() => {
-              onChange("");
-              setOpen(false);
-            }}
-          >
-            {placeholder}
-          </div>
-          {options.map((opt) => (
+      {mounted &&
+        open &&
+        createPortal(
+          <div style={dropdownStyle as React.CSSProperties}>
             <div
-              key={opt.value}
+              className='px-3 py-2 text-sm text-gray-400 hover:bg-gray-50 cursor-pointer'
               onClick={() => {
-                onChange(opt.value);
+                onChange("");
                 setOpen(false);
               }}
-              className={`px-3 py-2 text-sm cursor-pointer hover:bg-red-50 hover:text-red-700 ${value === opt.value ? "bg-red-50 text-red-700 font-medium" : "text-gray-700"}`}
             >
-              {opt.label}
+              {placeholder}
             </div>
-          ))}
-        </div>
-      )}
+            {options.map((opt) => (
+              <div
+                key={opt.value}
+                onClick={() => {
+                  onChange(opt.value);
+                  setOpen(false);
+                }}
+                className={`px-3 py-2 text-sm cursor-pointer hover:bg-red-50 hover:text-red-700 ${value === opt.value ? "bg-red-50 text-red-700 font-medium" : "text-gray-700"}`}
+              >
+                {opt.label}
+              </div>
+            ))}
+          </div>,
+          document.body,
+        )}
     </div>
   );
 }
