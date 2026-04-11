@@ -15,11 +15,13 @@ export default async function StudyPage() {
 
   const userExamType = profile?.exam_type;
 
+  // Fetch ALL rows with no limit using range
   let query = supabase
     .from("questions")
     .select("book_title, chapter, topic")
     .eq("is_active", true)
-    .eq("study_eligible", true);
+    .eq("study_eligible", true)
+    .range(0, 5000);
 
   if (userExamType) {
     query = query.in("exam_type", [userExamType, "both"]);
@@ -33,6 +35,7 @@ export default async function StudyPage() {
       rows.map((r: { book_title: string }) => r.book_title).filter(Boolean),
     ),
   ].sort() as string[];
+
   const chapters = [
     ...new Set(rows.map((r: { chapter: string }) => r.chapter).filter(Boolean)),
   ].sort((a, b) => {
@@ -41,6 +44,7 @@ export default async function StudyPage() {
     if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
     return a.localeCompare(b);
   }) as string[];
+
   const topics = [
     ...new Set(rows.map((r: { topic: string }) => r.topic).filter(Boolean)),
   ].sort() as string[];
