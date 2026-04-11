@@ -81,7 +81,7 @@ export default function StudyConfig({ books, chapters, topics, bookChapters }: P
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Chapter</label>
           <select value={chapter} onChange={(e) => setChapter(e.target.value)}
-            size={filteredChapters.length > 0 ? Math.min(filteredChapters.length + 1, 8) : 1}
+            size={filteredChapters.length > 0 ? Math.min(filteredChapters.length + 1, 15) : 1}
             className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 bg-white">
             <option value="">All chapters</option>
             {filteredChapters.map((c) => <option key={c} value={c}>Chapter {c}</option>)}
