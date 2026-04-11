@@ -6,15 +6,12 @@ interface Props {
   params: Promise<{ sessionId: string }>
 }
 
-// POST /api/sessions/[sessionId]/complete
-// Server-side: scores all answers against correct_answer, updates session, refreshes stats cache
 export async function POST(_request: Request, { params }: Props) {
   const { sessionId } = await params
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  // Verify session belongs to user and is in progress
   const { data: session } = await supabase
     .from('exam_sessions')
     .select('*')
@@ -27,7 +24,6 @@ export async function POST(_request: Request, { params }: Props) {
     return NextResponse.json({ ok: true, already_complete: true })
   }
 
-  // Load all session questions WITH correct_answer (server-side only)
   const { data: sessionQuestions, error: sqErr } = await supabase
     .from('exam_session_questions')
     .select(`
@@ -42,26 +38,24 @@ export async function POST(_request: Request, { params }: Props) {
     return NextResponse.json({ error: 'Failed to load session questions' }, { status: 500 })
   }
 
-  // Score each question (Supabase returns joined relation as array)
-  const scored = (sessionQuestions as unknown as {
-    id: string
-    question_id: string
-    user_answer: string | null
-    question: { correct_answer: string }[]
-  }[]).map((sq) => ({
-    id: sq.id,
-    is_correct: sq.user_answer !== null && sq.user_answer === sq.question?.[0]?.correct_answer,
-  }))
+  // Handle both array and object returns from Supabase join
+  const scored = sessionQuestions.map((sq: any) => {
+    const correctAnswer = Array.isArray(sq.question)
+      ? sq.question?.[0]?.correct_answer
+      : sq.question?.correct_answer
+    return {
+      id: sq.id,
+      is_correct: sq.user_answer !== null && sq.user_answer === correctAnswer,
+    }
+  })
 
-  const correctCount = scored.filter((s) => s.is_correct).length
+  const correctCount = scored.filter((s: any) => s.is_correct).length
   const totalCount = sessionQuestions.length
   const scorePct = calcScorePercent(correctCount, totalCount)
   const elapsedSecs = Math.floor((Date.now() - new Date(session.started_at).getTime()) / 1000)
 
-  // Batch update is_correct for each session question
-  // Supabase doesn't support bulk UPDATE with different values, so we update individually in parallel
   await Promise.all(
-    scored.map((s) =>
+    scored.map((s: any) =>
       supabase
         .from('exam_session_questions')
         .update({ is_correct: s.is_correct })
@@ -69,7 +63,6 @@ export async function POST(_request: Request, { params }: Props) {
     )
   )
 
-  // Update session status
   const { error: updateErr } = await supabase
     .from('exam_sessions')
     .update({
@@ -85,11 +78,10 @@ export async function POST(_request: Request, { params }: Props) {
     return NextResponse.json({ error: updateErr.message }, { status: 500 })
   }
 
-  // Refresh user stats cache (fire and forget for exam mode speed, await for accuracy)
   try {
     await supabase.rpc('refresh_user_stats', { p_user_id: user.id })
   } catch {
-    // Non-critical — stats cache will be stale until next completion
+    // Non-critical
   }
 
   return NextResponse.json({
