@@ -77,7 +77,7 @@ export default function StudyConfig({
         </div>
       </div>
 
-      <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 overflow-visible">
         <CustomSelect
           label='Book / Reference'
           value={book}
@@ -186,7 +186,7 @@ function CustomSelect({
   const selected = options.find((o) => o.value === value);
 
   return (
-    <div ref={ref} className='relative'>
+    <div ref={ref} className="relative z-50">
       <label className='block text-sm font-medium text-gray-700 mb-1'>
         {label}
       </label>
@@ -204,7 +204,7 @@ function CustomSelect({
       </button>
 
       {open && (
-        <div className='absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto'>
+        <div className="absolute z-[100] w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
           <div
             className='px-3 py-2 text-sm text-gray-400 hover:bg-gray-50 cursor-pointer'
             onClick={() => {
@@ -232,6 +232,6 @@ function CustomSelect({
           ))}
         </div>
       )}
-    </div>
+    </>
   );
 }
