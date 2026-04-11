@@ -52,4 +52,4 @@ export default function StudyConfig({ books, chapters, topics, bookChapters }: P
       if (!res.ok) throw new Error(data.error || "Failed to start session");
       router.push(`/study/${data.session_id}`);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Some
+      setError(err instanceof Error ? err.message : "Something went wrong");
