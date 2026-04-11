@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { BookOpen, Loader2 } from "lucide-react";
+import { BookOpen, Loader2, ChevronDown } from "lucide-react";
 import { DEFAULT_STUDY_COUNT } from "@/lib/constants";
 
 interface Props {
@@ -27,12 +27,11 @@ export default function StudyConfig({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Filter chapters based on selected book
   const filteredChapters = book ? bookChapters[book] || [] : chapters;
 
   function handleBookChange(val: string) {
     setBook(val);
-    setChapter(""); // reset chapter when book changes
+    setChapter("");
   }
 
   async function handleStart() {
@@ -79,58 +78,41 @@ export default function StudyConfig({
       </div>
 
       <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
-        <SelectField
+        <CustomSelect
           label='Book / Reference'
           value={book}
           onChange={handleBookChange}
           placeholder='All books'
-        >
-          {books.map((b) => (
-            <option key={b} value={b}>
-              {b}
-            </option>
-          ))}
-        </SelectField>
-
-        <SelectField
+          options={books.map((b) => ({ value: b, label: b }))}
+        />
+        <CustomSelect
           label='Chapter'
           value={chapter}
           onChange={setChapter}
           placeholder='All chapters'
-        >
-          {filteredChapters.map((c) => (
-            <option key={c} value={c}>
-              {c}
-            </option>
-          ))}
-        </SelectField>
-
-        <SelectField
+          options={filteredChapters.map((c) => ({
+            value: c,
+            label: `Chapter ${c}`,
+          }))}
+        />
+        <CustomSelect
           label='Topic'
           value={topic}
           onChange={setTopic}
           placeholder='All topics'
-        >
-          {topics.map(
-            (t) =>
-              t && (
-                <option key={t} value={t}>
-                  {t}
-                </option>
-              ),
-          )}
-        </SelectField>
-
-        <SelectField
+          options={topics.filter(Boolean).map((t) => ({ value: t, label: t }))}
+        />
+        <CustomSelect
           label='Difficulty'
           value={difficulty}
           onChange={setDifficulty}
           placeholder='All difficulties'
-        >
-          <option value='easy'>Easy</option>
-          <option value='medium'>Medium</option>
-          <option value='hard'>Hard</option>
-        </SelectField>
+          options={[
+            { value: "easy", label: "Easy" },
+            { value: "medium", label: "Medium" },
+            { value: "hard", label: "Hard" },
+          ]}
+        />
       </div>
 
       <div>
@@ -175,32 +157,81 @@ export default function StudyConfig({
   );
 }
 
-function SelectField({
+function CustomSelect({
   label,
   value,
   onChange,
   placeholder,
-  children,
+  options,
 }: {
   label: string;
   value: string;
   onChange: (v: string) => void;
   placeholder: string;
-  children: React.ReactNode;
+  options: { value: string; label: string }[];
 }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
+
+  const selected = options.find((o) => o.value === value);
+
   return (
-    <div>
+    <div ref={ref} className='relative'>
       <label className='block text-sm font-medium text-gray-700 mb-1'>
         {label}
       </label>
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className='w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 bg-white'
+      <button
+        type='button'
+        onClick={() => setOpen(!open)}
+        className='w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 bg-white flex items-center justify-between text-left'
       >
-        <option value=''>{placeholder}</option>
-        {children}
-      </select>
+        <span className={selected ? "text-gray-900" : "text-gray-400"}>
+          {selected ? selected.label : placeholder}
+        </span>
+        <ChevronDown
+          className={`w-4 h-4 text-gray-400 transition-transform ${open ? "rotate-180" : ""}`}
+        />
+      </button>
+
+      {open && (
+        <div className='absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto'>
+          <div
+            className='px-3 py-2 text-sm text-gray-400 hover:bg-gray-50 cursor-pointer'
+            onClick={() => {
+              onChange("");
+              setOpen(false);
+            }}
+          >
+            {placeholder}
+          </div>
+          {options.map((opt) => (
+            <div
+              key={opt.value}
+              onClick={() => {
+                onChange(opt.value);
+                setOpen(false);
+              }}
+              className={`px-3 py-2 text-sm cursor-pointer hover:bg-red-50 hover:text-red-700 ${
+                value === opt.value
+                  ? "bg-red-50 text-red-700 font-medium"
+                  : "text-gray-700"
+              }`}
+            >
+              {opt.label}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
