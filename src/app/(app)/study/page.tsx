@@ -14,43 +14,38 @@ export default async function StudyPage() {
     .single();
 
   const userExamType = profile?.exam_type;
+  const examTypes = userExamType
+    ? [userExamType, "both"]
+    : ["lieutenant", "captain", "both"];
 
-  // Fetch ALL rows with no limit using range
-  let query = supabase
+  // Query distinct book+chapter+topic combinations only
+  const { data: allData } = await supabase
     .from("questions")
     .select("book_title, chapter, topic")
     .eq("is_active", true)
     .eq("study_eligible", true)
-    .range(0, 5000);
+    .in("exam_type", examTypes)
+    .range(0, 9999);
 
-  if (userExamType) {
-    query = query.in("exam_type", [userExamType, "both"]);
-  }
-
-  const { data: allData } = await query;
   const rows = allData || [];
 
   const books = [
-    ...new Set(
-      rows.map((r: { book_title: string }) => r.book_title).filter(Boolean),
-    ),
+    ...new Set(rows.map((r: any) => r.book_title).filter(Boolean)),
   ].sort() as string[];
-
   const chapters = [
-    ...new Set(rows.map((r: { chapter: string }) => r.chapter).filter(Boolean)),
-  ].sort((a, b) => {
+    ...new Set(rows.map((r: any) => r.chapter).filter(Boolean)),
+  ].sort((a: string, b: string) => {
     const numA = parseInt(a);
     const numB = parseInt(b);
     if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
     return a.localeCompare(b);
   }) as string[];
-
   const topics = [
-    ...new Set(rows.map((r: { topic: string }) => r.topic).filter(Boolean)),
+    ...new Set(rows.map((r: any) => r.topic).filter(Boolean)),
   ].sort() as string[];
 
   const bookChapters: Record<string, string[]> = {};
-  for (const row of rows as { book_title: string; chapter: string }[]) {
+  for (const row of rows as any[]) {
     if (!row.book_title || !row.chapter) continue;
     if (!bookChapters[row.book_title]) bookChapters[row.book_title] = [];
     if (!bookChapters[row.book_title].includes(row.chapter)) {
@@ -58,7 +53,7 @@ export default async function StudyPage() {
     }
   }
   for (const book of Object.keys(bookChapters)) {
-    bookChapters[book].sort((a, b) => {
+    bookChapters[book].sort((a: string, b: string) => {
       const numA = parseInt(a);
       const numB = parseInt(b);
       if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
