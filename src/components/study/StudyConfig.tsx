@@ -77,7 +77,7 @@ export default function StudyConfig({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 overflow-visible">
+      <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
         <CustomSelect
           label='Book / Reference'
           value={book}
@@ -175,9 +175,8 @@ function CustomSelect({
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
+      if (ref.current && !ref.current.contains(e.target as Node))
         setOpen(false);
-      }
     }
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
@@ -186,7 +185,7 @@ function CustomSelect({
   const selected = options.find((o) => o.value === value);
 
   return (
-    <div ref={ref} className="relative z-50">
+    <div ref={ref} style={{ position: "relative", zIndex: 50 }}>
       <label className='block text-sm font-medium text-gray-700 mb-1'>
         {label}
       </label>
@@ -204,7 +203,20 @@ function CustomSelect({
       </button>
 
       {open && (
-        <div className="absolute z-[100] w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+        <div
+          style={{
+            position: "absolute",
+            zIndex: 9999,
+            width: "100%",
+            marginTop: 4,
+            background: "white",
+            border: "1px solid #e5e7eb",
+            borderRadius: 8,
+            boxShadow: "0 4px 16px rgba(0,0,0,0.12)",
+            maxHeight: 240,
+            overflowY: "auto",
+          }}
+        >
           <div
             className='px-3 py-2 text-sm text-gray-400 hover:bg-gray-50 cursor-pointer'
             onClick={() => {
@@ -221,17 +233,13 @@ function CustomSelect({
                 onChange(opt.value);
                 setOpen(false);
               }}
-              className={`px-3 py-2 text-sm cursor-pointer hover:bg-red-50 hover:text-red-700 ${
-                value === opt.value
-                  ? "bg-red-50 text-red-700 font-medium"
-                  : "text-gray-700"
-              }`}
+              className={`px-3 py-2 text-sm cursor-pointer hover:bg-red-50 hover:text-red-700 ${value === opt.value ? "bg-red-50 text-red-700 font-medium" : "text-gray-700"}`}
             >
               {opt.label}
             </div>
           ))}
         </div>
       )}
-    </>
+    </div>
   );
 }
