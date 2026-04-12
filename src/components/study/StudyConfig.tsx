@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { BookOpen, Loader2, ChevronDown, Check } from "lucide-react";
+import { createPortal } from "react-dom";
 import { DEFAULT_STUDY_COUNT } from "@/lib/constants";
 
 interface Props {
@@ -187,6 +188,8 @@ function Dropdown({
   options: { value: string; label: string }[];
 }) {
   const [open, setOpen] = useState(false);
+  const [rect, setRect] = useState<DOMRect | null>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
   const ref = useRef<HTMLDivElement>(null);
   const selected = options.find((o) => o.value === value);
 
@@ -199,14 +202,22 @@ function Dropdown({
     return () => document.removeEventListener("mousedown", handle);
   }, []);
 
+  function handleOpen() {
+    if (buttonRef.current) {
+      setRect(buttonRef.current.getBoundingClientRect());
+    }
+    setOpen(!open);
+  }
+
   return (
-    <div ref={ref} className='relative'>
+    <div ref={ref}>
       <label className='block text-sm font-medium text-gray-700 mb-1'>
         {label}
       </label>
       <button
+        ref={buttonRef}
         type='button'
-        onClick={() => setOpen(!open)}
+        onClick={handleOpen}
         className='w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm bg-white flex items-center justify-between text-left focus:outline-none focus:ring-2 focus:ring-red-500'
       >
         <span className={value ? "text-gray-900" : "text-gray-400"}>
@@ -217,29 +228,44 @@ function Dropdown({
         />
       </button>
 
-      {open && (
-        <div
-          className='absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-xl overflow-y-auto'
-          style={{ zIndex: 9999, maxHeight: "240px", top: "100%" }}
-        >
-          {options.map((opt) => (
-            <div
-              key={opt.value}
-              onMouseDown={(e) => {
-                e.preventDefault();
-                onChange(opt.value);
-                setOpen(false);
-              }}
-              className={`px-3 py-2 text-sm cursor-pointer flex items-center justify-between hover:bg-red-50 hover:text-red-700 ${value === opt.value ? "bg-red-50 text-red-700 font-medium" : "text-gray-700"}`}
-            >
-              <span>{opt.label}</span>
-              {value === opt.value && (
-                <Check className='w-3 h-3 flex-shrink-0' />
-              )}
-            </div>
-          ))}
-        </div>
-      )}
+      {open &&
+        rect &&
+        typeof document !== "undefined" &&
+        createPortal(
+          <div
+            style={{
+              position: "fixed",
+              top: rect.bottom + 4,
+              left: rect.left,
+              width: rect.width,
+              zIndex: 99999,
+              background: "white",
+              border: "1px solid #e5e7eb",
+              borderRadius: 8,
+              boxShadow: "0 8px 24px rgba(0,0,0,0.15)",
+              maxHeight: 260,
+              overflowY: "auto",
+            }}
+          >
+            {options.map((opt) => (
+              <div
+                key={opt.value}
+                onMouseDown={(e) => {
+                  e.preventDefault();
+                  onChange(opt.value);
+                  setOpen(false);
+                }}
+                className={`px-3 py-2 text-sm cursor-pointer flex items-center justify-between hover:bg-red-50 hover:text-red-700 ${value === opt.value ? "bg-red-50 text-red-700 font-medium" : "text-gray-700"}`}
+              >
+                <span>{opt.label}</span>
+                {value === opt.value && (
+                  <Check className='w-3 h-3 flex-shrink-0' />
+                )}
+              </div>
+            ))}
+          </div>,
+          document.body,
+        )}
     </div>
   );
 }
