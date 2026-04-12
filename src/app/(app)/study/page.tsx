@@ -48,13 +48,26 @@ export default async function StudyPage() {
   ].sort() as string[];
 
   const bookChapters: Record<string, string[]> = {};
+  const bookTopics: Record<string, string[]> = {};
+
   for (const row of rows as any[]) {
-    if (!row.book_title || !row.chapter || row.chapter.trim() === "") continue;
-    if (!bookChapters[row.book_title]) bookChapters[row.book_title] = [];
-    if (!bookChapters[row.book_title].includes(row.chapter)) {
-      bookChapters[row.book_title].push(row.chapter);
+    if (!row.book_title) continue;
+
+    if (row.chapter && row.chapter.trim() !== "") {
+      if (!bookChapters[row.book_title]) bookChapters[row.book_title] = [];
+      if (!bookChapters[row.book_title].includes(row.chapter)) {
+        bookChapters[row.book_title].push(row.chapter);
+      }
+    }
+
+    if (row.topic && row.topic.trim() !== "") {
+      if (!bookTopics[row.book_title]) bookTopics[row.book_title] = [];
+      if (!bookTopics[row.book_title].includes(row.topic)) {
+        bookTopics[row.book_title].push(row.topic);
+      }
     }
   }
+
   for (const book of Object.keys(bookChapters)) {
     bookChapters[book].sort((a: string, b: string) => {
       const numA = parseInt(a);
@@ -62,6 +75,10 @@ export default async function StudyPage() {
       if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
       return a.localeCompare(b);
     });
+  }
+
+  for (const book of Object.keys(bookTopics)) {
+    bookTopics[book].sort();
   }
 
   return (
@@ -77,6 +94,7 @@ export default async function StudyPage() {
         chapters={chapters}
         topics={topics}
         bookChapters={bookChapters}
+        bookTopics={bookTopics}
       />
     </div>
   );
