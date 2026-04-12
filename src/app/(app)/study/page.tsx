@@ -33,6 +33,13 @@ export default async function StudyPage() {
     ...new Set(rows.map((r: any) => r.book_title).filter(Boolean)),
   ].sort() as string[];
   const chapters = [
+    ...new Set(
+      rows
+        .map((r: any) => r.chapter)
+        .filter((c: string) => c && c.trim() !== ""),
+    ),
+  ];
+  const chapters = [
     ...new Set(rows.map((r: any) => r.chapter).filter(Boolean)),
   ].sort((a: string, b: string) => {
     const numA = parseInt(a);
@@ -46,7 +53,7 @@ export default async function StudyPage() {
 
   const bookChapters: Record<string, string[]> = {};
   for (const row of rows as any[]) {
-    if (!row.book_title || !row.chapter) continue;
+    if (!row.book_title || !row.chapter || row.chapter.trim() === "") continue;
     if (!bookChapters[row.book_title]) bookChapters[row.book_title] = [];
     if (!bookChapters[row.book_title].includes(row.chapter)) {
       bookChapters[row.book_title].push(row.chapter);
