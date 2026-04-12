@@ -14,6 +14,7 @@ export interface Profile {
   full_name: string | null
   role: UserRole
   department: string | null
+  exam_type: string | null
   created_at: string
   updated_at: string
 }
