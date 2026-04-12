@@ -10,6 +10,7 @@ interface Props {
   chapters: string[];
   topics: string[];
   bookChapters: Record<string, string[]>;
+  bookTopics: Record<string, string[]>;
 }
 
 export default function StudyConfig({
@@ -17,6 +18,7 @@ export default function StudyConfig({
   chapters,
   topics,
   bookChapters,
+  bookTopics,
 }: Props) {
   const router = useRouter();
   const [book, setBook] = useState("");
@@ -28,10 +30,12 @@ export default function StudyConfig({
   const [error, setError] = useState("");
 
   const filteredChapters = book ? bookChapters[book] || [] : chapters;
+  const filteredTopics = book ? bookTopics[book] || [] : topics;
 
   function handleBookChange(val: string) {
     setBook(val);
     setChapter("");
+    setTopic("");
   }
 
   async function handleStart() {
@@ -124,7 +128,7 @@ export default function StudyConfig({
             className='w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 bg-white'
           >
             <option value=''>All topics</option>
-            {topics.filter(Boolean).map((t) => (
+            {filteredTopics.filter(Boolean).map((t) => (
               <option key={t} value={t}>
                 {t}
               </option>
