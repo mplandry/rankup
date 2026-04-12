@@ -36,7 +36,8 @@ export default function StudentsTable({
           <tr className='text-left text-xs text-gray-500 uppercase tracking-wide'>
             <th className='px-4 py-3'>Name</th>
             <th className='px-4 py-3'>Department</th>
-            <th className='px-4 py-3'>Exams</th>
+            <th className='px-4 py-3'>Exam</th>
+            <th className='px-4 py-3'>Sessions</th>
             <th className='px-4 py-3'>Avg Score</th>
             <th className='px-4 py-3'>Best Score</th>
             <th className='px-4 py-3'>Last Active</th>
@@ -46,7 +47,7 @@ export default function StudentsTable({
         <tbody className='divide-y divide-gray-100'>
           {students.length === 0 && (
             <tr>
-              <td colSpan={7} className='px-4 py-8 text-center text-gray-400'>
+              <td colSpan={8} className='px-4 py-8 text-center text-gray-400'>
                 No students registered yet
               </td>
             </tr>
@@ -66,6 +67,17 @@ export default function StudentsTable({
                 </td>
                 <td className='px-4 py-3 text-gray-600'>
                   {s.department || "—"}
+                </td>
+                <td className='px-4 py-3'>
+                  <span
+                    className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
+                      s.exam_type === "captain"
+                        ? "bg-blue-100 text-blue-700"
+                        : "bg-orange-100 text-orange-700"
+                    }`}
+                  >
+                    {s.exam_type === "captain" ? "Captain" : "Lt."}
+                  </span>
                 </td>
                 <td className='px-4 py-3 text-gray-600'>
                   {stats?.total_sessions ?? 0}
