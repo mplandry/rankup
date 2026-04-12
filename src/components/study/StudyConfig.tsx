@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { BookOpen, Loader2 } from "lucide-react";
+import { BookOpen, Loader2, ChevronDown, Check } from "lucide-react";
 import { DEFAULT_STUDY_COUNT } from "@/lib/constants";
 
 interface Props {
@@ -82,75 +82,53 @@ export default function StudyConfig({
       </div>
 
       <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
-        <div>
-          <label className='block text-sm font-medium text-gray-700 mb-1'>
-            Book / Reference
-          </label>
-          <select
-            value={book}
-            onChange={(e) => handleBookChange(e.target.value)}
-            className='w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 bg-white'
-          >
-            <option value=''>All books</option>
-            {books.map((b) => (
-              <option key={b} value={b}>
-                {b}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div>
-          <label className='block text-sm font-medium text-gray-700 mb-1'>
-            Chapter
-          </label>
-          <select
-            value={chapter}
-            onChange={(e) => setChapter(e.target.value)}
-            className='w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 bg-white'
-          >
-            <option value=''>All chapters</option>
-            {filteredChapters.map((c) => (
-              <option key={c} value={c}>
-                Chapter {c}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div>
-          <label className='block text-sm font-medium text-gray-700 mb-1'>
-            Topic
-          </label>
-          <select
-            value={topic}
-            onChange={(e) => setTopic(e.target.value)}
-            className='w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 bg-white'
-          >
-            <option value=''>All topics</option>
-            {filteredTopics.filter(Boolean).map((t) => (
-              <option key={t} value={t}>
-                {t}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div>
-          <label className='block text-sm font-medium text-gray-700 mb-1'>
-            Difficulty
-          </label>
-          <select
-            value={difficulty}
-            onChange={(e) => setDifficulty(e.target.value)}
-            className='w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 bg-white'
-          >
-            <option value=''>All difficulties</option>
-            <option value='easy'>Easy</option>
-            <option value='medium'>Medium</option>
-            <option value='hard'>Hard</option>
-          </select>
-        </div>
+        <Dropdown
+          label='Book / Reference'
+          value={book}
+          onChange={handleBookChange}
+          placeholder='All books'
+          options={[
+            { value: "", label: "All books" },
+            ...books.map((b) => ({ value: b, label: b })),
+          ]}
+        />
+        <Dropdown
+          label='Chapter'
+          value={chapter}
+          onChange={setChapter}
+          placeholder='All chapters'
+          options={[
+            { value: "", label: "All chapters" },
+            ...filteredChapters.map((c) => ({
+              value: c,
+              label: `Chapter ${c}`,
+            })),
+          ]}
+        />
+        <Dropdown
+          label='Topic'
+          value={topic}
+          onChange={setTopic}
+          placeholder='All topics'
+          options={[
+            { value: "", label: "All topics" },
+            ...filteredTopics
+              .filter(Boolean)
+              .map((t) => ({ value: t, label: t })),
+          ]}
+        />
+        <Dropdown
+          label='Difficulty'
+          value={difficulty}
+          onChange={setDifficulty}
+          placeholder='All difficulties'
+          options={[
+            { value: "", label: "All difficulties" },
+            { value: "easy", label: "Easy" },
+            { value: "medium", label: "Medium" },
+            { value: "hard", label: "Hard" },
+          ]}
+        />
       </div>
 
       <div>
@@ -191,6 +169,77 @@ export default function StudyConfig({
           "Start Study Session"
         )}
       </button>
+    </div>
+  );
+}
+
+function Dropdown({
+  label,
+  value,
+  onChange,
+  placeholder,
+  options,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  placeholder: string;
+  options: { value: string; label: string }[];
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const selected = options.find((o) => o.value === value);
+
+  useEffect(() => {
+    function handle(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node))
+        setOpen(false);
+    }
+    document.addEventListener("mousedown", handle);
+    return () => document.removeEventListener("mousedown", handle);
+  }, []);
+
+  return (
+    <div ref={ref} className='relative'>
+      <label className='block text-sm font-medium text-gray-700 mb-1'>
+        {label}
+      </label>
+      <button
+        type='button'
+        onClick={() => setOpen(!open)}
+        className='w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm bg-white flex items-center justify-between text-left focus:outline-none focus:ring-2 focus:ring-red-500'
+      >
+        <span className={value ? "text-gray-900" : "text-gray-400"}>
+          {selected?.label || placeholder}
+        </span>
+        <ChevronDown
+          className={`w-4 h-4 text-gray-400 flex-shrink-0 transition-transform ${open ? "rotate-180" : ""}`}
+        />
+      </button>
+
+      {open && (
+        <div
+          className='absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-xl overflow-y-auto'
+          style={{ zIndex: 9999, maxHeight: "240px", top: "100%" }}
+        >
+          {options.map((opt) => (
+            <div
+              key={opt.value}
+              onMouseDown={(e) => {
+                e.preventDefault();
+                onChange(opt.value);
+                setOpen(false);
+              }}
+              className={`px-3 py-2 text-sm cursor-pointer flex items-center justify-between hover:bg-red-50 hover:text-red-700 ${value === opt.value ? "bg-red-50 text-red-700 font-medium" : "text-gray-700"}`}
+            >
+              <span>{opt.label}</span>
+              {value === opt.value && (
+                <Check className='w-3 h-3 flex-shrink-0' />
+              )}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
