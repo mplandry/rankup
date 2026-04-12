@@ -18,7 +18,6 @@ export default async function StudyPage() {
     ? [userExamType, "both"]
     : ["lieutenant", "captain", "both"];
 
-  // Query distinct book+chapter+topic combinations only
   const { data: allData } = await supabase
     .from("questions")
     .select("book_title, chapter, topic")
@@ -32,21 +31,18 @@ export default async function StudyPage() {
   const books = [
     ...new Set(rows.map((r: any) => r.book_title).filter(Boolean)),
   ].sort() as string[];
+
   const chapters = [
     ...new Set(
-      rows
-        .map((r: any) => r.chapter)
-        .filter((c: string) => c && c.trim() !== ""),
+      rows.map((r: any) => r.chapter).filter((c: any) => c && c.trim() !== ""),
     ),
-  ];
-  const chapters = [
-    ...new Set(rows.map((r: any) => r.chapter).filter(Boolean)),
-  ].sort((a: string, b: string) => {
+  ].sort((a: any, b: any) => {
     const numA = parseInt(a);
     const numB = parseInt(b);
     if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
     return a.localeCompare(b);
   }) as string[];
+
   const topics = [
     ...new Set(rows.map((r: any) => r.topic).filter(Boolean)),
   ].sort() as string[];
