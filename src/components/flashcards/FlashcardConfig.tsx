@@ -36,9 +36,8 @@ export default function FlashcardConfig({ books, bookChapters }: Props) {
         className='w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3.5 rounded-xl transition-colors flex items-center justify-center gap-2'
       >
         <Layers className='w-5 h-5' />
-        Study Due Cards
+        Start Review Session
       </button>
-
       <div className='bg-white border border-gray-200 rounded-xl p-6 sm:p-8 space-y-6'>
         <div className='flex items-center gap-3 pb-4 border-b border-gray-100'>
           <div className='w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center'>
