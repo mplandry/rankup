@@ -14,7 +14,7 @@ export default async function StudyPage() {
     .single();
 
   const userExamType = profile?.exam_type;
-  // const examTypes = userExamType
+  const examTypes = userExamType
     ? [userExamType, "both"]
     : ["lieutenant", "captain", "both"];
 
