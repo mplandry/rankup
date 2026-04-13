@@ -113,9 +113,37 @@ export default function StudyConfig({
       {/* Chapter Selection - only show if there are valid chapters */}
       {filteredChapters.length > 0 && (
         <div>
-          <label className='block text-sm font-medium text-gray-700 mb-2'>
-            Chapter
-          </label>
+          {/* Chapter/Section Selection - only show if there are valid chapters */}
+          {filteredChapters.length > 0 && (
+            <div>
+              <label className='block text-sm font-medium text-gray-700 mb-2'>
+                {book === "Massachusetts General Laws Chapter 148"
+                  ? "Section"
+                  : "Chapter"}
+              </label>
+              <div className='flex flex-wrap gap-2'>
+                <button
+                  type='button'
+                  onClick={() => setChapter("")}
+                  className={`px-3 py-1.5 rounded-lg text-xs border transition-all ${!chapter ? "border-red-500 bg-red-50 text-red-700 font-medium" : "border-gray-200 text-gray-600 hover:border-gray-300"}`}
+                >
+                  All
+                </button>
+                {filteredChapters.map((c) => (
+                  <button
+                    key={c}
+                    type='button'
+                    onClick={() => setChapter(c)}
+                    className={`px-3 py-1.5 rounded-lg text-xs border transition-all ${chapter === c ? "border-red-500 bg-red-50 text-red-700 font-medium" : "border-gray-200 text-gray-600 hover:border-gray-300"}`}
+                  >
+                    {book === "Massachusetts General Laws Chapter 148"
+                      ? `Sec. ${c}`
+                      : `Ch. ${c}`}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
           <div className='flex flex-wrap gap-2'>
             <button
               type='button'
