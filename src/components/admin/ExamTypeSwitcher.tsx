@@ -19,7 +19,7 @@ export default function ExamTypeSwitcher({ currentExamType }: { currentExamType:
       })
       if (res.ok) {
         setExamType(newType)
-        router.refresh()
+        window.location.href = "/admin"
       }
     } finally {
       setLoading(false)
