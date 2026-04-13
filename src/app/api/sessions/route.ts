@@ -3,33 +3,64 @@ import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user)
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("role")
+    .select("role, exam_type")
     .eq("id", user.id)
     .single();
 
-  if (profile?.role !== "admin") {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  }
+  const { mode, filters } = await request.json();
 
-  const { exam_type } = await request.json();
-  if (!["lieutenant", "captain"].includes(exam_type)) {
-    return NextResponse.json({ error: "Invalid exam type" }, { status: 400 });
-  }
+  const userExamType = profile?.exam_type;
+  const examTypes = userExamType ? [userExamType, "both"] : ["lieutenant", "captain", "both"];
 
-  const { error } = await supabase
-    .from("profiles")
-    .update({ exam_type })
-    .eq("id", user.id);
+  let query = supabase
+    .from("questions")
+    .select("*")
+    .eq("is_active", true)
+    .eq("study_eligible", true)
+    .in("exam_type", examTypes);
 
-  if (error)
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json({ ok: true });
+  if (filters?.book_title) query = query.eq("book_title", filters.book_title);
+  if (filters?.chapter) query = query.eq("chapter", filters.chapter);
+  if (filters?.topic) query = query.eq("topic", filters.topic);
+  if (filters?.difficulty) query = query.eq("difficulty", filters.difficulty);
+
+  const { data: questions, error } = await query.limit(5000);
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (!questions?.length) return NextResponse.json({ error: "No questions found matching your filters" }, { status: 404 });
+
+  const shuffled = questions.sort(() => Math.random() - 0.5);
+  const selected = shuffled.slice(0, Math.min(filters?.question_count || 20, shuffled.length));
+
+  const { data: session, error: sessionError } = await supabase
+    .from("exam_sessions")
+    .insert({
+      user_id: user.id,
+      mode,
+      status: "in_progress",
+      total_questions: selected.length,
+      filters: filters || {},
+    })
+    .select()
+    .single();
+
+  if (sessionError) return NextResponse.json({ error: sessionError.message }, { status: 500 });
+
+  const questionRows = selected.map((q: any, i: number) => ({
+    session_id: session.id,
+    question_id: q.id,
+    question_order: i + 1,
+  }));
+
+  const { error: qError } = await supabase
+    .from("exam_session_questions")
+    .insert(questionRows);
+
+  if (qError) return NextResponse.json({ error: qError.message }, { status: 500 });
+
+  return NextResponse.json({ session_id: session.id });
 }
