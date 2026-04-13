@@ -25,15 +25,27 @@ export default async function StudyPage() {
     exam_types: examTypes,
   });
 
-  const { data: allData } = await supabase
-    .from("questions")
-    .select("book_title, chapter, topic")
-    .eq("is_active", true)
-    .eq("study_eligible", true)
-    .in("exam_type", examTypes)
-    .limit(5000);
+  // Fetch in batches to work around Supabase 1000 row default limit
+  let allRows: any[] = [];
+  let from = 0;
+  const batchSize = 1000;
 
-  const rows = allData || [];
+  while (true) {
+    const { data: batch } = await supabase
+      .from("questions")
+      .select("book_title, chapter, topic")
+      .eq("is_active", true)
+      .eq("study_eligible", true)
+      .in("exam_type", examTypes)
+      .range(from, from + batchSize - 1);
+
+    if (!batch || batch.length === 0) break;
+    allRows = allRows.concat(batch);
+    if (batch.length < batchSize) break;
+    from += batchSize;
+  }
+
+  const rows = allRows;
 
   const books = [
     ...new Set((booksData || []).map((r: any) => r.book_title).filter(Boolean)),
