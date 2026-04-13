@@ -16,6 +16,14 @@ export default async function StudyPage() {
   const userExamType = profile?.exam_type;
   const examTypes = ["lieutenant", "captain", "both"];
 
+  // Fetch distinct books directly
+  const { data: booksData } = await supabase
+    .from("questions")
+    .select("book_title")
+    .eq("is_active", true)
+    .eq("study_eligible", true)
+    .in("exam_type", examTypes);
+
   const { data: allData } = await supabase
     .from("questions")
     .select("book_title, chapter, topic")
@@ -27,7 +35,7 @@ export default async function StudyPage() {
   const rows = allData || [];
 
   const books = [
-    ...new Set(rows.map((r: any) => r.book_title).filter(Boolean)),
+    ...new Set((booksData || []).map((r: any) => r.book_title).filter(Boolean)),
   ].sort() as string[];
 
   const chapters = [
