@@ -16,13 +16,9 @@ export default async function StudyPage() {
   const userExamType = profile?.exam_type;
   const examTypes = ["lieutenant", "captain", "both"];
 
-  // Fetch distinct books directly
+  // Fetch distinct books via RPC
   const { data: booksData } = await supabase
-    .from("questions")
-    .select("book_title")
-    .eq("is_active", true)
-    .eq("study_eligible", true)
-    .in("exam_type", examTypes);
+    .rpc("get_distinct_books", { exam_types: examTypes });
 
   const { data: allData } = await supabase
     .from("questions")
