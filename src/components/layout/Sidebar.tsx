@@ -14,23 +14,11 @@ import {
   ChevronRight,
   Menu,
   X,
+  Layers,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils/cn";
 import type { UserRole } from "@/types";
-
-import {
-  LayoutDashboard,
-  BookOpen,
-  ClipboardList,
-  TrendingUp,
-  Settings,
-  LogOut,
-  ChevronRight,
-  Menu,
-  X,
-  Layers,
-} from "lucide-react";
 
 const studentNav = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
