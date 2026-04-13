@@ -1,6 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import StudyConfigClient from "@/components/study/StudyConfig";
 
+export const dynamic = "force-dynamic";
+
 export default async function StudyPage() {
   const supabase = await createClient();
 
@@ -19,8 +21,9 @@ export default async function StudyPage() {
     : ["lieutenant", "captain", "both"];
 
   // Fetch distinct books via RPC
-  const { data: booksData } = await supabase
-    .rpc("get_distinct_books", { exam_types: examTypes });
+  const { data: booksData } = await supabase.rpc("get_distinct_books", {
+    exam_types: examTypes,
+  });
 
   const { data: allData } = await supabase
     .from("questions")
