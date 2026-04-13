@@ -19,10 +19,24 @@ import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils/cn";
 import type { UserRole } from "@/types";
 
+import {
+  LayoutDashboard,
+  BookOpen,
+  ClipboardList,
+  TrendingUp,
+  Settings,
+  LogOut,
+  ChevronRight,
+  Menu,
+  X,
+  Layers,
+} from "lucide-react";
+
 const studentNav = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/study", label: "Study Mode", icon: BookOpen },
   { href: "/exam", label: "Exam Mode", icon: ClipboardList },
+  { href: "/flashcards", label: "Flashcards", icon: Layers },
   { href: "/progress", label: "My Progress", icon: TrendingUp },
 ];
 
