@@ -12,9 +12,11 @@ export default function WeakAreasChart({ items, labelKey }: Props) {
   return (
     <div className='space-y-3'>
       {items.map((item, i) => {
+        const isMassLaw =
+          item.book_title === "Massachusetts General Laws Chapter 148";
         const label =
           labelKey === "chapter"
-            ? `Ch. ${item.chapter}`
+            ? `${isMassLaw ? "Sec." : "Ch."} ${item.chapter}`
             : item.topic || "Unknown";
         const bookLabel = item.book_title || "";
         const pct = item.pct ?? 0;
