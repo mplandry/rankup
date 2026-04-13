@@ -29,7 +29,10 @@ export default function StudyConfig({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const filteredChapters = book ? bookChapters[book] || [] : chapters;
+  const rawChapters = book ? bookChapters[book] || [] : chapters;
+  const filteredChapters = rawChapters.filter(
+    (c) => c && c.trim().toUpperCase() !== "N/A",
+  );
   const filteredTopics = book ? bookTopics[book] || [] : topics;
 
   function handleBookChange(val: string) {
@@ -107,7 +110,7 @@ export default function StudyConfig({
         </div>
       </div>
 
-      {/* Chapter Selection */}
+      {/* Chapter Selection - only show if there are valid chapters */}
       {filteredChapters.length > 0 && (
         <div>
           <label className='block text-sm font-medium text-gray-700 mb-2'>
