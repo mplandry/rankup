@@ -36,7 +36,7 @@ export default function WeakAreasChart({ items, labelKey }: Props) {
               : "text-red-600";
 
         const studyHref =
-          labelKey === "chapter" && item.book_title
+          labelKey === "chapter" && item.book_title && item.chapter
             ? `/study?book=${encodeURIComponent(item.book_title)}&chapter=${encodeURIComponent(item.chapter)}`
             : `/study`;
 
