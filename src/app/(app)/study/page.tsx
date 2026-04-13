@@ -22,7 +22,7 @@ export default async function StudyPage() {
     .eq("is_active", true)
     .eq("study_eligible", true)
     .in("exam_type", examTypes)
-    .range(0, 9999);
+    .limit(5000);
 
   const rows = allData || [];
 
