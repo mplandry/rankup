@@ -23,7 +23,7 @@ export async function POST(request: Request) {
 
   const { error } = await supabase
     .from('profiles')
-    .update({ exam_type })
+    .update({ exam_type, updated_at: new Date().toISOString() })
     .eq('id', user.id)
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
