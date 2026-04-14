@@ -1,14 +1,14 @@
 "use client";
-
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import Image from "next/image";
+import "../login/login.css";
+import "./signup.css";
 
 export default function SignupPage() {
   const router = useRouter();
-
   const [form, setForm] = useState({
     full_name: "",
     department: "",
@@ -26,12 +26,10 @@ export default function SignupPage() {
   async function handleSubmit(e: { preventDefault(): void }) {
     e.preventDefault();
     setError("");
-
     if (!form.exam_type) {
       setError("Please select which exam you are preparing for.");
       return;
     }
-
     setLoading(true);
     const supabase = createClient();
     const { data, error: signUpError } = await supabase.auth.signUp({
@@ -42,169 +40,141 @@ export default function SignupPage() {
         emailRedirectTo: `${location.origin}/auth/callback`,
       },
     });
-
     if (signUpError) {
       setError(signUpError.message);
       setLoading(false);
       return;
     }
-
-    // Save exam_type to profiles table
     if (data.user) {
       const { error: profileError } = await supabase
         .from("profiles")
         .update({ exam_type: form.exam_type })
         .eq("id", data.user.id);
-
       if (profileError) {
-        setError(
-          "Account created but failed to save exam type. Please update in settings.",
-        );
+        setError("Account created but failed to save exam type.");
         setLoading(false);
         return;
       }
     }
-
     router.push("/dashboard");
   }
 
   return (
-    <div className='min-h-screen flex items-center justify-center bg-[#1B2A4A]'>
-      <div className='w-full max-w-md'>
-        <div className='text-center mb-8'>
-          <div className='inline-flex w-20 h-20 rounded-2xl overflow-hidden mb-4'>
+    <div className='login-page'>
+      <div className='login-inner'>
+        <div className='login-logo'>
+          <div className='login-logo-img'>
             <Image
               src='/icon.png'
               alt='RankUp'
-              width={80}
-              height={80}
-              className='object-cover'
+              width={88}
+              height={88}
+              style={{ objectFit: "cover", width: "100%", height: "100%" }}
             />
           </div>
-          <h1 className='text-3xl font-bold text-white'>RankUp</h1>
-          <p className='text-slate-400 mt-1'>Create your account</p>
+          <div className='login-logo-title'>RankUp</div>
+          <div className='login-logo-sub'>Create your account</div>
         </div>
 
-        <div className='bg-white rounded-2xl shadow-xl p-8'>
-          <form onSubmit={handleSubmit} className='space-y-5'>
-            <div className='grid grid-cols-2 gap-4'>
-              <div className='col-span-2'>
-                <label className='block text-sm font-medium text-gray-700 mb-1'>
-                  Full Name
-                </label>
-                <input
-                  type='text'
-                  required
-                  value={form.full_name}
-                  onChange={(e) => set("full_name", e.target.value)}
-                  className='w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500'
-                  placeholder='John Smith'
-                />
-              </div>
-              <div className='col-span-2'>
-                <label className='block text-sm font-medium text-gray-700 mb-1'>
-                  Department
-                </label>
-                <input
-                  type='text'
-                  value={form.department}
-                  onChange={(e) => set("department", e.target.value)}
-                  className='w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500'
-                  placeholder='City Fire Dept'
-                />
-              </div>
+        <div className='login-card'>
+          <form onSubmit={handleSubmit}>
+            <div className='login-field'>
+              <label className='login-label'>Full Name</label>
+              <input
+                type='text'
+                required
+                value={form.full_name}
+                onChange={(e) => set("full_name", e.target.value)}
+                placeholder='John Smith'
+                className='login-input'
+              />
             </div>
 
-            {/* Exam Type Selection */}
-            <div>
-              <label className='block text-sm font-medium text-gray-700 mb-2'>
+            <div className='login-field'>
+              <label className='login-label'>Department</label>
+              <input
+                type='text'
+                value={form.department}
+                onChange={(e) => set("department", e.target.value)}
+                placeholder='City Fire Dept'
+                className='login-input'
+              />
+            </div>
+
+            <div className='login-field'>
+              <label className='login-label'>
                 Which exam are you preparing for?
               </label>
-              <div className='grid grid-cols-2 gap-3'>
+              <div className='exam-grid'>
                 <button
                   type='button'
                   onClick={() => set("exam_type", "lieutenant")}
-                  className={`py-3 px-4 rounded-lg border-2 text-sm font-semibold transition-all ${
-                    form.exam_type === "lieutenant"
-                      ? "border-[#C0392B] bg-red-50 text-[#C0392B]"
-                      : "border-gray-200 text-gray-600 hover:border-gray-300"
-                  }`}
+                  className={`exam-btn${form.exam_type === "lieutenant" ? " exam-btn-active" : ""}`}
                 >
                   🚒 Lieutenant
                 </button>
                 <button
                   type='button'
                   onClick={() => set("exam_type", "captain")}
-                  className={`py-3 px-4 rounded-lg border-2 text-sm font-semibold transition-all ${
-                    form.exam_type === "captain"
-                      ? "border-[#C0392B] bg-red-50 text-[#C0392B]"
-                      : "border-gray-200 text-gray-600 hover:border-gray-300"
-                  }`}
+                  className={`exam-btn${form.exam_type === "captain" ? " exam-btn-active" : ""}`}
                 >
                   👨‍🚒 Captain
                 </button>
               </div>
             </div>
 
-            <div>
-              <label className='block text-sm font-medium text-gray-700 mb-1'>
-                Email
-              </label>
+            <div className='login-field'>
+              <label className='login-label'>Email</label>
               <input
                 type='email'
                 required
                 value={form.email}
                 onChange={(e) => set("email", e.target.value)}
-                className='w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500'
                 placeholder='you@department.gov'
+                className='login-input'
               />
             </div>
-            <div>
-              <label className='block text-sm font-medium text-gray-700 mb-1'>
-                Password
-              </label>
+
+            <div className='login-field-last'>
+              <label className='login-label'>Password</label>
               <input
                 type='password'
                 required
                 minLength={6}
                 value={form.password}
                 onChange={(e) => set("password", e.target.value)}
-                className='w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500'
                 placeholder='min 6 characters'
+                className='login-input'
               />
             </div>
 
-            {error && (
-              <div className='bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-3'>
-                {error}
-              </div>
-            )}
+            {error && <div className='login-error'>{error}</div>}
 
-            <button
-              type='submit'
-              disabled={loading}
-              className='w-full bg-[#C0392B] hover:bg-[#a93226] text-white font-semibold py-2.5 rounded-lg transition-colors disabled:opacity-60'
-            >
-              {loading ? "Creating account…" : "Create Account"}
+            <button type='submit' disabled={loading} className='login-btn'>
+              {loading ? "Creating account..." : "Create Account"}
             </button>
-          </form>
 
-          <p className='text-center text-sm text-gray-500 mt-6'>
-            Already have an account?{" "}
-            <Link
-              href='/login'
-              className='text-[#C0392B] font-medium hover:underline'
-            >
-              Sign in
+            <div className='login-divider'>
+              <div className='login-divider-line'>
+                <div />
+              </div>
+              <div className='login-divider-text'>
+                <span>Already have an account?</span>
+              </div>
+            </div>
+
+            <Link href='/login' className='login-signup-btn'>
+              Sign In
             </Link>
-          </p>
+          </form>
         </div>
 
-        <p className='text-center text-[11px] text-slate-500 mt-6 px-4 leading-relaxed'>
-          This app is an independent study tool and is not affiliated with or
-          endorsed by IFSTA, Fire Protection Publications, or any official
-          testing agency. All questions are original and created for educational
-          purposes based on publicly available concepts.
+        <div className='login-back'>
+          <Link href='/'>Back to home</Link>
+        </div>
+        <p className='login-disclaimer'>
+          Independent study tool. Not affiliated with IFSTA, Fire Protection
+          Publications, or any official testing agency.
         </p>
       </div>
     </div>
