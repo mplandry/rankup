@@ -383,8 +383,12 @@ export default function LandingPage() {
         <div className='testimonials'>
           {[
             {
-              {init:'ML',name:'M. Landry',role:'Waltham Fire Dept.',text:'This used the exact same Mass reading list material I needed to study for my exam. Finally a prep tool built around what we actually get tested on.'},
+              init: "ML",
+              name: "M. Landry",
+              role: "Waltham Fire Dept",
+              text: "This used the exact same Mass reading list material I needed to study for my exam. Finally a prep tool built around what we actually get tested on.",
             },
+            ,
             {
               init: "JT",
               name: "J. Thompson",
