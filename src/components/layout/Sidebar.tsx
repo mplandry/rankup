@@ -41,7 +41,6 @@ interface SidebarProps {
 export default function Sidebar({ role, fullName, email }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
-
   const nav = role === "admin" ? [...studentNav, ...adminNav] : studentNav;
 
   async function handleLogout() {
@@ -53,7 +52,6 @@ export default function Sidebar({ role, fullName, email }: SidebarProps) {
 
   return (
     <aside className='flex flex-col w-64 min-h-screen bg-[#1B2A4A] text-white'>
-      {/* Logo */}
       <div className='flex items-center gap-3 px-6 py-5 border-b border-white/10'>
         <div className='w-9 h-9 rounded-lg overflow-hidden shrink-0'>
           <Image
@@ -70,7 +68,6 @@ export default function Sidebar({ role, fullName, email }: SidebarProps) {
         </div>
       </div>
 
-      {/* Nav */}
       <nav className='flex-1 px-3 py-4 space-y-1'>
         {nav.map(({ href, label, icon: Icon }) => {
           const active =
@@ -99,7 +96,6 @@ export default function Sidebar({ role, fullName, email }: SidebarProps) {
         })}
       </nav>
 
-      {/* User / Logout */}
       <div className='px-3 pb-4 border-t border-white/10 pt-4 space-y-1'>
         <div className='flex items-center gap-3 px-3 py-2'>
           <div className='w-8 h-8 rounded-full bg-[#C0392B] flex items-center justify-center shrink-0'>
