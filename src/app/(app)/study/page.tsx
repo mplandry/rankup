@@ -45,7 +45,14 @@ export default async function StudyPage() {
     from += batchSize;
   }
 
-  const rows = allRows;
+  // Deduplicate rows by book_title + chapter + topic
+  const seen = new Set<string>();
+  const rows = allRows.filter((row) => {
+    const key = `${row.book_title}|${row.chapter}|${row.topic}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 
   const books = [
     ...new Set((booksData || []).map((r: any) => r.book_title).filter(Boolean)),
@@ -53,7 +60,11 @@ export default async function StudyPage() {
 
   const chapters = [
     ...new Set(
-      rows.map((r: any) => r.chapter).filter((c: any) => c && c.trim() !== ""),
+      rows
+        .map((r: any) => r.chapter)
+        .filter(
+          (c: any) => c && c.trim() !== "" && c.trim().toUpperCase() !== "N/A",
+        ),
     ),
   ].sort((a: any, b: any) => {
     const numA = parseInt(a);
@@ -72,7 +83,11 @@ export default async function StudyPage() {
   for (const row of rows as any[]) {
     if (!row.book_title) continue;
 
-    if (row.chapter && row.chapter.trim() !== "") {
+    if (
+      row.chapter &&
+      row.chapter.trim() !== "" &&
+      row.chapter.trim().toUpperCase() !== "N/A"
+    ) {
       if (!bookChapters[row.book_title]) bookChapters[row.book_title] = [];
       if (!bookChapters[row.book_title].includes(row.chapter)) {
         bookChapters[row.book_title].push(row.chapter);
