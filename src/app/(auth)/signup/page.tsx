@@ -4,9 +4,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import Image from "next/image";
-import "../login/login.css";
 import "./signup.css";
-
 export default function SignupPage() {
   const router = useRouter();
   const [form, setForm] = useState({
