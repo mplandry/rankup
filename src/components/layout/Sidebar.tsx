@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
+import { useState } from "react";
 import {
   LayoutDashboard,
   BookOpen,
@@ -11,6 +12,8 @@ import {
   Settings,
   LogOut,
   ChevronRight,
+  Menu,
+  X,
   Layers,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
@@ -41,6 +44,8 @@ interface SidebarProps {
 export default function Sidebar({ role, fullName, email }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
+  const [mobileOpen, setMobileOpen] = useState(false);
+
   const nav = role === "admin" ? [...studentNav, ...adminNav] : studentNav;
 
   async function handleLogout() {
@@ -50,24 +55,8 @@ export default function Sidebar({ role, fullName, email }: SidebarProps) {
     router.refresh();
   }
 
-  return (
-    <aside className='flex flex-col w-64 min-h-screen bg-[#1B2A4A] text-white'>
-      <div className='flex items-center gap-3 px-6 py-5 border-b border-white/10'>
-        <div className='w-9 h-9 rounded-lg overflow-hidden shrink-0'>
-          <Image
-            src='/icon.png'
-            alt='RankUp'
-            width={36}
-            height={36}
-            className='object-cover'
-          />
-        </div>
-        <div>
-          <div className='font-bold text-sm leading-tight'>RankUp</div>
-          <div className='text-xs text-slate-400 capitalize'>{role}</div>
-        </div>
-      </div>
-
+  const NavContent = () => (
+    <>
       <nav className='flex-1 px-3 py-4 space-y-1'>
         {nav.map(({ href, label, icon: Icon }) => {
           const active =
@@ -79,6 +68,7 @@ export default function Sidebar({ role, fullName, email }: SidebarProps) {
             <Link
               key={href}
               href={href}
+              onClick={() => setMobileOpen(false)}
               className={cn(
                 "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
                 active
@@ -118,6 +108,69 @@ export default function Sidebar({ role, fullName, email }: SidebarProps) {
           Sign Out
         </button>
       </div>
-    </aside>
+    </>
+  );
+
+  return (
+    <>
+      {/* Mobile top bar */}
+      <div className='sm:hidden fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-4 py-3 bg-[#1B2A4A] text-white'>
+        <div className='flex items-center gap-3'>
+          <div className='w-8 h-8 rounded-lg overflow-hidden shrink-0'>
+            <Image
+              src='/icon.png'
+              alt='RankUp'
+              width={32}
+              height={32}
+              className='object-cover'
+            />
+          </div>
+          <div className='font-bold text-sm'>RankUp</div>
+        </div>
+        <button
+          onClick={() => setMobileOpen(!mobileOpen)}
+          className='p-1.5 rounded-lg hover:bg-white/10 transition-colors'
+        >
+          {mobileOpen ? (
+            <X className='w-5 h-5' />
+          ) : (
+            <Menu className='w-5 h-5' />
+          )}
+        </button>
+      </div>
+
+      {/* Mobile drawer */}
+      {mobileOpen && (
+        <div className='sm:hidden fixed inset-0 z-30 flex'>
+          <div
+            className='absolute inset-0 bg-black/50'
+            onClick={() => setMobileOpen(false)}
+          />
+          <div className='relative flex flex-col w-64 min-h-screen bg-[#1B2A4A] text-white pt-14'>
+            <NavContent />
+          </div>
+        </div>
+      )}
+
+      {/* Desktop sidebar */}
+      <aside className='hidden sm:flex flex-col w-64 min-h-screen bg-[#1B2A4A] text-white'>
+        <div className='flex items-center gap-3 px-6 py-5 border-b border-white/10'>
+          <div className='w-9 h-9 rounded-lg overflow-hidden shrink-0'>
+            <Image
+              src='/icon.png'
+              alt='RankUp'
+              width={36}
+              height={36}
+              className='object-cover'
+            />
+          </div>
+          <div>
+            <div className='font-bold text-sm leading-tight'>RankUp</div>
+            <div className='text-xs text-slate-400 capitalize'>{role}</div>
+          </div>
+        </div>
+        <NavContent />
+      </aside>
+    </>
   );
 }
