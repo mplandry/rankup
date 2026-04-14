@@ -33,8 +33,11 @@ export default function StudyConfig({
   const filteredChapters = rawChapters.filter(
     (c) => c && c.trim().toUpperCase() !== "N/A",
   );
-  const filteredTopics = book ? bookTopics[book] || [] : topics;
-
+  const filteredChapters = book
+    ? (bookChapters[book] || []).filter(
+        (c) => c && c.trim().toUpperCase() !== "N/A",
+      )
+    : [];
   function handleBookChange(val: string) {
     setBook(val);
     setChapter("");
