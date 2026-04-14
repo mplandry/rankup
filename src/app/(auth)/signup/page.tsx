@@ -5,6 +5,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import Image from "next/image";
 import "./signup.css";
+
 export default function SignupPage() {
   const router = useRouter();
   const [form, setForm] = useState({
@@ -58,10 +59,10 @@ export default function SignupPage() {
   }
 
   return (
-    <div className='login-page'>
-      <div className='login-inner'>
-        <div className='login-logo'>
-          <div className='login-logo-img'>
+    <div className='signup-page'>
+      <div className='signup-inner'>
+        <div className='signup-logo'>
+          <div className='signup-logo-img'>
             <Image
               src='/icon.png'
               alt='RankUp'
@@ -70,37 +71,37 @@ export default function SignupPage() {
               style={{ objectFit: "cover", width: "100%", height: "100%" }}
             />
           </div>
-          <div className='login-logo-title'>RankUp</div>
-          <div className='login-logo-sub'>Create your account</div>
+          <div className='signup-logo-title'>RankUp</div>
+          <div className='signup-logo-sub'>Create your account</div>
         </div>
 
-        <div className='login-card'>
+        <div className='signup-card'>
           <form onSubmit={handleSubmit}>
-            <div className='login-field'>
-              <label className='login-label'>Full Name</label>
+            <div className='signup-field'>
+              <label className='signup-label'>Full Name</label>
               <input
                 type='text'
                 required
                 value={form.full_name}
                 onChange={(e) => set("full_name", e.target.value)}
                 placeholder='John Smith'
-                className='login-input'
+                className='signup-input'
               />
             </div>
 
-            <div className='login-field'>
-              <label className='login-label'>Department</label>
+            <div className='signup-field'>
+              <label className='signup-label'>Department</label>
               <input
                 type='text'
                 value={form.department}
                 onChange={(e) => set("department", e.target.value)}
                 placeholder='City Fire Dept'
-                className='login-input'
+                className='signup-input'
               />
             </div>
 
-            <div className='login-field'>
-              <label className='login-label'>
+            <div className='signup-field'>
+              <label className='signup-label'>
                 Which exam are you preparing for?
               </label>
               <div className='exam-grid'>
@@ -109,32 +110,32 @@ export default function SignupPage() {
                   onClick={() => set("exam_type", "lieutenant")}
                   className={`exam-btn${form.exam_type === "lieutenant" ? " exam-btn-active" : ""}`}
                 >
-                  🚒 Lieutenant Exam
+                  Lieutenant Exam
                 </button>
                 <button
                   type='button'
                   onClick={() => set("exam_type", "captain")}
                   className={`exam-btn${form.exam_type === "captain" ? " exam-btn-active" : ""}`}
                 >
-                  👨‍🚒 Captain Exam
+                  Captain Exam
                 </button>
               </div>
             </div>
 
-            <div className='login-field'>
-              <label className='login-label'>Email</label>
+            <div className='signup-field'>
+              <label className='signup-label'>Email</label>
               <input
                 type='email'
                 required
                 value={form.email}
                 onChange={(e) => set("email", e.target.value)}
                 placeholder='you@department.gov'
-                className='login-input'
+                className='signup-input'
               />
             </div>
 
-            <div className='login-field-last'>
-              <label className='login-label'>Password</label>
+            <div className='signup-field-last'>
+              <label className='signup-label'>Password</label>
               <input
                 type='password'
                 required
@@ -142,35 +143,35 @@ export default function SignupPage() {
                 value={form.password}
                 onChange={(e) => set("password", e.target.value)}
                 placeholder='min 6 characters'
-                className='login-input'
+                className='signup-input'
               />
             </div>
 
-            {error && <div className='login-error'>{error}</div>}
+            {error && <div className='signup-error'>{error}</div>}
 
-            <button type='submit' disabled={loading} className='login-btn'>
+            <button type='submit' disabled={loading} className='signup-btn'>
               {loading ? "Creating account..." : "Create Account"}
             </button>
 
-            <div className='login-divider'>
-              <div className='login-divider-line'>
+            <div className='signup-divider'>
+              <div className='signup-divider-line'>
                 <div />
               </div>
-              <div className='login-divider-text'>
+              <div className='signup-divider-text'>
                 <span>Already have an account?</span>
               </div>
             </div>
 
-            <Link href='/login' className='login-signup-btn'>
+            <Link href='/login' className='signup-secondary-btn'>
               Sign In
             </Link>
           </form>
         </div>
 
-        <div className='login-back'>
+        <div className='signup-back'>
           <Link href='/'>Back to home</Link>
         </div>
-        <p className='login-disclaimer'>
+        <p className='signup-disclaimer'>
           Independent study tool. Not affiliated with IFSTA, Fire Protection
           Publications, or any official testing agency.
         </p>
