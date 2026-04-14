@@ -1,122 +1,461 @@
-import Link from 'next/link'
+import Link from "next/link";
+import "./landing.css";
 
 export default function LandingPage() {
   return (
     <>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700;900&family=Barlow+Condensed:wght@600;700;800&display=swap');
-        :root {
-          --red: #C0392B; --red-dark: #96281B; --red-light: #E74C3C;
-          --navy: #1B2A4A; --navy-dark: #111c33;
-          --gold: #F39C12; --gold-light: #F5C842;
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        html { scroll-behavior: smooth; }
-        body { font-family: 'Barlow', sans-serif; background: var(--navy-dark); color: white; overflow-x: hidden; }
-        .hero { min-height: 100vh; background: radial-gradient(ellipse at 20% 50%, rgba(192,57,43,0.35) 0%, transparent 60%), radial-gradient(ellipse at 80% 20%, rgba(243,156,18,0.15) 0%, transparent 50%), linear-gradient(160deg, #0d1829 0%, #1B2A4A 50%, #0d1829 100%); display: flex; flex-direction: column; position: relative; overflow: hidden; }
-        .hero::before { content: ''; position: absolute; inset: 0; background-image: repeating-linear-gradient(0deg, transparent, transparent 80px, rgba(255,255,255,0.015) 80px, rgba(255,255,255,0.015) 81px), repeating-linear-gradient(90deg, transparent, transparent 80px, rgba(255,255,255,0.015) 80px, rgba(255,255,255,0.015) 81px); pointer-events: none; }
-        .flames { position: absolute; bottom: 0; left: 0; right: 0; height: 200px; pointer-events: none; overflow: hidden; }
-        .flame { position: absolute; bottom: -20px; width: 40px; animation: flicker 2s ease-in-out infinite alternate; opacity: 0.6; }
-        .flame svg { width: 100%; }
-        @keyframes flicker { 0% { transform: scaleY(1) scaleX(1) translateY(0); opacity: 0.5; } 100% { transform: scaleY(1.3) scaleX(0.85) translateY(-15px); opacity: 0.8; } }
-        @keyframes fadeDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.8); } }
-        nav { display: flex; align-items: center; justify-content: space-between; padding: 24px 48px; position: relative; z-index: 10; animation: fadeDown 0.6s ease both; }
-        .nav-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
-        .nav-logo-icon { width: 40px; height: 40px; background: linear-gradient(135deg,#C0392B,#96281B); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-family: 'Bebas Neue',sans-serif; font-size: 18px; color: white; }
-        .nav-logo-text { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: white; letter-spacing: 2px; }
-        .nav-logo-text span { color: #F5C842; }
-        .nav-actions { display: flex; gap: 12px; align-items: center; }
-        .btn-ghost { padding: 10px 24px; border: 1.5px solid rgba(255,255,255,0.3); border-radius: 8px; color: white; text-decoration: none; font-size: 14px; font-weight: 600; transition: all 0.2s; letter-spacing: 0.5px; }
-        .btn-ghost:hover { border-color: white; background: rgba(255,255,255,0.08); }
-        .btn-primary-nav { padding: 10px 24px; background: #C0392B; border-radius: 8px; color: white; text-decoration: none; font-size: 14px; font-weight: 700; transition: all 0.2s; letter-spacing: 0.5px; border: 1.5px solid #C0392B; }
-        .btn-primary-nav:hover { background: #E74C3C; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(192,57,43,0.4); }
-        .hero-content { flex: 1; display: flex; align-items: center; padding: 40px 48px 80px; gap: 60px; position: relative; z-index: 5; }
-        .hero-left { flex: 1; max-width: 580px; animation: fadeUp 0.8s ease 0.2s both; }
-        .badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(192,57,43,0.2); border: 1px solid rgba(192,57,43,0.4); border-radius: 100px; padding: 6px 16px; font-size: 12px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: #ff8a75; margin-bottom: 24px; }
-        .badge-dot { width: 6px; height: 6px; background: #E74C3C; border-radius: 50%; animation: pulse 1.5s ease infinite; }
-        .hero-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(52px, 7vw, 88px); line-height: 0.95; letter-spacing: 2px; margin-bottom: 24px; }
-        .hero-title .gold { color: #F5C842; }
-        .hero-title .red { color: #E74C3C; }
-        .hero-subtitle { font-size: 18px; line-height: 1.6; color: rgba(255,255,255,0.7); margin-bottom: 40px; max-width: 460px; }
-        .hero-ctas { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 48px; }
-        .btn-hero-primary { display: inline-flex; align-items: center; gap: 10px; padding: 16px 32px; background: linear-gradient(135deg, #C0392B, #96281B); color: white; text-decoration: none; border-radius: 12px; font-size: 16px; font-weight: 700; transition: all 0.25s; box-shadow: 0 4px 20px rgba(192,57,43,0.4); }
-        .btn-hero-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(192,57,43,0.55); }
-        .btn-hero-secondary { display: inline-flex; align-items: center; gap: 10px; padding: 16px 32px; border: 2px solid rgba(255,255,255,0.25); color: white; text-decoration: none; border-radius: 12px; font-size: 16px; font-weight: 600; transition: all 0.25s; }
-        .btn-hero-secondary:hover { border-color: rgba(255,255,255,0.6); background: rgba(255,255,255,0.06); }
-        .hero-stats { display: flex; gap: 32px; flex-wrap: wrap; }
-        .stat { display: flex; flex-direction: column; gap: 2px; }
-        .stat-num { font-family: 'Bebas Neue', sans-serif; font-size: 32px; color: #F5C842; letter-spacing: 1px; line-height: 1; }
-        .stat-label { font-size: 12px; color: rgba(255,255,255,0.5); font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase; }
-        .stat-divider { width: 1px; background: rgba(255,255,255,0.15); align-self: stretch; }
-        .hero-right { flex-shrink: 0; animation: fadeUp 0.8s ease 0.4s both; position: relative; }
-        .phone-mockup { width: 280px; background: #0a0f1a; border-radius: 40px; border: 2px solid rgba(255,255,255,0.12); box-shadow: 0 40px 80px rgba(0,0,0,0.6), inset 0 0 30px rgba(192,57,43,0.05); overflow: hidden; }
-        .phone-notch { width: 80px; height: 24px; background: #0a0f1a; border-radius: 0 0 16px 16px; margin: 0 auto; }
-        .phone-screen { padding: 8px 16px 24px; background: #f8f9fb; color: #1B2A4A; }
-        .phone-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 0 12px; border-bottom: 1px solid #e8ecf0; margin-bottom: 14px; }
-        .phone-header-title { font-weight: 700; font-size: 14px; color: #1B2A4A; }
-        .ring-container { position: relative; width: 100px; height: 100px; margin: 0 auto 16px; }
-        .ring-container svg { transform: rotate(-90deg); }
-        .ring-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
-        .ring-pct { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: #1B2A4A; line-height: 1; }
-        .ring-sub { font-size: 8px; color: #999; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-        .progress-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-        .progress-label { font-size: 9px; font-weight: 600; color: #666; width: 70px; flex-shrink: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .progress-bar-bg { flex: 1; height: 6px; background: #e8ecf0; border-radius: 3px; overflow: hidden; }
-        .progress-bar-fill { height: 100%; border-radius: 3px; }
-        .progress-pct { font-size: 9px; font-weight: 700; width: 26px; text-align: right; flex-shrink: 0; }
-        .phone-btn { display: block; width: 100%; padding: 9px; border-radius: 8px; font-size: 11px; font-weight: 700; text-align: center; margin-bottom: 8px; border: none; cursor: pointer; }
-        .phone-btn-red { background: #C0392B; color: white; }
-        .phone-btn-navy { background: #1B2A4A; color: white; }
-        .phone-nav { display: flex; justify-content: space-around; padding: 10px 0 4px; border-top: 1px solid #e8ecf0; margin-top: 8px; }
-        .phone-nav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 8px; color: #aaa; font-weight: 600; }
-        .phone-nav-item.active { color: #C0392B; }
-        .phone-nav-dot { width: 18px; height: 18px; border-radius: 5px; background: currentColor; opacity: 0.3; }
-        .phone-nav-item.active .phone-nav-dot { opacity: 1; }
-        .features { background: #f4f5f7; color: #1B2A4A; padding: 100px 48px; }
-        .section-label { font-size: 11px; font-weight: 800; letter-spacing: 3px; text-transform: uppercase; color: #C0392B; margin-bottom: 12px; }
-        .section-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(36px, 5vw, 56px); color: #1B2A4A; line-height: 1; margin-bottom: 16px; letter-spacing: 1px; }
-        .section-sub { font-size: 17px; color: #5a6a7a; max-width: 480px; line-height: 1.6; margin-bottom: 60px; }
-        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; max-width: 1100px; margin: 0 auto; }
-        .feature-card { background: white; border-radius: 20px; padding: 32px; border: 1px solid rgba(0,0,0,0.06); transition: all 0.25s; position: relative; overflow: hidden; }
-        .feature-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, #C0392B, #F39C12); transform: scaleX(0); transform-origin: left; transition: transform 0.3s ease; }
-        .feature-card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
-        .feature-card:hover::before { transform: scaleX(1); }
-        .feature-icon { width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 20px; }
-        .fi-red { background: rgba(192,57,43,0.1); }
-        .fi-navy { background: rgba(27,42,74,0.08); }
-        .fi-gold { background: rgba(243,156,18,0.12); }
-        .feature-title { font-family: 'Barlow Condensed', sans-serif; font-size: 20px; font-weight: 700; color: #1B2A4A; margin-bottom: 10px; }
-        .feature-desc { font-size: 14px; color: #5a6a7a; line-height: 1.65; }
-        .how { background: #111c33; padding: 100px 48px; position: relative; overflow: hidden; }
-        .how::before { content: ''; position: absolute; top: -100px; right: -100px; width: 500px; height: 500px; background: radial-gradient(circle, rgba(192,57,43,0.12) 0%, transparent 70%); pointer-events: none; }
-        .how-inner { max-width: 900px; margin: 0 auto; position: relative; z-index: 1; }
-        .how .section-title { color: white; }
-        .how .section-sub { color: rgba(255,255,255,0.55); }
-        .steps { display: flex; flex-direction: column; position: relative; }
-        .steps::before { content: ''; position: absolute; left: 27px; top: 40px; bottom: 40px; width: 2px; background: linear-gradient(to bottom, #C0392B, transparent); }
-        .step { display: flex; gap: 28px; align-items: flex-start; padding: 28px 0; }
-        .step-num { width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, #C0392B, #96281B); display: flex; align-items: center; justify-content: center; font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: white; flex-shrink: 0; box-shadow: 0 4px 20px rgba(192,57,43,0.4); position: relative; z-index: 1; }
-        .step-title { font-family: 'Barlow Condensed', sans-serif; font-size: 22px; font-weight: 700; color: white; margin-bottom: 8px; }
-        .step-desc { font-size: 15px; color: rgba(255,255,255,0.55); line-height: 1.6; }
-        .proof { background: white; padding: 80px 48px; color: #1B2A4A; text-align: center; }
-        .testimonials { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; max-width: 1000px; margin: 0 auto 60px; text-align: left; }
-        .testimonial { background: #f8f9fb; border-radius: 16px; padding: 28px; border: 1px solid #eaecf0; position: relative; }
-        .testimonial::before { content: '"'; position: absolute; top: 16px; right: 24px; font-family: 'Bebas Neue', sans-serif; font-size: 60px; color: #C0392B; opacity: 0.15; line-height: 1; }
-        .testimonial-text { font-size: 15px; line-height: 1.65; color: #374151; margin-bottom: 20px; font-style: italic; }
-        .testimonial-author { display: flex; align-items: center; gap: 12px; }
-        .author-avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #C0392B, #1B2A4A); display: flex; align-items: center; justify-content: center; font-weight: 700; color: white; font-size: 14px; flex-shrink: 0; }
-        .author-name { font-weight: 700; font-size: 14px; color: #1B2A4A; }
-        .author-title { font-size: 12px; color: #888; }
-        .stars { color: #F39C12; font-size: 13px; margin-bottom: 12px; }
-        .cta-section { background: linear-gradient(135deg, #96281B 0%, #C0392B 50%, #e74c3c 100%); padding: 100px 48px; text-align: center; position: relative; overflow: hidden; }
-        .cta-section::before { content: ''; position: absolute; inset: 0; background-image: repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(255,255,255,0.03) 20px, rgba(255,255,255,0.03) 21px); }
-        .cta-inner { position: relative; z-index: 1; max-width: 600px; margin: 0 auto; }
-        .cta-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(40px, 6vw, 72px); color: white; line-height: 1; margin-bottom: 16px; letter-spacing: 2px; }
-        .cta-sub { font-size: 18px; color: rgba(255,255,255,0.8); margin-bottom: 40px; line-height: 1.5; }
-        .btn-cta-white { display: inline-flex; align-items: center; gap: 10px; padding: 18px 40px; background: white; color: #C0392B; text-decoration: none; border-radius: 12px; font-size: 17px; font-weight: 800; transition: all 0.25s; box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
-        .btn-cta-white:hover { transform: translateY(-3px); box-shadow: 0 16px 48px rgba(0,0,0,0.3); }
-        .cta-note { margin-top: 20px; font-size: 13px; color: rgba(255,255,255,0.6); }
-        footer { background: #111c33; padding: 40px 48px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; border-top: 1px solid rgba(255,255,255,0.06); }
-        .footer-logo { font-family: 'Bebas Neue', sans-serif; font-size: 24px; color: whi
+      <nav>
+        <Link href='/' className='nav-logo'>
+          <div className='nav-logo-icon'>R</div>
+          <span className='nav-logo-text'>
+            Rank<span>Up</span>
+          </span>
+        </Link>
+        <div className='nav-actions'>
+          <Link href='/login' className='btn-ghost'>
+            Log In
+          </Link>
+          <Link href='/signup' className='btn-primary-nav'>
+            Get Started Free
+          </Link>
+        </div>
+      </nav>
+
+      <section className='hero'>
+        <div className='hero-content'>
+          <div className='hero-left'>
+            <div className='badge'>
+              <div className='badge-dot'></div>Fire Exam Prep Platform
+            </div>
+            <h1 className='hero-title'>
+              <span>PREPARE.</span>
+              <br />
+              <span className='gold'>STUDY.</span>
+              <br />
+              <span className='red'>PROMOTE.</span>
+            </h1>
+            <p className='hero-subtitle'>
+              The most comprehensive firefighter promotional exam prep platform.
+              Study smarter with adaptive flashcards, practice exams, and
+              detailed progress tracking.
+            </p>
+            <div className='hero-ctas'>
+              <Link href='/signup' className='btn-hero-primary'>
+                <svg
+                  width='18'
+                  height='18'
+                  fill='none'
+                  viewBox='0 0 24 24'
+                  stroke='currentColor'
+                  strokeWidth='2.5'
+                >
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    d='M13 10V3L4 14h7v7l9-11h-7z'
+                  />
+                </svg>
+                Start Studying Free
+              </Link>
+              <Link href='/login' className='btn-hero-secondary'>
+                Log In to Your Account
+              </Link>
+            </div>
+            <div className='hero-stats'>
+              <div className='stat'>
+                <div className='stat-num'>1,500+</div>
+                <div className='stat-label'>Questions</div>
+              </div>
+              <div className='stat-divider'></div>
+              <div className='stat'>
+                <div className='stat-num'>5</div>
+                <div className='stat-label'>Study Books</div>
+              </div>
+              <div className='stat-divider'></div>
+              <div className='stat'>
+                <div className='stat-num'>LT & CPT</div>
+                <div className='stat-label'>Exam Tracks</div>
+              </div>
+            </div>
+          </div>
+
+          <div className='hero-right'>
+            <div className='phone-mockup'>
+              <div className='phone-notch'></div>
+              <div className='phone-screen'>
+                <div className='phone-header'>
+                  <div style={{ fontSize: "11px", color: "#aaa" }}>← Back</div>
+                  <div className='phone-header-title'>RankUp</div>
+                  <div style={{ fontSize: "18px" }}>🔔</div>
+                </div>
+                <div className='ring-container'>
+                  <svg width='100' height='100' viewBox='0 0 100 100'>
+                    <circle
+                      cx='50'
+                      cy='50'
+                      r='40'
+                      stroke='#e8ecf0'
+                      strokeWidth='8'
+                      fill='none'
+                    />
+                    <circle
+                      cx='50'
+                      cy='50'
+                      r='40'
+                      stroke='url(#grad)'
+                      strokeWidth='8'
+                      fill='none'
+                      strokeDasharray='251'
+                      strokeDashoffset='33'
+                      strokeLinecap='round'
+                    />
+                    <defs>
+                      <linearGradient
+                        id='grad'
+                        x1='0%'
+                        y1='0%'
+                        x2='100%'
+                        y2='0%'
+                      >
+                        <stop offset='0%' stopColor='#22c55e' />
+                        <stop offset='100%' stopColor='#C0392B' />
+                      </linearGradient>
+                    </defs>
+                  </svg>
+                  <div className='ring-text'>
+                    <div className='ring-pct'>87%</div>
+                    <div className='ring-sub'>Best Score</div>
+                  </div>
+                </div>
+                <div style={{ marginBottom: "14px" }}>
+                  {[
+                    { l: "Building Const.", p: 92, c: "#22c55e" },
+                    { l: "Co. Officers", p: 78, c: "#22c55e" },
+                    { l: "Mass Gen. Laws", p: 61, c: "#f59e0b" },
+                    { l: "ERG 2024", p: 55, c: "#ef4444" },
+                  ].map(({ l, p, c }) => (
+                    <div key={l} className='progress-row'>
+                      <div className='progress-label'>{l}</div>
+                      <div className='progress-bar-bg'>
+                        <div
+                          className='progress-bar-fill'
+                          style={{ width: `${p}%`, background: c }}
+                        ></div>
+                      </div>
+                      <div className='progress-pct' style={{ color: c }}>
+                        {p}%
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <button className='phone-btn phone-btn-red'>
+                  Start Study Session
+                </button>
+                <button className='phone-btn phone-btn-navy'>
+                  Take Practice Exam
+                </button>
+                <div className='phone-nav'>
+                  {["Home", "Study", "Exam"].map((item, i) => (
+                    <div
+                      key={item}
+                      className={`phone-nav-item${i === 0 ? " active" : ""}`}
+                    >
+                      <div className='phone-nav-dot'></div>
+                      {item}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className='flames'>
+          {[
+            {
+              left: "5%",
+              delay: "0s",
+              dur: "1.8s",
+              w: "40px",
+              id: "f1",
+              c1: "#F39C12",
+              c2: "#E74C3C",
+            },
+            {
+              left: "18%",
+              delay: "0.4s",
+              dur: "2.2s",
+              w: "28px",
+              id: "f2",
+              c1: "#F5C842",
+              c2: "#E74C3C",
+            },
+            {
+              left: "35%",
+              delay: "0.8s",
+              dur: "1.6s",
+              w: "50px",
+              id: "f3",
+              c1: "#F39C12",
+              c2: "#C0392B",
+            },
+            {
+              left: "55%",
+              delay: "0.2s",
+              dur: "2s",
+              w: "32px",
+              id: "f4",
+              c1: "#F5C842",
+              c2: "#E74C3C",
+            },
+            {
+              left: "72%",
+              delay: "0.6s",
+              dur: "1.9s",
+              w: "45px",
+              id: "f5",
+              c1: "#F39C12",
+              c2: "#C0392B",
+            },
+            {
+              left: "88%",
+              delay: "1s",
+              dur: "1.7s",
+              w: "36px",
+              id: "f6",
+              c1: "#F5C842",
+              c2: "#E74C3C",
+            },
+          ].map(({ left, delay, dur, w, id, c1, c2 }) => (
+            <div
+              key={id}
+              className='flame'
+              style={{
+                left,
+                animationDelay: delay,
+                animationDuration: dur,
+                width: w,
+              }}
+            >
+              <svg viewBox='0 0 40 60' fill='none'>
+                <path
+                  d='M20 60 C8 50 2 35 10 20 C14 12 12 5 20 0 C18 10 24 14 22 22 C28 16 30 8 28 2 C38 14 38 30 32 42 C38 38 40 28 36 20 C44 36 36 52 20 60Z'
+                  fill={`url(#${id})`}
+                />
+                <defs>
+                  <linearGradient
+                    id={id}
+                    x1='20'
+                    y1='0'
+                    x2='20'
+                    y2='60'
+                    gradientUnits='userSpaceOnUse'
+                  >
+                    <stop stopColor={c1} />
+                    <stop offset='0.6' stopColor={c2} />
+                    <stop offset='1' stopColor='#96281B' stopOpacity='0.2' />
+                  </linearGradient>
+                </defs>
+              </svg>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className='features'>
+        <div style={{ maxWidth: "1100px", margin: "0 auto" }}>
+          <div className='section-label'>Why RankUp</div>
+          <h2 className='section-title'>
+            EVERYTHING YOU NEED
+            <br />
+            TO PASS YOUR EXAM
+          </h2>
+          <p className='section-sub'>
+            Built specifically for firefighter promotional exams — not generic
+            test prep.
+          </p>
+          <div className='features-grid'>
+            {[
+              {
+                icon: "📚",
+                cls: "fi-red",
+                title: "Study Mode",
+                desc: "Practice with instant feedback after every question. Filter by book, chapter, difficulty, or topic.",
+              },
+              {
+                icon: "📝",
+                cls: "fi-navy",
+                title: "Exam Simulation",
+                desc: "Timed, full-length practice exams that mirror the real promotional exam format.",
+              },
+              {
+                icon: "🃏",
+                cls: "fi-gold",
+                title: "Smart Flashcards",
+                desc: "Spaced repetition flashcards that adapt to your performance. Cards you miss come back sooner.",
+              },
+              {
+                icon: "📊",
+                cls: "fi-red",
+                title: "Progress Tracking",
+                desc: "See exactly where you stand. Identify your weakest chapters and get direct links to study them.",
+              },
+              {
+                icon: "🎯",
+                cls: "fi-navy",
+                title: "1,500+ Questions",
+                desc: "Covering Building Construction, Company Officers, Massachusetts General Laws, ERG 2024, and more.",
+              },
+              {
+                icon: "📱",
+                cls: "fi-gold",
+                title: "Study Anywhere",
+                desc: "Fully mobile-responsive. Study on your phone between calls or on your laptop at home.",
+              },
+            ].map(({ icon, cls, title, desc }) => (
+              <div key={title} className='feature-card'>
+                <div className={`feature-icon ${cls}`}>{icon}</div>
+                <div className='feature-title'>{title}</div>
+                <p className='feature-desc'>{desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className='how'>
+        <div className='how-inner'>
+          <div className='section-label' style={{ color: "#ff8a75" }}>
+            How It Works
+          </div>
+          <h2 className='section-title'>
+            FROM SIGNUP TO
+            <br />
+            PROMOTION READY
+          </h2>
+          <p className='section-sub'>Get up and running in minutes.</p>
+          <div className='steps'>
+            {[
+              {
+                n: "1",
+                title: "Create Your Free Account",
+                desc: "Sign up in under 60 seconds. Choose your exam track — Lieutenant or Captain.",
+              },
+              {
+                n: "2",
+                title: "Pick Your Study Mode",
+                desc: "Study Mode for instant feedback, Exam Mode for test simulation, or Flashcards for quick review.",
+              },
+              {
+                n: "3",
+                title: "Track Your Weak Areas",
+                desc: "Your dashboard shows which chapters need work — with direct links to study them immediately.",
+              },
+              {
+                n: "4",
+                title: "Walk In Confident",
+                desc: "Consistent practice builds the knowledge and confidence to outperform and earn your promotion.",
+              },
+            ].map(({ n, title, desc }) => (
+              <div key={n} className='step'>
+                <div className='step-num'>{n}</div>
+                <div>
+                  <div className='step-title'>{title}</div>
+                  <p className='step-desc'>{desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className='proof'>
+        <div className='section-label'>Real Results</div>
+        <h2 className='section-title'>
+          FIREFIGHTERS WHO
+          <br />
+          RANKED UP
+        </h2>
+        <p style={{ fontSize: "16px", color: "#5a6a7a", marginBottom: "48px" }}>
+          Join firefighters across Massachusetts who used RankUp to prepare for
+          their promotional exams.
+        </p>
+        <div className='testimonials'>
+          {[
+            {
+              init: "MR",
+              name: "M. Rivera",
+              role: "Promoted to Lieutenant",
+              text: "The chapter-by-chapter breakdown showed me exactly where I was weak. I went from failing practice exams to passing on my first attempt.",
+            },
+            {
+              init: "JT",
+              name: "J. Thompson",
+              role: "Firefighter, preparing for Captain",
+              text: "The flashcard spaced repetition is a game changer. I studied on my phone between shifts and the material actually stuck.",
+            },
+            {
+              init: "DK",
+              name: "D. Kowalski",
+              role: "Promoted to Captain",
+              text: "Best exam prep resource for MA firefighters. The Mass General Laws section alone is worth it.",
+            },
+          ].map(({ init, name, role, text }) => (
+            <div key={name} className='testimonial'>
+              <div className='stars'>★★★★★</div>
+              <p className='testimonial-text'>{text}</p>
+              <div className='testimonial-author'>
+                <div className='author-avatar'>{init}</div>
+                <div>
+                  <div className='author-name'>{name}</div>
+                  <div className='author-title'>{role}</div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className='cta-section'>
+        <div className='cta-inner'>
+          <h2 className='cta-title'>READY TO RANK UP?</h2>
+          <p className='cta-sub'>
+            Start your free account today and begin studying with 1,500+ exam
+            questions.
+          </p>
+          <Link href='/signup' className='btn-cta-white'>
+            <svg
+              width='20'
+              height='20'
+              fill='none'
+              viewBox='0 0 24 24'
+              stroke='currentColor'
+              strokeWidth='2.5'
+            >
+              <path
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                d='M13 10V3L4 14h7v7l9-11h-7z'
+              />
+            </svg>
+            Get Started Free
+          </Link>
+          <p className='cta-note'>No credit card required · Takes 60 seconds</p>
+        </div>
+      </section>
+
+      <footer>
+        <div className='footer-logo'>
+          Rank<span>Up</span>
+        </div>
+        <div className='footer-copy'>
+          © 2025 RankUp. Built for firefighters, by firefighters.
+        </div>
+        <div className='footer-links'>
+          <Link href='/login'>Log In</Link>
+          <Link href='/signup'>Sign Up</Link>
+        </div>
+      </footer>
+    </>
+  );
+}
