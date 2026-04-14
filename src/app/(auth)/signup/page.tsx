@@ -1,13 +1,14 @@
 "use client";
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import Image from "next/image";
-import "./signup.css";
 
 export default function SignupPage() {
   const router = useRouter();
+
   const [form, setForm] = useState({
     full_name: "",
     department: "",
@@ -25,10 +26,12 @@ export default function SignupPage() {
   async function handleSubmit(e: { preventDefault(): void }) {
     e.preventDefault();
     setError("");
+
     if (!form.exam_type) {
       setError("Please select which exam you are preparing for.");
       return;
     }
+
     setLoading(true);
     const supabase = createClient();
     const { data, error: signUpError } = await supabase.auth.signUp({
@@ -39,147 +42,169 @@ export default function SignupPage() {
         emailRedirectTo: `${location.origin}/auth/callback`,
       },
     });
+
     if (signUpError) {
       setError(signUpError.message);
       setLoading(false);
       return;
     }
+
+    // Save exam_type to profiles table
     if (data.user) {
       const { error: profileError } = await supabase
         .from("profiles")
         .update({ exam_type: form.exam_type })
         .eq("id", data.user.id);
+
       if (profileError) {
-        setError("Account created but failed to save exam type.");
+        setError(
+          "Account created but failed to save exam type. Please update in settings.",
+        );
         setLoading(false);
         return;
       }
     }
+
     router.push("/dashboard");
   }
 
   return (
-    <div className='signup-page'>
-      <div className='signup-inner'>
-        <div className='signup-logo'>
-          <div className='signup-logo-img'>
+    <div className='min-h-screen flex items-center justify-center bg-[#1B2A4A]'>
+      <div className='w-full max-w-md'>
+        <div className='text-center mb-8'>
+          <div className='inline-flex w-20 h-20 rounded-2xl overflow-hidden mb-4'>
             <Image
               src='/icon.png'
               alt='RankUp'
-              width={88}
-              height={88}
-              style={{ objectFit: "cover", width: "100%", height: "100%" }}
+              width={80}
+              height={80}
+              className='object-cover'
             />
           </div>
-          <div className='signup-logo-title'>RankUp</div>
-          <div className='signup-logo-sub'>Create your account</div>
+          <h1 className='text-3xl font-bold text-white'>RankUp</h1>
+          <p className='text-slate-400 mt-1'>Create your account</p>
         </div>
 
-        <div className='signup-card'>
-          <form onSubmit={handleSubmit}>
-            <div className='signup-field'>
-              <label className='signup-label'>Full Name</label>
-              <input
-                type='text'
-                required
-                value={form.full_name}
-                onChange={(e) => set("full_name", e.target.value)}
-                placeholder='John Smith'
-                className='signup-input'
-              />
+        <div className='bg-white rounded-2xl shadow-xl p-8'>
+          <form onSubmit={handleSubmit} className='space-y-5'>
+            <div className='grid grid-cols-2 gap-4'>
+              <div className='col-span-2'>
+                <label className='block text-sm font-medium text-gray-700 mb-1'>
+                  Full Name
+                </label>
+                <input
+                  type='text'
+                  required
+                  value={form.full_name}
+                  onChange={(e) => set("full_name", e.target.value)}
+                  className='w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500'
+                  placeholder='John Smith'
+                />
+              </div>
+              <div className='col-span-2'>
+                <label className='block text-sm font-medium text-gray-700 mb-1'>
+                  Department
+                </label>
+                <input
+                  type='text'
+                  value={form.department}
+                  onChange={(e) => set("department", e.target.value)}
+                  className='w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500'
+                  placeholder='City Fire Dept'
+                />
+              </div>
             </div>
 
-            <div className='signup-field'>
-              <label className='signup-label'>Department</label>
-              <input
-                type='text'
-                value={form.department}
-                onChange={(e) => set("department", e.target.value)}
-                placeholder='City Fire Dept'
-                className='signup-input'
-              />
-            </div>
-
-            <div className='signup-field'>
-              <label className='signup-label'>
+            {/* Exam Type Selection */}
+            <div>
+              <label className='block text-sm font-medium text-gray-700 mb-2'>
                 Which exam are you preparing for?
               </label>
-              <p className='signup-exam-hint'>
-                Selecting your exam filters the study material and question bank
-                to match your reading list.
-              </p>
-              <div className='exam-grid'>
+              <div className='grid grid-cols-2 gap-3'>
                 <button
                   type='button'
                   onClick={() => set("exam_type", "lieutenant")}
-                  className={`exam-btn${form.exam_type === "lieutenant" ? " exam-btn-active" : ""}`}
+                  className={`py-3 px-4 rounded-lg border-2 text-sm font-semibold transition-all ${
+                    form.exam_type === "lieutenant"
+                      ? "border-[#C0392B] bg-red-50 text-[#C0392B]"
+                      : "border-gray-200 text-gray-600 hover:border-gray-300"
+                  }`}
                 >
-                  <span className='exam-btn-title'>Lieutenant Exam</span>
-                  <span className='exam-btn-sub'>LT Promotional</span>
+                  🚒 Lieutenant
                 </button>
                 <button
                   type='button'
                   onClick={() => set("exam_type", "captain")}
-                  className={`exam-btn${form.exam_type === "captain" ? " exam-btn-active" : ""}`}
+                  className={`py-3 px-4 rounded-lg border-2 text-sm font-semibold transition-all ${
+                    form.exam_type === "captain"
+                      ? "border-[#C0392B] bg-red-50 text-[#C0392B]"
+                      : "border-gray-200 text-gray-600 hover:border-gray-300"
+                  }`}
                 >
-                  <span className='exam-btn-title'>Captain Exam</span>
-                  <span className='exam-btn-sub'>CPT Promotional</span>
+                  👨‍🚒 Captain
                 </button>
               </div>
             </div>
 
-            <div className='signup-field'>
-              <label className='signup-label'>Email</label>
+            <div>
+              <label className='block text-sm font-medium text-gray-700 mb-1'>
+                Email
+              </label>
               <input
                 type='email'
                 required
                 value={form.email}
                 onChange={(e) => set("email", e.target.value)}
+                className='w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500'
                 placeholder='you@department.gov'
-                className='signup-input'
               />
             </div>
-
-            <div className='signup-field-last'>
-              <label className='signup-label'>Password</label>
+            <div>
+              <label className='block text-sm font-medium text-gray-700 mb-1'>
+                Password
+              </label>
               <input
                 type='password'
                 required
                 minLength={6}
                 value={form.password}
                 onChange={(e) => set("password", e.target.value)}
+                className='w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500'
                 placeholder='min 6 characters'
-                className='signup-input'
               />
             </div>
 
-            {error && <div className='signup-error'>{error}</div>}
+            {error && (
+              <div className='bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-3'>
+                {error}
+              </div>
+            )}
 
-            <button type='submit' disabled={loading} className='signup-btn'>
-              {loading ? "Creating account..." : "Create Account"}
+            <button
+              type='submit'
+              disabled={loading}
+              className='w-full bg-[#C0392B] hover:bg-[#a93226] text-white font-semibold py-2.5 rounded-lg transition-colors disabled:opacity-60'
+            >
+              {loading ? "Creating account…" : "Create Account"}
             </button>
-
-            <div className='signup-divider'>
-              <div className='signup-divider-line'>
-                <div />
-              </div>
-              <div className='signup-divider-text'>
-                <span>Already have an account?</span>
-              </div>
-            </div>
-
-            <Link href='/login' className='signup-secondary-btn'>
-              Sign In
-            </Link>
           </form>
+
+          <p className='text-center text-sm text-gray-500 mt-6'>
+            Already have an account?{" "}
+            <Link
+              href='/login'
+              className='text-[#C0392B] font-medium hover:underline'
+            >
+              Sign in
+            </Link>
+          </p>
         </div>
 
-        <div className='signup-back'>
-          <Link href='/'>Back to home</Link>
-        </div>
-        <p className='signup-disclaimer'>
-          Independent study tool. Not affiliated with IFSTA, Fire Protection
-          Publications, or any official testing agency.
+        <p className='text-center text-[11px] text-slate-500 mt-6 px-4 leading-relaxed'>
+          This app is an independent study tool and is not affiliated with or
+          endorsed by IFSTA, Fire Protection Publications, or any official
+          testing agency. All questions are original and created for educational
+          purposes based on publicly available concepts.
         </p>
       </div>
     </div>
