@@ -49,7 +49,6 @@ export default function SignupPage() {
       return;
     }
 
-    // Save exam_type to profiles table
     if (data.user) {
       const { error: profileError } = await supabase
         .from("profiles")
@@ -87,35 +86,33 @@ export default function SignupPage() {
 
         <div className='bg-white rounded-2xl shadow-xl p-8'>
           <form onSubmit={handleSubmit} className='space-y-5'>
-            <div className='grid grid-cols-2 gap-4'>
-              <div className='col-span-2'>
-                <label className='block text-sm font-medium text-gray-700 mb-1'>
-                  Full Name
-                </label>
-                <input
-                  type='text'
-                  required
-                  value={form.full_name}
-                  onChange={(e) => set("full_name", e.target.value)}
-                  className='w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500'
-                  placeholder='John Smith'
-                />
-              </div>
-              <div className='col-span-2'>
-                <label className='block text-sm font-medium text-gray-700 mb-1'>
-                  Department
-                </label>
-                <input
-                  type='text'
-                  value={form.department}
-                  onChange={(e) => set("department", e.target.value)}
-                  className='w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500'
-                  placeholder='City Fire Dept'
-                />
-              </div>
+            <div>
+              <label className='block text-sm font-medium text-gray-700 mb-1'>
+                Full Name
+              </label>
+              <input
+                type='text'
+                required
+                value={form.full_name}
+                onChange={(e) => set("full_name", e.target.value)}
+                className='w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500'
+                placeholder='John Smith'
+              />
             </div>
 
-            {/* Exam Type Selection */}
+            <div>
+              <label className='block text-sm font-medium text-gray-700 mb-1'>
+                Department
+              </label>
+              <input
+                type='text'
+                value={form.department}
+                onChange={(e) => set("department", e.target.value)}
+                className='w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500'
+                placeholder='City Fire Dept'
+              />
+            </div>
+
             <div>
               <label className='block text-sm font-medium text-gray-700 mb-2'>
                 Which exam are you preparing for?
@@ -130,7 +127,7 @@ export default function SignupPage() {
                       : "border-gray-200 text-gray-600 hover:border-gray-300"
                   }`}
                 >
-                  🚒 Lieutenant
+                  Lieutenant Exam
                 </button>
                 <button
                   type='button'
@@ -141,7 +138,7 @@ export default function SignupPage() {
                       : "border-gray-200 text-gray-600 hover:border-gray-300"
                   }`}
                 >
-                  👨‍🚒 Captain
+                  Captain Exam
                 </button>
               </div>
             </div>
@@ -159,6 +156,7 @@ export default function SignupPage() {
                 placeholder='you@department.gov'
               />
             </div>
+
             <div>
               <label className='block text-sm font-medium text-gray-700 mb-1'>
                 Password
@@ -203,8 +201,7 @@ export default function SignupPage() {
         <p className='text-center text-[11px] text-slate-500 mt-6 px-4 leading-relaxed'>
           This app is an independent study tool and is not affiliated with or
           endorsed by IFSTA, Fire Protection Publications, or any official
-          testing agency. All questions are original and created for educational
-          purposes based on publicly available concepts.
+          testing agency.
         </p>
       </div>
     </div>
