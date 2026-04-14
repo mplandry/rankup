@@ -36,71 +36,70 @@ export default function LoginForm() {
 
   return (
     <div
-      className='min-h-screen flex items-center justify-center relative overflow-hidden'
+      className='min-h-screen flex items-center justify-center px-4'
       style={{
         background:
           "linear-gradient(160deg, #0d1829 0%, #1B2A4A 50%, #0d1829 100%)",
       }}
     >
-      {/* Background grid */}
+      {/* Background effects */}
       <div
-        className='absolute inset-0 pointer-events-none'
+        className='fixed inset-0 pointer-events-none'
         style={{
           backgroundImage:
             "repeating-linear-gradient(0deg,transparent,transparent 80px,rgba(255,255,255,0.015) 80px,rgba(255,255,255,0.015) 81px),repeating-linear-gradient(90deg,transparent,transparent 80px,rgba(255,255,255,0.015) 80px,rgba(255,255,255,0.015) 81px)",
         }}
       />
-
-      {/* Red glow */}
       <div
-        className='absolute pointer-events-none'
+        className='fixed pointer-events-none'
         style={{
-          width: "600px",
-          height: "600px",
+          width: "500px",
+          height: "500px",
           background:
-            "radial-gradient(circle, rgba(192,57,43,0.15) 0%, transparent 70%)",
+            "radial-gradient(circle, rgba(192,57,43,0.12) 0%, transparent 70%)",
           top: "50%",
           left: "50%",
           transform: "translate(-50%,-50%)",
         }}
       />
 
-      <div className='relative z-10 w-full max-w-sm px-6 py-12'>
-        {/* Logo */}
+      <div className='relative z-10 w-full max-w-md'>
+        {/* Logo area */}
         <div className='text-center mb-10'>
-          <div className='inline-flex w-20 h-20 rounded-2xl overflow-hidden mb-5 shadow-2xl ring-2 ring-white/10'>
+          <div className='inline-flex w-24 h-24 rounded-3xl overflow-hidden mb-6 shadow-2xl ring-2 ring-white/10'>
             <Image
               src='/icon.png'
               alt='RankUp'
-              width={80}
-              height={80}
+              width={96}
+              height={96}
               className='object-cover'
             />
           </div>
-          <h1 className='text-4xl font-black text-white tracking-tight'>
+          <h1 className='text-5xl font-black text-white tracking-tight mb-2'>
             RankUp
           </h1>
-          <p className='text-slate-400 mt-2 text-sm'>Sign in to your account</p>
+          <p className='text-slate-400 text-base'>Sign in to your account</p>
         </div>
 
-        {/* Card */}
-        <div className='bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-8'>
-          <form onSubmit={handleSubmit} className='space-y-5'>
-            <div>
-              <label className='block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5'>
-                Email
+        {/* Form card */}
+        <div className='bg-white rounded-3xl shadow-2xl p-10'>
+          <form onSubmit={handleSubmit}>
+            <div className='mb-6'>
+              <label className='block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2'>
+                Email Address
               </label>
               <input
                 type='email'
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className='w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent text-gray-900 bg-gray-50 placeholder-gray-400 text-sm transition-all'
+                className='w-full px-5 py-4 border-2 border-gray-100 rounded-2xl focus:outline-none focus:border-red-400 text-gray-900 bg-gray-50 placeholder-gray-300 text-sm transition-all'
                 placeholder='you@department.gov'
               />
             </div>
-            <div>
-              <label className='block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5'>
+
+            <div className='mb-8'>
+              <label className='block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2'>
                 Password
               </label>
               <input
@@ -108,13 +107,13 @@ export default function LoginForm() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className='w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent text-gray-900 bg-gray-50 placeholder-gray-400 text-sm transition-all'
+                className='w-full px-5 py-4 border-2 border-gray-100 rounded-2xl focus:outline-none focus:border-red-400 text-gray-900 bg-gray-50 placeholder-gray-300 text-sm transition-all'
                 placeholder='••••••••'
               />
             </div>
 
             {error && (
-              <div className='bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl px-4 py-3'>
+              <div className='mb-6 bg-red-50 border-2 border-red-100 text-red-600 text-sm rounded-2xl px-5 py-4'>
                 {error}
               </div>
             )}
@@ -122,49 +121,49 @@ export default function LoginForm() {
             <button
               type='submit'
               disabled={loading}
-              className='w-full text-white font-bold py-3.5 rounded-xl transition-all disabled:opacity-60 text-sm tracking-wide shadow-lg hover:shadow-red-500/25 hover:-translate-y-0.5 active:translate-y-0'
+              className='w-full text-white font-bold py-4 rounded-2xl transition-all disabled:opacity-60 text-base tracking-wide shadow-lg mb-4'
               style={{
                 background: "linear-gradient(135deg, #C0392B, #96281B)",
+                boxShadow: "0 8px 24px rgba(192,57,43,0.35)",
               }}
             >
               {loading ? "Signing in…" : "Sign In"}
             </button>
+
+            <div className='relative my-6'>
+              <div className='absolute inset-0 flex items-center'>
+                <div className='w-full border-t-2 border-gray-100'></div>
+              </div>
+              <div className='relative flex justify-center'>
+                <span className='px-4 bg-white text-xs font-semibold text-gray-300 uppercase tracking-widest'>
+                  New here?
+                </span>
+              </div>
+            </div>
+
+            <Link
+              href='/signup'
+              className='block w-full text-center py-4 rounded-2xl border-2 border-gray-200 text-gray-500 text-sm font-bold hover:border-gray-300 hover:bg-gray-50 transition-all tracking-wide'
+            >
+              Create an Account
+            </Link>
           </form>
-
-          <div className='relative my-6'>
-            <div className='absolute inset-0 flex items-center'>
-              <div className='w-full border-t border-gray-100'></div>
-            </div>
-            <div className='relative flex justify-center'>
-              <span className='px-3 bg-white text-xs text-gray-400'>
-                New here?
-              </span>
-            </div>
-          </div>
-
-          <Link
-            href='/signup'
-            className='block w-full text-center py-3 rounded-xl border-2 border-gray-200 text-gray-600 text-sm font-semibold hover:border-gray-300 hover:bg-gray-50 transition-all'
-          >
-            Create an account
-          </Link>
         </div>
 
-        {/* Back to home */}
-        <div className='text-center mt-6'>
+        {/* Back link */}
+        <div className='text-center mt-8'>
           <Link
             href='/'
-            className='text-slate-500 text-xs hover:text-slate-300 transition-colors'
+            className='text-slate-500 text-sm hover:text-slate-300 transition-colors'
           >
             ← Back to home
           </Link>
         </div>
 
         {/* Disclaimer */}
-        <p className='text-center text-[10px] text-slate-600 mt-6 px-2 leading-relaxed'>
-          This app is an independent study tool and is not affiliated with or
-          endorsed by IFSTA, Fire Protection Publications, or any official
-          testing agency.
+        <p className='text-center text-xs text-slate-600 mt-6 px-4 leading-relaxed'>
+          Independent study tool. Not affiliated with IFSTA, Fire Protection
+          Publications, or any official testing agency.
         </p>
       </div>
     </div>
