@@ -383,10 +383,7 @@ export default function LandingPage() {
         <div className='testimonials'>
           {[
             {
-              init: "MR",
-              name: "M. Rivera",
-              role: "Promoted to Lieutenant",
-              text: "The chapter-by-chapter breakdown showed me exactly where I was weak. I went from failing practice exams to passing on my first attempt.",
+              {init:'ML',name:'M. Landry',role:'Waltham Fire Dept.',text:'This used the exact same Mass reading list material I needed to study for my exam. Finally a prep tool built around what we actually get tested on.'},
             },
             {
               init: "JT",
