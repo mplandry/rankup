@@ -109,14 +109,14 @@ export default function SignupPage() {
                   onClick={() => set("exam_type", "lieutenant")}
                   className={`exam-btn${form.exam_type === "lieutenant" ? " exam-btn-active" : ""}`}
                 >
-                  🚒 Lieutenant
+                  🚒 Lieutenant Exam
                 </button>
                 <button
                   type='button'
                   onClick={() => set("exam_type", "captain")}
                   className={`exam-btn${form.exam_type === "captain" ? " exam-btn-active" : ""}`}
                 >
-                  👨‍🚒 Captain
+                  👨‍🚒 Captain Exam
                 </button>
               </div>
             </div>
