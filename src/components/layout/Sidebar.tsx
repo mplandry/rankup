@@ -45,7 +45,6 @@ export default function Sidebar({ role, fullName, email }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
-
   const nav = role === "admin" ? [...studentNav, ...adminNav] : studentNav;
 
   async function handleLogout() {
@@ -55,67 +54,57 @@ export default function Sidebar({ role, fullName, email }: SidebarProps) {
     router.refresh();
   }
 
-  const NavContent = () => (
-    <>
-      {/* Nav */}
-      <nav className='flex-1 px-3 py-4 space-y-1'>
-        {nav.map(({ href, label, icon: Icon }) => {
-          const active =
-            pathname === href ||
-            (href !== "/dashboard" &&
-              href !== "/admin" &&
-              pathname.startsWith(href));
-          return (
-            <Link
-              key={href}
-              href={href}
-              onClick={() => setMobileOpen(false)}
-              className={cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
-                active
-                  ? "bg-[#C0392B] text-white"
-                  : "text-slate-300 hover:bg-white/10 hover:text-white",
-              )}
-            >
-              <Icon className='w-4 h-4 shrink-0' />
-              {label}
-              {active && (
-                <ChevronRight className='w-3.5 h-3.5 ml-auto opacity-60' />
-              )}
-            </Link>
-          );
-        })}
-      </nav>
+  const navLinks = nav.map(({ href, label, icon: Icon }) => {
+    const active =
+      pathname === href ||
+      (href !== "/dashboard" && href !== "/admin" && pathname.startsWith(href));
+    return (
+      <Link
+        key={href}
+        href={href}
+        onClick={() => setMobileOpen(false)}
+        className={cn(
+          "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
+          active
+            ? "bg-[#C0392B] text-white"
+            : "text-slate-300 hover:bg-white/10 hover:text-white",
+        )}
+      >
+        <Icon className='w-4 h-4 shrink-0' />
+        {label}
+        {active && <ChevronRight className='w-3.5 h-3.5 ml-auto opacity-60' />}
+      </Link>
+    );
+  });
 
-      {/* User / Logout */}
-      <div className='px-3 pb-4 border-t border-white/10 pt-4 space-y-1'>
-        <div className='flex items-center gap-3 px-3 py-2'>
-          <div className='w-8 h-8 rounded-full bg-[#C0392B] flex items-center justify-center shrink-0'>
-            <span className='text-xs font-bold text-white'>
-              {(fullName || email).charAt(0).toUpperCase()}
-            </span>
-          </div>
-          <div className='min-w-0'>
-            <div className='text-sm font-medium truncate'>
-              {fullName || email}
-            </div>
-            <div className='text-xs text-slate-400 truncate'>{email}</div>
-          </div>
+  const userSection = (
+    <div className='px-3 pb-4 border-t border-white/10 pt-4 space-y-1'>
+      <div className='flex items-center gap-3 px-3 py-2'>
+        <div className='w-8 h-8 rounded-full bg-[#C0392B] flex items-center justify-center shrink-0'>
+          <span className='text-xs font-bold text-white'>
+            {(fullName || email).charAt(0).toUpperCase()}
+          </span>
         </div>
-        <button
-          onClick={handleLogout}
-          className='flex w-full items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-300 hover:bg-white/10 hover:text-white transition-colors'
-        >
-          <LogOut className='w-4 h-4' />
-          Sign Out
-        </button>
+        <div className='min-w-0'>
+          <div className='text-sm font-medium truncate'>
+            {fullName || email}
+          </div>
+          <div className='text-xs text-slate-400 truncate'>{email}</div>
+        </div>
       </div>
-    </>
+      <button
+        onClick={handleLogout}
+        className='flex w-full items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-300 hover:bg-white/10 hover:text-white transition-colors'
+      >
+        <LogOut className='w-4 h-4' />
+        Sign Out
+      </button>
+    </div>
   );
 
   return (
     <>
-      {/* Mobile top bar */}
+      {/* Mobile top bar - only on small screens */}
       <div className='sm:hidden fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-4 py-3 bg-[#1B2A4A] text-white'>
         <div className='flex items-center gap-3'>
           <div className='w-8 h-8 rounded-lg overflow-hidden shrink-0'>
@@ -141,7 +130,7 @@ export default function Sidebar({ role, fullName, email }: SidebarProps) {
         </button>
       </div>
 
-      {/* Mobile drawer */}
+      {/* Mobile drawer - only on small screens */}
       {mobileOpen && (
         <div className='sm:hidden fixed inset-0 z-30 flex'>
           <div
@@ -149,14 +138,14 @@ export default function Sidebar({ role, fullName, email }: SidebarProps) {
             onClick={() => setMobileOpen(false)}
           />
           <div className='relative flex flex-col w-64 min-h-screen bg-[#1B2A4A] text-white pt-14'>
-            <NavContent />
+            <nav className='flex-1 px-3 py-4 space-y-1'>{navLinks}</nav>
+            {userSection}
           </div>
         </div>
       )}
 
-      {/* Desktop sidebar */}
+      {/* Desktop sidebar - only on sm and above */}
       <aside className='hidden sm:flex flex-col w-64 min-h-screen bg-[#1B2A4A] text-white'>
-        {/* Logo */}
         <div className='flex items-center gap-3 px-6 py-5 border-b border-white/10'>
           <div className='w-9 h-9 rounded-lg overflow-hidden shrink-0'>
             <Image
@@ -172,7 +161,8 @@ export default function Sidebar({ role, fullName, email }: SidebarProps) {
             <div className='text-xs text-slate-400 capitalize'>{role}</div>
           </div>
         </div>
-        <NavContent />
+        <nav className='flex-1 px-3 py-4 space-y-1'>{navLinks}</nav>
+        {userSection}
       </aside>
     </>
   );
