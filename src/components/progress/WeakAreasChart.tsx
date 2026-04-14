@@ -19,7 +19,7 @@ export default function WeakAreasChart({ items, labelKey }: Props) {
             ? `${isMassLaw ? "Sec." : "Ch."} ${item.chapter}`
             : item.topic || "Unknown";
         const bookLabel = item.book_title || "";
-        const pct = item.pct ?? 0;
+        const pct = Math.round(item.pct ?? 0);
         const attempts = item.attempts ?? 0;
         const correct = item.correct ?? 0;
         const incorrect = attempts - correct;
