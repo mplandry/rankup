@@ -29,15 +29,14 @@ export default function StudyConfig({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const rawChapters = book ? bookChapters[book] || [] : chapters;
-  const filteredChapters = rawChapters.filter(
-    (c) => c && c.trim().toUpperCase() !== "N/A",
-  );
   const filteredChapters = book
     ? (bookChapters[book] || []).filter(
         (c) => c && c.trim().toUpperCase() !== "N/A",
       )
     : [];
+
+  const filteredTopics = book ? bookTopics[book] || [] : [];
+
   function handleBookChange(val: string) {
     setBook(val);
     setChapter("");
@@ -113,40 +112,14 @@ export default function StudyConfig({
         </div>
       </div>
 
-      {/* Chapter Selection - only show if there are valid chapters */}
+      {/* Chapter/Section Selection - only show when a book is selected */}
       {filteredChapters.length > 0 && (
         <div>
-          {/* Chapter/Section Selection - only show if there are valid chapters */}
-          {filteredChapters.length > 0 && (
-            <div>
-              <label className='block text-sm font-medium text-gray-700 mb-2'>
-                {book === "Massachusetts General Laws Chapter 148"
-                  ? "Section"
-                  : "Chapter"}
-              </label>
-              <div className='flex flex-wrap gap-2'>
-                <button
-                  type='button'
-                  onClick={() => setChapter("")}
-                  className={`px-3 py-1.5 rounded-lg text-xs border transition-all ${!chapter ? "border-red-500 bg-red-50 text-red-700 font-medium" : "border-gray-200 text-gray-600 hover:border-gray-300"}`}
-                >
-                  All
-                </button>
-                {filteredChapters.map((c) => (
-                  <button
-                    key={c}
-                    type='button'
-                    onClick={() => setChapter(c)}
-                    className={`px-3 py-1.5 rounded-lg text-xs border transition-all ${chapter === c ? "border-red-500 bg-red-50 text-red-700 font-medium" : "border-gray-200 text-gray-600 hover:border-gray-300"}`}
-                  >
-                    {book === "Massachusetts General Laws Chapter 148"
-                      ? `Sec. ${c}`
-                      : `Ch. ${c}`}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
+          <label className='block text-sm font-medium text-gray-700 mb-2'>
+            {book === "Massachusetts General Laws Chapter 148"
+              ? "Section"
+              : "Chapter"}
+          </label>
           <div className='flex flex-wrap gap-2'>
             <button
               type='button'
@@ -162,7 +135,9 @@ export default function StudyConfig({
                 onClick={() => setChapter(c)}
                 className={`px-3 py-1.5 rounded-lg text-xs border transition-all ${chapter === c ? "border-red-500 bg-red-50 text-red-700 font-medium" : "border-gray-200 text-gray-600 hover:border-gray-300"}`}
               >
-                Ch. {c}
+                {book === "Massachusetts General Laws Chapter 148"
+                  ? `Sec. ${c}`
+                  : `Ch. ${c}`}
               </button>
             ))}
           </div>
