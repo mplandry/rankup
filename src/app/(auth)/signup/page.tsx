@@ -104,20 +104,26 @@ export default function SignupPage() {
               <label className='signup-label'>
                 Which exam are you preparing for?
               </label>
+              <p className='signup-exam-hint'>
+                Selecting your exam filters the study material and question bank
+                to match your reading list.
+              </p>
               <div className='exam-grid'>
                 <button
                   type='button'
                   onClick={() => set("exam_type", "lieutenant")}
                   className={`exam-btn${form.exam_type === "lieutenant" ? " exam-btn-active" : ""}`}
                 >
-                  Lieutenant Exam
+                  <span className='exam-btn-title'>Lieutenant Exam</span>
+                  <span className='exam-btn-sub'>LT Promotional</span>
                 </button>
                 <button
                   type='button'
                   onClick={() => set("exam_type", "captain")}
                   className={`exam-btn${form.exam_type === "captain" ? " exam-btn-active" : ""}`}
                 >
-                  Captain Exam
+                  <span className='exam-btn-title'>Captain Exam</span>
+                  <span className='exam-btn-sub'>CPT Promotional</span>
                 </button>
               </div>
             </div>

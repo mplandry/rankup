@@ -4,7 +4,7 @@
   align-items: center;
   justify-content: center;
   padding: 40px 24px;
-  background: linear-gradient(160deg, #0d1829 0%, #1B2A4A 60%, #0d1829 100%);
+  background: linear-gradient(160deg, #0d1829 0%, #1b2a4a 60%, #0d1829 100%);
   font-family: system-ui, sans-serif;
 }
 
@@ -13,15 +13,31 @@
   inset: 0;
   pointer-events: none;
   background-image:
-    repeating-linear-gradient(0deg, transparent, transparent 80px, rgba(255,255,255,0.015) 80px, rgba(255,255,255,0.015) 81px),
-    repeating-linear-gradient(90deg, transparent, transparent 80px, rgba(255,255,255,0.015) 80px, rgba(255,255,255,0.015) 81px);
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 80px,
+      rgba(255, 255, 255, 0.015) 80px,
+      rgba(255, 255, 255, 0.015) 81px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 80px,
+      rgba(255, 255, 255, 0.015) 80px,
+      rgba(255, 255, 255, 0.015) 81px
+    );
 }
 
 .login-glow {
   position: fixed;
   width: 600px;
   height: 600px;
-  background: radial-gradient(circle, rgba(192,57,43,0.12) 0%, transparent 70%);
+  background: radial-gradient(
+    circle,
+    rgba(192, 57, 43, 0.12) 0%,
+    transparent 70%
+  );
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -47,8 +63,8 @@
   border-radius: 22px;
   overflow: hidden;
   margin-bottom: 20px;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-  border: 2px solid rgba(255,255,255,0.1);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+  border: 2px solid rgba(255, 255, 255, 0.1);
 }
 
 .login-logo-title {
@@ -62,14 +78,14 @@
 
 .login-logo-sub {
   font-size: 15px;
-  color: rgba(255,255,255,0.45);
+  color: rgba(255, 255, 255, 0.45);
 }
 
 .login-card {
   background: white;
   border-radius: 28px;
   padding: 48px;
-  box-shadow: 0 40px 80px rgba(0,0,0,0.4);
+  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.4);
 }
 
 .login-label {
@@ -97,7 +113,7 @@
 }
 
 .login-input:focus {
-  border-color: #C0392B;
+  border-color: #c0392b;
   background: white;
 }
 
@@ -122,7 +138,7 @@
 .login-btn {
   width: 100%;
   padding: 17px;
-  background: linear-gradient(135deg, #C0392B, #96281B);
+  background: linear-gradient(135deg, #c0392b, #96281b);
   color: white;
   border: none;
   border-radius: 14px;
@@ -130,7 +146,7 @@
   font-weight: 700;
   cursor: pointer;
   letter-spacing: 0.3px;
-  box-shadow: 0 8px 24px rgba(192,57,43,0.35);
+  box-shadow: 0 8px 24px rgba(192, 57, 43, 0.35);
   margin-bottom: 28px;
   transition: all 0.2s;
   font-family: inherit;
@@ -138,7 +154,7 @@
 
 .login-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 12px 32px rgba(192,57,43,0.45);
+  box-shadow: 0 12px 32px rgba(192, 57, 43, 0.45);
 }
 
 .login-btn:disabled {
@@ -199,8 +215,8 @@
 }
 
 .login-signup-btn:hover {
-  border-color: #C0392B;
-  color: #C0392B;
+  border-color: #c0392b;
+  color: #c0392b;
 }
 
 .login-back {
@@ -209,20 +225,20 @@
 }
 
 .login-back a {
-  color: rgba(255,255,255,0.35);
+  color: rgba(255, 255, 255, 0.35);
   font-size: 14px;
   text-decoration: none;
   transition: color 0.2s;
 }
 
 .login-back a:hover {
-  color: rgba(255,255,255,0.7);
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .login-disclaimer {
   text-align: center;
   font-size: 11px;
-  color: rgba(255,255,255,0.2);
+  color: rgba(255, 255, 255, 0.2);
   margin-top: 20px;
   line-height: 1.7;
   padding: 0 8px;
@@ -256,4 +272,49 @@
   .login-logo {
     margin-bottom: 28px;
   }
+}
+.signup-exam-hint {
+  font-size: 12px;
+  color: #9ca3af;
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+.exam-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 12px;
+  border: 2px solid #f3f4f6;
+  border-radius: 14px;
+  background: #f9fafb;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+  width: 100%;
+}
+.exam-btn:hover {
+  border-color: #d1d5db;
+  background: white;
+}
+.exam-btn-active {
+  border-color: #c0392b !important;
+  background: #fff5f5 !important;
+}
+.exam-btn-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 4px;
+}
+.exam-btn-active .exam-btn-title {
+  color: #c0392b;
+}
+.exam-btn-sub {
+  font-size: 11px;
+  color: #9ca3af;
+  font-weight: 500;
+}
+.exam-btn-active .exam-btn-sub {
+  color: #e88070;
 }
