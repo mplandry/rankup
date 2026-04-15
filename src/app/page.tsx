@@ -449,16 +449,11 @@ export default function LandingPage() {
       </section>
 
       <footer>
-        <div className='footer-logo'>
-          Rank<span>Up</span>
-        </div>
-        <div className='footer-copy'>
-          © 2026 RankUp · rankupfire.com · Built for firefighters, by
-          firefighters.
-        </div>
         <div className='footer-links'>
           <Link href='/login'>Log In</Link>
           <Link href='/signup'>Sign Up</Link>
+          <Link href='/privacy'>Privacy Policy</Link>
+          <Link href='/terms'>Terms of Service</Link>
         </div>
       </footer>
     </>
