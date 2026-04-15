@@ -104,7 +104,7 @@ export default function Sidebar({ role, fullName, email }: SidebarProps) {
 
   return (
     <>
-      {/* Mobile top bar - only on small screens */}
+      {/* Mobile top bar */}
       <div className='sm:hidden fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-4 py-3 bg-[#1B2A4A] text-white'>
         <div className='flex items-center gap-3'>
           <div className='w-8 h-8 rounded-lg overflow-hidden shrink-0'>
@@ -130,7 +130,7 @@ export default function Sidebar({ role, fullName, email }: SidebarProps) {
         </button>
       </div>
 
-      {/* Mobile drawer - only on small screens */}
+      {/* Mobile drawer */}
       {mobileOpen && (
         <div className='sm:hidden fixed inset-0 z-30 flex'>
           <div
@@ -144,7 +144,7 @@ export default function Sidebar({ role, fullName, email }: SidebarProps) {
         </div>
       )}
 
-      {/* Desktop sidebar - only on sm and above */}
+      {/* Desktop sidebar */}
       <aside className='hidden sm:flex flex-col w-64 min-h-screen bg-[#1B2A4A] text-white'>
         <div className='flex items-center gap-3 px-6 py-5 border-b border-white/10'>
           <div className='w-9 h-9 rounded-lg overflow-hidden shrink-0'>
