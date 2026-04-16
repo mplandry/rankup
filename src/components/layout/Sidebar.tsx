@@ -45,7 +45,7 @@ export default function Sidebar({ role, fullName, email }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState<boolean | null>(null);
   const nav = role === "admin" ? [...studentNav, ...adminNav] : studentNav;
 
   useEffect(() => {
@@ -61,6 +61,9 @@ export default function Sidebar({ role, fullName, email }: SidebarProps) {
     router.push("/login");
     router.refresh();
   }
+
+  // Wait until we know screen size
+  if (isMobile === null) return null;
 
   const navItems = nav.map(({ href, label, icon: Icon }) => {
     const active =
@@ -111,7 +114,6 @@ export default function Sidebar({ role, fullName, email }: SidebarProps) {
   );
 
   if (!isMobile) {
-    // Desktop sidebar
     return (
       <aside className='flex flex-col w-64 min-h-screen bg-[#1B2A4A] text-white shrink-0'>
         <div className='flex items-center gap-3 px-6 py-5 border-b border-white/10'>
@@ -135,7 +137,6 @@ export default function Sidebar({ role, fullName, email }: SidebarProps) {
     );
   }
 
-  // Mobile
   return (
     <>
       <div
