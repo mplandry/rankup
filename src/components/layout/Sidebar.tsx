@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   LayoutDashboard,
   BookOpen,
@@ -45,7 +45,15 @@ export default function Sidebar({ role, fullName, email }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const nav = role === "admin" ? [...studentNav, ...adminNav] : studentNav;
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   async function handleLogout() {
     const supabase = createClient();
@@ -54,7 +62,7 @@ export default function Sidebar({ role, fullName, email }: SidebarProps) {
     router.refresh();
   }
 
-  const navLinks = nav.map(({ href, label, icon: Icon }) => {
+  const navItems = nav.map(({ href, label, icon: Icon }) => {
     const active =
       pathname === href ||
       (href !== "/dashboard" && href !== "/admin" && pathname.startsWith(href));
@@ -86,7 +94,7 @@ export default function Sidebar({ role, fullName, email }: SidebarProps) {
           </span>
         </div>
         <div className='min-w-0'>
-          <div className='text-sm font-medium truncate'>
+          <div className='text-sm font-medium truncate text-white'>
             {fullName || email}
           </div>
           <div className='text-xs text-slate-400 truncate'>{email}</div>
@@ -102,50 +110,10 @@ export default function Sidebar({ role, fullName, email }: SidebarProps) {
     </div>
   );
 
-  return (
-    <>
-      {/* Mobile top bar */}
-      <div className='sm:hidden fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-4 py-3 bg-[#1B2A4A] text-white'>
-        <div className='flex items-center gap-3'>
-          <div className='w-8 h-8 rounded-lg overflow-hidden shrink-0'>
-            <Image
-              src='/icon.png'
-              alt='RankUp'
-              width={32}
-              height={32}
-              className='object-cover'
-            />
-          </div>
-          <div className='font-bold text-sm'>RankUp</div>
-        </div>
-        <button
-          onClick={() => setMobileOpen(!mobileOpen)}
-          className='p-1.5 rounded-lg hover:bg-white/10 transition-colors'
-        >
-          {mobileOpen ? (
-            <X className='w-5 h-5' />
-          ) : (
-            <Menu className='w-5 h-5' />
-          )}
-        </button>
-      </div>
-
-      {/* Mobile drawer */}
-      {mobileOpen && (
-        <div className='sm:hidden fixed inset-0 z-30 flex'>
-          <div
-            className='absolute inset-0 bg-black/50'
-            onClick={() => setMobileOpen(false)}
-          />
-          <div className='relative flex flex-col w-64 min-h-screen bg-[#1B2A4A] text-white pt-14'>
-            <nav className='flex-1 px-3 py-4 space-y-1'>{navLinks}</nav>
-            {userSection}
-          </div>
-        </div>
-      )}
-
-      {/* Desktop sidebar */}
-      <aside className='hidden sm:flex flex-col w-64 min-h-screen bg-[#1B2A4A] text-white'>
+  if (!isMobile) {
+    // Desktop sidebar
+    return (
+      <aside className='flex flex-col w-64 min-h-screen bg-[#1B2A4A] text-white shrink-0'>
         <div className='flex items-center gap-3 px-6 py-5 border-b border-white/10'>
           <div className='w-9 h-9 rounded-lg overflow-hidden shrink-0'>
             <Image
@@ -161,9 +129,107 @@ export default function Sidebar({ role, fullName, email }: SidebarProps) {
             <div className='text-xs text-slate-400 capitalize'>{role}</div>
           </div>
         </div>
-        <nav className='flex-1 px-3 py-4 space-y-1'>{navLinks}</nav>
+        <nav className='flex-1 px-3 py-4 space-y-1'>{navItems}</nav>
         {userSection}
       </aside>
+    );
+  }
+
+  // Mobile
+  return (
+    <>
+      <div
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 40,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "12px 16px",
+          background: "#1B2A4A",
+          color: "white",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <div
+            style={{
+              width: "32px",
+              height: "32px",
+              borderRadius: "8px",
+              overflow: "hidden",
+            }}
+          >
+            <Image
+              src='/icon.png'
+              alt='RankUp'
+              width={32}
+              height={32}
+              style={{ objectFit: "cover" }}
+            />
+          </div>
+          <div style={{ fontWeight: "bold", fontSize: "14px" }}>RankUp</div>
+        </div>
+        <button
+          onClick={() => setMobileOpen(!mobileOpen)}
+          style={{
+            padding: "6px",
+            borderRadius: "8px",
+            background: "transparent",
+            border: "none",
+            color: "white",
+            cursor: "pointer",
+          }}
+        >
+          {mobileOpen ? (
+            <X className='w-5 h-5' />
+          ) : (
+            <Menu className='w-5 h-5' />
+          )}
+        </button>
+      </div>
+
+      {mobileOpen && (
+        <div
+          style={{ position: "fixed", inset: 0, zIndex: 30, display: "flex" }}
+        >
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              background: "rgba(0,0,0,0.5)",
+            }}
+            onClick={() => setMobileOpen(false)}
+          />
+          <div
+            style={{
+              position: "relative",
+              display: "flex",
+              flexDirection: "column",
+              width: "256px",
+              minHeight: "100vh",
+              background: "#1B2A4A",
+              color: "white",
+              paddingTop: "56px",
+            }}
+          >
+            <nav
+              style={{
+                flex: 1,
+                padding: "16px 12px",
+                display: "flex",
+                flexDirection: "column",
+                gap: "4px",
+              }}
+            >
+              {navItems}
+            </nav>
+            {userSection}
+          </div>
+        </div>
+      )}
     </>
   );
 }
