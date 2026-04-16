@@ -28,9 +28,7 @@ export default async function AppLayout({
         fullName={profile?.full_name ?? null}
         email={profile?.email ?? user.email ?? ""}
       />
-      <main className='flex-1 overflow-auto pt-14 sm:pt-0 min-h-screen'>
-        {children}
-      </main>
+      <main className='flex-1 overflow-auto min-h-screen'>{children}</main>
     </div>
   );
 }
