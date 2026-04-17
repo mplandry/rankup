@@ -22,7 +22,7 @@ export default async function AppLayout({
     .single();
 
   return (
-    <div className='flex min-h-screen bg-[#f8f9fb]'>
+    <div className='flex min-h-screen bg-[#f8f9fb] overflow-hidden'>
       <Sidebar
         role={(profile?.role as UserRole) ?? "student"}
         fullName={profile?.full_name ?? null}
