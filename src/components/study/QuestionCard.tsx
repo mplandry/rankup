@@ -76,8 +76,9 @@ export default function QuestionCard({
       </p>
 
       <div className='space-y-3'>
-        {displayOptions.map(({ displayLabel, isCorrect, text }) => {
-          const isSelected = selectedAnswer === displayLabel;
+        {displayOptions.map((opt) => {
+          const { displayLabel, originalKey, isCorrect, text } = opt;
+          const isSelected = selectedAnswer === originalKey;
           const showResult = submitted && mode === "study";
 
           let optClass =
