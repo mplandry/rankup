@@ -103,7 +103,7 @@ export default function QuestionCard({
           return (
             <button
               key={displayLabel}
-              onClick={() => !submitted && onAnswer(displayLabel)}
+              onClick={() => !submitted && onAnswer(originalKey)}
               disabled={submitted}
               className={cn(
                 "w-full flex items-center gap-3 p-4 rounded-lg border-2 text-left transition-all",
