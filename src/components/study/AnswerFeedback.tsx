@@ -6,7 +6,31 @@ interface Props {
   selectedAnswer: Answer;
 }
 
+function seededShuffle<T>(arr: T[], seed: string): T[] {
+  const copy = [...arr];
+  let hash = 0;
+  for (let i = 0; i < seed.length; i++) {
+    hash = (hash << 5) - hash + seed.charCodeAt(i);
+    hash |= 0;
+  }
+  for (let i = copy.length - 1; i > 0; i--) {
+    hash = (hash << 5) - hash + i;
+    hash |= 0;
+    const j = Math.abs(hash) % (i + 1);
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
+const LABELS: Answer[] = ["A", "B", "C", "D"];
+
 export default function AnswerFeedback({ question, selectedAnswer }: Props) {
+  const shuffledKeys = seededShuffle(
+    ["A", "B", "C", "D"] as Answer[],
+    String(question.id)
+  );
+
+  const correctDisplayLabel = LABELS[shuffledKeys.indexOf(question.correct_answer as Answer)];
   const isCorrect = selectedAnswer === question.correct_answer;
 
   return (
@@ -15,7 +39,6 @@ export default function AnswerFeedback({ question, selectedAnswer }: Props) {
         isCorrect ? "border-green-400 bg-green-50" : "border-red-300 bg-red-50"
       }`}
     >
-      {/* Result header */}
       <div className='flex items-center gap-2 mb-3'>
         {isCorrect ? (
           <>
@@ -26,21 +49,18 @@ export default function AnswerFeedback({ question, selectedAnswer }: Props) {
           <>
             <XCircle className='w-5 h-5 text-red-500 shrink-0' />
             <span className='font-semibold text-red-700'>
-              Incorrect — correct answer:{" "}
-              <strong>{question.correct_answer}</strong>
+              Incorrect — correct answer: <strong>{correctDisplayLabel}</strong>
             </span>
           </>
         )}
       </div>
 
-      {/* Explanation */}
       {question.explanation && (
         <p className='text-sm text-gray-700 mb-4 leading-relaxed'>
           {question.explanation}
         </p>
       )}
 
-      {/* Reference metadata */}
       <div className='flex flex-col sm:flex-row sm:flex-wrap gap-2 sm:gap-3 text-xs text-gray-600'>
         <div className='flex items-center gap-1.5'>
           <BookOpen className='w-3.5 h-3.5 text-gray-400 shrink-0' />
