@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { BookOpen, Users, Upload, Database } from "lucide-react";
 import ExamTypeSwitcher from "@/components/admin/ExamTypeSwitcher";
+import AdminReadingList from "@/components/admin/AdminReadingList";
 
 export default async function AdminPage() {
   const supabase = await createClient();
@@ -111,6 +112,8 @@ export default async function AdminPage() {
           </div>
         </Link>
       </div>
+
+      <AdminReadingList />
     </div>
   );
 }
