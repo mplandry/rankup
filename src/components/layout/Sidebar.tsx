@@ -1,36 +1,31 @@
 'use client'
 
-import Link from 'next/link'
-import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
-import { useState } from 'react'
-import { LayoutDashboard, BookOpen, ClipboardList, TrendingUp, Settings, LogOut, ChevronRight, Menu, X, Layers } from 'lucide-react'
+import { BookOpen, BarChart3, Layout, FileText, Settings, LogOut, Menu, X } from 'lucide-react'
+import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
-import { cn } from '@/lib/utils/cn'
-import type { UserRole } from '@/types'
+import { useState } from 'react'
 
 const studentNav = [
-  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/study', label: 'Study Mode', icon: BookOpen },
-  { href: '/exam', label: 'Exam Mode', icon: ClipboardList },
-  { href: '/flashcards', label: 'Flashcards', icon: Layers },
-  { href: '/progress', label: 'My Progress', icon: TrendingUp },
+  { name: 'Dashboard', href: '/dashboard', icon: Layout },
+  { name: 'Study Mode', href: '/study', icon: BookOpen },
+  { name: 'Exam Mode', href: '/exam', icon: FileText },
+  { name: 'My Progress', href: '/progress', icon: BarChart3 }
 ]
 
 const adminNav = [
-  { href: '/admin', label: 'Admin Overview', icon: Settings },
-  { href: '/admin/questions', label: 'Questions', icon: BookOpen },
-  { href: '/admin/import', label: 'Import CSV', icon: ClipboardList },
-  { href: '/admin/students', label: 'Students', icon: TrendingUp },
+  { name: 'Admin Overview', href: '/admin', icon: Settings }
 ]
 
-interface SidebarProps {
-  role: UserRole
-  fullName: string | null
-  email: string
-}
-
-export default function Sidebar({ role, fullName, email }: SidebarProps) {
+export default function Sidebar({ 
+  role, 
+  fullName, 
+  email 
+}: { 
+  role: string
+  fullName?: string | null
+  email?: string | null
+}) {
   const pathname = usePathname()
   const router = useRouter()
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -53,40 +48,44 @@ export default function Sidebar({ role, fullName, email }: SidebarProps) {
           </div>
           <div className='font-bold text-sm'>RankUp</div>
         </div>
-        <button onClick={() => setMobileOpen(!mobileOpen)} className='p-1.5 rounded-lg'>
-          {mobileOpen ? <X className='w-5 h-5' /> : <Menu className='w-5 h-5' />}
+        <button onClick={() => setMobileOpen(!mobileOpen)} className='p-2'>
+          {mobileOpen ? <X className='w-6 h-6' /> : <Menu className='w-6 h-6' />}
         </button>
       </div>
 
-      {/* Desktop sidebar - only shows on md+ screens */}
-      <aside className='hidden md:flex flex-col w-64 min-h-screen bg-[#1B2A4A] text-white shrink-0'>
-        <div className='flex items-center gap-3 px-6 py-5 border-b border-white/10'>
-          <div className='w-9 h-9 rounded-lg overflow-hidden shrink-0'>
-            <Image src='/icon.png' alt='RankUp' width={36} height={36} className='object-cover' />
+      {/* Desktop sidebar - hidden on mobile, flex on md+ */}
+      <div className='hidden md:flex flex-col fixed left-0 top-0 h-screen w-64 bg-[#1B2A4A] text-white'>
+        <div className='p-6 flex items-center gap-3'>
+          <div className='w-10 h-10 rounded-lg overflow-hidden'>
+            <Image src='/icon.png' alt='RankUp' width={40} height={40} className='object-cover' />
           </div>
-          <div>
-            <div className='font-bold text-sm leading-tight'>RankUp</div>
-            <div className='text-xs text-slate-400 capitalize'>{role}</div>
-          </div>
+          <div className='font-bold text-lg'>RankUp</div>
         </div>
-        <nav className='flex-1 px-3 py-4 space-y-1'>
-          {nav.map(({ href, label, icon: Icon }) => {
-            const active = pathname === href || (href !== '/dashboard' && href !== '/admin' && pathname.startsWith(href))
+
+        <nav className='flex-1 px-3 py-2'>
+          {nav.map((item) => {
+            const isActive = pathname === item.href
             return (
-              <Link key={href} href={href} className={cn('flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors', active ? 'bg-[#C0392B] text-white' : 'text-slate-300 hover:bg-white/10 hover:text-white')}>
-                <Icon className='w-4 h-4 shrink-0' />
-                {label}
-                {active && <ChevronRight className='w-3.5 h-3.5 ml-auto opacity-60' />}
-              </Link>
+              
+                key={item.name}
+                href={item.href}
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors mb-1 ${
+                  isActive ? 'bg-white/20 text-white' : 'text-slate-300 hover:bg-white/10 hover:text-white'
+                }`}
+              >
+                <item.icon className='w-4 h-4' />
+                {item.name}
+              </a>
             )
           })}
         </nav>
-        <div className='px-3 pb-4 border-t border-white/10 pt-4 space-y-1'>
-          <div className='flex items-center gap-3 px-3 py-2'>
-            <div className='w-8 h-8 rounded-full bg-[#C0392B] flex items-center justify-center shrink-0'>
-              <span className='text-xs font-bold text-white'>{(fullName || email).charAt(0).toUpperCase()}</span>
+
+        <div className='p-4 border-t border-white/10'>
+          <div className='flex items-center gap-3 px-3 py-2 mb-2'>
+            <div className='w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center text-sm font-medium'>
+              {(fullName?.[0] || email?.[0] || 'U').toUpperCase()}
             </div>
-            <div className='min-w-0'>
+            <div className='flex-1 min-w-0'>
               <div className='text-sm font-medium truncate text-white'>{fullName || email}</div>
               <div className='text-xs text-slate-400 truncate'>{email}</div>
             </div>
@@ -95,33 +94,40 @@ export default function Sidebar({ role, fullName, email }: SidebarProps) {
             <LogOut className='w-4 h-4' />Sign Out
           </button>
         </div>
-      </aside>
+      </div>
 
-      {/* Mobile drawer - only shows when open on small screens */}
+      {/* Mobile drawer - only shows when open and on small screens */}
       {mobileOpen && (
         <div className='fixed inset-0 z-30 md:hidden'>
-          <div className='absolute inset-0 bg-black/50' onClick={() => setMobileOpen(false)} />
-          <div className='absolute left-0 top-0 bottom-0 w-64 bg-[#1B2A4A] text-white pt-14 flex flex-col'>
-            <nav className='flex-1 px-3 py-4 space-y-1'>
-              {nav.map(({ href, label, icon: Icon }) => {
-                const active = pathname === href || (href !== '/dashboard' && href !== '/admin' && pathname.startsWith(href))
+          <div onClick={() => setMobileOpen(false)} className='absolute inset-0 bg-black/50' />
+          <div className='absolute left-0 top-14 bottom-0 w-64 bg-[#1B2A4A] text-white flex flex-col'>
+            <nav className='flex-1 px-3 py-2 overflow-y-auto'>
+              {nav.map((item) => {
+                const isActive = pathname === item.href
                 return (
-                  <Link key={href} href={href} onClick={() => setMobileOpen(false)} className={cn('flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors', active ? 'bg-[#C0392B] text-white' : 'text-slate-300 hover:bg-white/10 hover:text-white')}>
-                    <Icon className='w-4 h-4 shrink-0' />
-                    {label}
-                    {active && <ChevronRight className='w-3.5 h-3.5 ml-auto opacity-60' />}
-                  </Link>
+                  
+                    key={item.name}
+                    href={item.href}
+                    onClick={() => setMobileOpen(false)}
+                    className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors mb-1 ${
+                      isActive ? 'bg-white/20 text-white' : 'text-slate-300 hover:bg-white/10 hover:text-white'
+                    }`}
+                  >
+                    <item.icon className='w-4 h-4' />
+                    {item.name}
+                  </a>
                 )
               })}
             </nav>
-            <div className='px-3 pb-4 border-t border-white/10 pt-4'>
-              <div className='flex items-center gap-3 px-3 py-2 mb-1'>
-                <div className='w-8 h-8 rounded-full bg-[#C0392B] flex items-center justify-center shrink-0'>
-                  <span className='text-xs font-bold text-white'>{(fullName || email).charAt(0).toUpperCase()}</span>
+
+            <div className='p-4 border-t border-white/10'>
+              <div className='flex items-center gap-3 px-3 py-2 mb-2'>
+                <div className='w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center text-sm font-medium'>
+                  {(fullName?.[0] || email?.[0] || 'U').toUpperCase()}
                 </div>
-                <div className='min-w-0'>
+                <div className='flex-1 min-w-0'>
                   <div className='text-sm font-medium truncate text-white'>{fullName || email}</div>
-                  <div className='text-xs text-slate-400 truncate'>{email}</div>
+                  <div className='text-xs text-slate-400 truncate'>{email}</div> 
                 </div>
               </div>
               <button onClick={handleLogout} className='flex w-full items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-300 hover:bg-white/10 hover:text-white transition-colors'>
