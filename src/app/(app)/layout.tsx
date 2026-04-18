@@ -22,13 +22,13 @@ export default async function AppLayout({
     .single();
 
   return (
-    <div className='flex min-h-screen bg-[#f8f9fb] overflow-hidden'>
+    <div className='min-h-screen bg-[#f8f9fb] md:pl-64'>
       <Sidebar
         role={(profile?.role as UserRole) ?? "student"}
         fullName={profile?.full_name ?? null}
         email={profile?.email ?? user.email ?? ""}
       />
-      <main className='flex-1 overflow-auto min-h-screen'>{children}</main>
+      <main className='min-h-screen pt-14 md:pt-0'>{children}</main>
     </div>
   );
 }
