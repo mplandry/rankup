@@ -40,7 +40,6 @@ export default function Sidebar({
 
   return (
     <>
-      {/* Mobile header - only shows on small screens */}
       <div className="fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-4 py-3 bg-[#1B2A4A] text-white md:hidden">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg overflow-hidden">
@@ -53,7 +52,6 @@ export default function Sidebar({
         </button>
       </div>
 
-      {/* Desktop sidebar - hidden on mobile, flex on md+ */}
       <div className="hidden md:flex flex-col fixed left-0 top-0 h-screen w-64 bg-[#1B2A4A] text-white">
         <div className="p-6 flex items-center gap-3">
           <div className="w-10 h-10 rounded-lg overflow-hidden">
@@ -69,9 +67,7 @@ export default function Sidebar({
               
                 key={item.name}
                 href={item.href}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors mb-1 ${
-                  isActive ? 'bg-white/20 text-white' : 'text-slate-300 hover:bg-white/10 hover:text-white'
-                }`}
+                className={"flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors mb-1 " + (isActive ? "bg-white/20 text-white" : "text-slate-300 hover:bg-white/10 hover:text-white")}
               >
                 <item.icon className="w-4 h-4" />
                 {item.name}
@@ -96,7 +92,6 @@ export default function Sidebar({
         </div>
       </div>
 
-      {/* Mobile drawer - only shows when open and on small screens */}
       {mobileOpen && (
         <div className="fixed inset-0 z-30 md:hidden">
           <div onClick={() => setMobileOpen(false)} className="absolute inset-0 bg-black/50" />
@@ -109,9 +104,7 @@ export default function Sidebar({
                     key={item.name}
                     href={item.href}
                     onClick={() => setMobileOpen(false)}
-                    className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors mb-1 ${
-                      isActive ? 'bg-white/20 text-white' : 'text-slate-300 hover:bg-white/10 hover:text-white'
-                    }`}
+                    className={"flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors mb-1 " + (isActive ? "bg-white/20 text-white" : "text-slate-300 hover:bg-white/10 hover:text-white")}
                   >
                     <item.icon className="w-4 h-4" />
                     {item.name}
