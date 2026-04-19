@@ -11,6 +11,10 @@ import {
   LogOut,
   Menu,
   X,
+  List,
+  Upload,
+  Users,
+  CreditCard,
 } from "lucide-react";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
@@ -20,10 +24,16 @@ const studentNav = [
   { name: "Dashboard", href: "/dashboard", icon: Layout },
   { name: "Study Mode", href: "/study", icon: BookOpen },
   { name: "Exam Mode", href: "/exam", icon: FileText },
+  { name: "Flashcards", href: "/flashcards", icon: CreditCard },
   { name: "My Progress", href: "/progress", icon: BarChart3 },
 ];
 
-const adminNav = [{ name: "Admin Overview", href: "/admin", icon: Settings }];
+const adminNav = [
+  { name: "Admin Overview", href: "/admin", icon: Settings },
+  { name: "Questions", href: "/admin/questions", icon: List },
+  { name: "Import CSV", href: "/admin/import", icon: Upload },
+  { name: "Students", href: "/admin/students", icon: Users },
+];
 
 export default function Sidebar({
   role,

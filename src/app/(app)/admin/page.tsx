@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
-import { BookOpen, Users, Upload, Database } from "lucide-react";
+import { BookOpen, Users, Upload, Database, List } from "lucide-react";
 import ExamTypeSwitcher from "@/components/admin/ExamTypeSwitcher";
 import AdminReadingList from "@/components/admin/AdminReadingList";
 
@@ -82,7 +82,21 @@ export default async function AdminPage() {
         ))}
       </div>
 
-      <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+      <div className='grid grid-cols-1 md:grid-cols-3 gap-4 mb-8'>
+        <Link
+          href='/admin/questions'
+          className='flex items-center gap-4 bg-white border border-gray-200 rounded-xl p-6 hover:border-red-300 hover:shadow-sm transition-all'
+        >
+          <div className='w-11 h-11 bg-purple-100 rounded-xl flex items-center justify-center'>
+            <List className='w-5 h-5 text-purple-600' />
+          </div>
+          <div>
+            <div className='font-semibold text-[#1B2A4A]'>View Questions</div>
+            <div className='text-sm text-gray-500'>
+              Browse and manage all questions
+            </div>
+          </div>
+        </Link>
         <Link
           href='/admin/questions/new'
           className='flex items-center gap-4 bg-white border border-gray-200 rounded-xl p-6 hover:border-red-300 hover:shadow-sm transition-all'
