@@ -22,13 +22,16 @@ export default async function AppLayout({
     .single();
 
   return (
-    <div className='min-h-screen bg-[#f8f9fb] md:pl-64' suppressHydrationWarning>
+    <div
+      className='min-h-screen bg-[#f8f9fb] md:pl-64'
+      suppressHydrationWarning
+    >
       <Sidebar
         role={(profile?.role as UserRole) ?? "student"}
         fullName={profile?.full_name ?? null}
         email={profile?.email ?? user.email ?? ""}
       />
       <main className='min-h-screen pt-14 md:pt-0'>{children}</main>
-    </>
+    </div>
   );
 }
