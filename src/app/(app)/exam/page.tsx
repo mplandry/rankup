@@ -2,10 +2,10 @@
 
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase/client";
 import TopNav from "@/components/layout/TopNav";
-import { shuffleArray, formatTime } from "@/lib/utils";
-import type { Question } from "@/lib/supabase";
+import { shuffleArray, formatTime } from "@/lib/utils/score";
+import type { Question } from "@/types";
 
 type ExamState = "configure" | "session" | "results";
 
@@ -25,6 +25,7 @@ export default function ExamPage() {
 
   useEffect(() => {
     const init = async () => {
+      const supabase = createClient();
       const {
         data: { session },
       } = await supabase.auth.getSession();
@@ -41,7 +42,7 @@ export default function ExamPage() {
       setQuestions(data || []);
     };
     init();
-  }, []);
+  }, [router]);
 
   const handleSubmit = useCallback(async () => {
     clearInterval(timerRef.current);
@@ -52,12 +53,13 @@ export default function ExamPage() {
     setScore(finalScore);
     setState("results");
 
+    const supabase = createClient();
     const {
-      data: { session },
+      data: { session: authSession },
     } = await supabase.auth.getSession();
-    if (session) {
+    if (authSession) {
       await supabase.from("exam_sessions").insert({
-        user_id: session.user.id,
+        user_id: authSession.user.id,
         mode: "exam",
         score: finalScore,
         total_questions: qs.length,
@@ -103,19 +105,6 @@ export default function ExamPage() {
     user?.email?.split("@")[0] ||
     "Firefighter";
   if (!user) return null;
-
-  const examInfoItems = [
-    { label: "90 questions", rest: " drawn from the full question bank" },
-    {
-      label: "1:30:00",
-      rest: " time limit \u2014 exam auto-submits when time expires",
-    },
-    {
-      label: "",
-      rest: "No feedback during the exam \u2014 results shown after submission",
-    },
-    { label: "Passing score: ", rest: "70% or higher" },
-  ];
 
   return (
     <>
