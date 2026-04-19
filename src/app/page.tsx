@@ -264,6 +264,135 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* FREE TRIAL SECTION */}
+      <section style={{
+        background: 'linear-gradient(135deg, #1B2A4A 0%, #2C3E5F 100%)',
+        padding: '60px 20px',
+        position: 'relative',
+        overflow: 'hidden'
+      }}>
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          opacity: 0.1,
+          backgroundImage: 'radial-gradient(circle at 20% 50%, #C41E3A 0%, transparent 50%), radial-gradient(circle at 80% 80%, #F39C12 0%, transparent 50%)',
+          pointerEvents: 'none'
+        }}></div>
+        <div style={{ maxWidth: '900px', margin: '0 auto', position: 'relative', zIndex: 1, textAlign: 'center' }}>
+          <div style={{
+            display: 'inline-block',
+            background: 'rgba(196, 30, 58, 0.2)',
+            border: '1px solid rgba(196, 30, 58, 0.4)',
+            borderRadius: '100px',
+            padding: '8px 20px',
+            marginBottom: '24px',
+            fontSize: '13px',
+            fontWeight: 700,
+            color: '#ff8a75',
+            letterSpacing: '0.5px',
+            textTransform: 'uppercase'
+          }}>
+            🔥 Limited Time Offer
+          </div>
+          <h2 style={{
+            fontSize: '42px',
+            fontWeight: 800,
+            color: '#ffffff',
+            marginBottom: '20px',
+            lineHeight: 1.2,
+            letterSpacing: '-0.5px'
+          }}>
+            FREE TRIAL RUN
+            <br />
+            <span style={{ background: 'linear-gradient(135deg, #F39C12 0%, #C41E3A 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+              UNLIMITED ACCESS
+            </span>
+          </h2>
+          <p style={{
+            fontSize: '18px',
+            color: 'rgba(255, 255, 255, 0.85)',
+            marginBottom: '32px',
+            maxWidth: '700px',
+            margin: '0 auto 32px',
+            lineHeight: 1.6
+          }}>
+            Get complete access to all 1,500+ questions, study modes, practice exams, and progress tracking. No credit card required. No time limits during the trial period.
+          </p>
+          
+          <div style={{
+            display: 'flex',
+            gap: '20px',
+            justifyContent: 'center',
+            flexWrap: 'wrap',
+            marginBottom: '36px'
+          }}>
+            {[
+              { icon: '✓', text: 'Full Question Bank' },
+              { icon: '✓', text: 'All Study Modes' },
+              { icon: '✓', text: 'Practice Exams' },
+              { icon: '✓', text: 'Progress Analytics' }
+            ].map(({ icon, text }) => (
+              <div key={text} style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                fontSize: '15px',
+                fontWeight: 600,
+                color: '#ffffff'
+              }}>
+                <span style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: '22px',
+                  height: '22px',
+                  borderRadius: '50%',
+                  background: 'rgba(34, 197, 94, 0.2)',
+                  border: '1.5px solid rgba(34, 197, 94, 0.6)',
+                  color: '#22c55e',
+                  fontSize: '13px',
+                  fontWeight: 800
+                }}>{icon}</span>
+                {text}
+              </div>
+            ))}
+          </div>
+
+          <Link href='/signup' style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '10px',
+            padding: '16px 40px',
+            background: 'linear-gradient(135deg, #C41E3A 0%, #96281B 100%)',
+            color: '#ffffff',
+            textDecoration: 'none',
+            borderRadius: '12px',
+            fontSize: '17px',
+            fontWeight: 700,
+            boxShadow: '0 8px 24px rgba(196, 30, 58, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1) inset',
+            transition: 'all 0.2s',
+            border: 'none'
+          }}>
+            <svg width='20' height='20' fill='none' viewBox='0 0 24 24' stroke='currentColor' strokeWidth='2.5'>
+              <path strokeLinecap='round' strokeLinejoin='round' d='M13 10V3L4 14h7v7l9-11h-7z' />
+            </svg>
+            Start Your Free Trial Now
+          </Link>
+
+          <p style={{
+            fontSize: '14px',
+            color: 'rgba(255, 255, 255, 0.6)',
+            marginTop: '20px',
+            fontWeight: 500
+          }}>
+            No payment required • Instant access • Cancel anytime
+          </p>
+        </div>
+      </section>
+
       <section className='features'>
         <div style={{ maxWidth: "1100px", margin: "0 auto" }}>
           <div className='section-label'>Why RankUp</div>
