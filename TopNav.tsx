@@ -75,7 +75,6 @@ export default function TopNav({
               </div>
               <span className='font-bold text-lg text-[#1B2A4A]'>RankUp</span>
             </Link>
-
             <div className='hidden md:flex items-center gap-1'>
               {nav.map((item) => {
                 const isActive = pathname === item.href;
@@ -96,7 +95,6 @@ export default function TopNav({
                 );
               })}
             </div>
-
             <div className='flex items-center gap-2'>
               <div className='hidden md:block relative'>
                 <button
@@ -113,7 +111,6 @@ export default function TopNav({
                     <div className='text-xs text-gray-500'>{email}</div>
                   </div>
                 </button>
-
                 {userMenuOpen && (
                   <>
                     <div
@@ -138,7 +135,6 @@ export default function TopNav({
                   </>
                 )}
               </div>
-
               <button
                 onClick={() => setMobileOpen(!mobileOpen)}
                 className='md:hidden p-2 rounded-lg hover:bg-gray-100'
@@ -152,7 +148,6 @@ export default function TopNav({
             </div>
           </div>
         </div>
-
         {mobileOpen && (
           <div className='md:hidden border-t border-gray-200 bg-white'>
             <div className='px-4 py-2 space-y-1'>
