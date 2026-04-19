@@ -1,7 +1,7 @@
 "use client";
 
 import { AuthProvider, useAuth } from "@/components/auth/AuthProvider";
-import Sidebar from "@/components/layout/Sidebar";
+import Sidebar from "@/components/layout/TopNav";
 
 function AppLayoutContent({ children }: { children: React.ReactNode }) {
   const { userRole, fullName, email } = useAuth();
