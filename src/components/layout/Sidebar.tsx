@@ -65,7 +65,7 @@ export default function Sidebar({
     <>
       <div
         className='fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-4 py-3 bg-[#1B2A4A] text-white md:hidden'
-        style={{ opacity: mounted ? 1 : 0 }}
+        style={{ opacity: mounted ? 1 : 0, transition: "none" }}
       >
         <div className='flex items-center gap-3'>
           <div className='w-8 h-8 rounded-lg overflow-hidden'>
