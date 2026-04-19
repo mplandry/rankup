@@ -1,5 +1,4 @@
-cat > (src / components / layout / Sidebar.tsx) << "ENDFILE";
-("use client");
+"use client";
 
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
