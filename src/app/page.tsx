@@ -33,7 +33,7 @@ export default function LandingPage() {
               <br />
               <span className='gold'>STUDY.</span>
               <br />
-              <span className='red'>PROMOTE.</span>
+              <span className='red'>GET PROMOTED.</span>
             </h1>
             <p className='hero-subtitle'>
               The most comprehensive Massachusetts firefighter promotional exam
