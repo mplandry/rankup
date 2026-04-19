@@ -60,9 +60,9 @@ export default function TopNav({
   return (
     <>
       <nav className='fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200'>
-        <div className='max-w-7xl mx-auto px-4'>
+        <div className='max-w-7xl mx-auto px-6'>
           <div className='flex items-center justify-between h-16'>
-            <Link href='/dashboard' className='flex items-center gap-2'>
+            <Link href='/dashboard' className='flex items-center gap-2 mr-12'>
               <div className='w-8 h-8 rounded-lg overflow-hidden'>
                 <Image
                   src='/icon.png'
@@ -75,7 +75,7 @@ export default function TopNav({
               </div>
               <span className='font-bold text-lg text-[#1B2A4A]'>RankUp</span>
             </Link>
-            <div className='hidden md:flex items-center gap-1'>
+            <div className='hidden md:flex items-center gap-2'>
               {nav.map((item) => {
                 const isActive = pathname === item.href;
                 return (
@@ -83,7 +83,7 @@ export default function TopNav({
                     key={item.name}
                     href={item.href}
                     className={
-                      "flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors " +
+                      "flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors " +
                       (isActive
                         ? "bg-[#1B2A4A] text-white"
                         : "text-gray-700 hover:bg-gray-100")
@@ -95,7 +95,7 @@ export default function TopNav({
                 );
               })}
             </div>
-            <div className='flex items-center gap-2'>
+            <div className='flex items-center gap-3'>
               <div className='hidden md:block relative'>
                 <button
                   onClick={() => setUserMenuOpen(!userMenuOpen)}
@@ -189,7 +189,7 @@ export default function TopNav({
           </div>
         )}
       </nav>
-      <div className='h-16' />
+      <div className='h-24' />
     </>
   );
 }
