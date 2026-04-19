@@ -67,6 +67,7 @@ export default function Sidebar({
               width={32}
               height={32}
               className='object-cover'
+              priority
             />
           </div>
           <div className='font-bold text-sm'>RankUp</div>
@@ -80,7 +81,7 @@ export default function Sidebar({
         </button>
       </div>
 
-      <div className='hidden md:flex flex-col fixed left-0 top-0 h-screen w-64 bg-[#1B2A4A] text-white'>
+      <div className='hidden md:flex flex-col fixed left-0 top-0 h-screen w-64 bg-[#1B2A4A] text-white z-50'>
         <div className='p-6 flex items-center gap-3'>
           <div className='w-10 h-10 rounded-lg overflow-hidden'>
             <Image
@@ -89,6 +90,7 @@ export default function Sidebar({
               width={40}
               height={40}
               className='object-cover'
+              priority
             />
           </div>
           <div className='font-bold text-lg'>RankUp</div>
