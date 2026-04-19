@@ -5,12 +5,12 @@ import { createClient } from "@/lib/supabase/client";
 import { Search, Edit, Trash2, Plus } from "lucide-react";
 
 type Question = {
-  question_id: number;
+  id: string; // Changed from question_id
   book_title: string;
   chapter: string;
   question_text: string;
   difficulty: string;
-  study_eligible: boolean;
+  study_oligible: boolean; // Note: This has a typo in your database
   exam_eligible: boolean;
 };
 
@@ -60,7 +60,7 @@ export default function QuestionsPage() {
           return numA - numB;
         });
       setChapters(bookChapters);
-      setSelectedChapter(""); // Reset chapter when book changes
+      setSelectedChapter("");
     } else {
       setChapters([]);
       setSelectedChapter("");
@@ -70,30 +70,13 @@ export default function QuestionsPage() {
   async function loadQuestions() {
     try {
       const supabase = createClient();
-
-      // First, try to get ALL questions without any filter
       const { data, error } = await supabase
         .from("questions")
         .select("*")
-        .limit(10); // Just get 10 to test
+        .eq("is_active", true)
+        .order("id", { ascending: false });
 
-      console.log("Query result:", { data, error });
-
-      if (error) {
-        console.error("Supabase error:", error);
-        alert(`Database error: ${error.message}`);
-        throw error;
-      }
-
-      if (!data || data.length === 0) {
-        console.log("No data returned from database");
-        alert("No questions found in database");
-        setLoading(false);
-        return;
-      }
-
-      console.log("Found questions:", data.length);
-      console.log("First question:", data[0]);
+      if (error) throw error;
 
       setQuestions(data || []);
 
@@ -101,12 +84,9 @@ export default function QuestionsPage() {
       const uniqueBooks = [
         ...new Set(data?.map((q) => q.book_title) || []),
       ].sort();
-
-      console.log("Unique books:", uniqueBooks);
       setBooks(uniqueBooks);
     } catch (error) {
       console.error("Error loading questions:", error);
-      alert(`Failed to load questions: ${error}`);
     } finally {
       setLoading(false);
     }
@@ -137,11 +117,11 @@ export default function QuestionsPage() {
       filtered = filtered.filter((q) => q.difficulty === selectedDifficulty);
     }
 
-    // Study eligible filter
+    // Study eligible filter (note the typo in database)
     if (studyFilter === "yes") {
-      filtered = filtered.filter((q) => q.study_eligible === true);
+      filtered = filtered.filter((q) => q.study_oligible === true);
     } else if (studyFilter === "no") {
-      filtered = filtered.filter((q) => q.study_eligible === false);
+      filtered = filtered.filter((q) => q.study_oligible === false);
     }
 
     // Exam eligible filter
@@ -163,7 +143,7 @@ export default function QuestionsPage() {
     setExamFilter("");
   }
 
-  async function deleteQuestion(id: number) {
+  async function deleteQuestion(id: string) {
     if (!confirm("Are you sure you want to delete this question?")) return;
 
     try {
@@ -171,7 +151,7 @@ export default function QuestionsPage() {
       const { error } = await supabase
         .from("questions")
         .update({ is_active: false })
-        .eq("question_id", id);
+        .eq("id", id);
 
       if (error) throw error;
 
@@ -355,7 +335,7 @@ export default function QuestionsPage() {
                 </tr>
               ) : (
                 filteredQuestions.map((question) => (
-                  <tr key={question.question_id} className='hover:bg-gray-50'>
+                  <tr key={question.id} className='hover:bg-gray-50'>
                     <td className='px-6 py-4 text-sm text-gray-900 max-w-md'>
                       {question.question_text.substring(0, 100)}
                       {question.question_text.length > 100 && "..."}
@@ -385,12 +365,12 @@ export default function QuestionsPage() {
                     <td className='px-6 py-4 text-center'>
                       <span
                         className={`inline-block px-2 py-1 text-xs font-medium rounded ${
-                          question.study_eligible
+                          question.study_oligible
                             ? "bg-green-100 text-green-800"
                             : "bg-gray-100 text-gray-600"
                         }`}
                       >
-                        {question.study_eligible ? "Yes" : "No"}
+                        {question.study_oligible ? "Yes" : "No"}
                       </span>
                     </td>
                     <td className='px-6 py-4 text-center'>
@@ -408,7 +388,7 @@ export default function QuestionsPage() {
                       <div className='flex items-center justify-center gap-2'>
                         <button
                           onClick={() =>
-                            (window.location.href = `/admin/questions/${question.question_id}/edit`)
+                            (window.location.href = `/admin/questions/${question.id}/edit`)
                           }
                           className='p-1.5 text-blue-600 hover:bg-blue-50 rounded'
                           title='Edit'
@@ -416,7 +396,7 @@ export default function QuestionsPage() {
                           <Edit className='w-4 h-4' />
                         </button>
                         <button
-                          onClick={() => deleteQuestion(question.question_id)}
+                          onClick={() => deleteQuestion(question.id)}
                           className='p-1.5 text-red-600 hover:bg-red-50 rounded'
                           title='Delete'
                         >
