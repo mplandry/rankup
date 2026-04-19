@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import Sidebar from "@/components/layout/Sidebar";
+import ClientLayoutWrapper from "@/components/layout/ClientLayoutWrapper";
 import type { UserRole } from "@/types";
 
 export default async function AppLayout({
@@ -22,16 +22,14 @@ export default async function AppLayout({
     .single();
 
   return (
-    <div
-      className='min-h-screen bg-[#f8f9fb] md:pl-64'
-      suppressHydrationWarning
-    >
-      <Sidebar
+    <div className='min-h-screen bg-[#f8f9fb] md:pl-64'>
+      <ClientLayoutWrapper
         role={(profile?.role as UserRole) ?? "student"}
         fullName={profile?.full_name ?? null}
         email={profile?.email ?? user.email ?? ""}
-      />
-      <main className='min-h-screen pt-14 md:pt-0'>{children}</main>
+      >
+        {children}
+      </ClientLayoutWrapper>
     </div>
   );
 }
