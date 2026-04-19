@@ -1,4 +1,4 @@
-"use client";
+("use client");
 
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const studentNav = [
   { name: "Dashboard", href: "/dashboard", icon: Layout },
@@ -47,13 +47,22 @@ export default function Sidebar({
   const pathname = usePathname();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const nav = role === "admin" ? [...studentNav, ...adminNav] : studentNav;
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   async function handleLogout() {
     const supabase = createClient();
     await supabase.auth.signOut();
     router.push("/login");
     router.refresh();
+  }
+
+  if (!mounted) {
+    return null;
   }
 
   return (
