@@ -99,7 +99,7 @@ export default function QuestionsPage() {
     // Text search
     if (searchText) {
       filtered = filtered.filter((q) =>
-        q.question_text.toLowerCase().includes(searchText.toLowerCase())
+        q.question_text.toLowerCase().includes(searchText.toLowerCase()),
       );
     }
 
@@ -174,59 +174,60 @@ export default function QuestionsPage() {
 
   if (loading) {
     return (
-      <div className="p-8">
-        <div className="text-center">Loading questions...</div>
+      <div className='p-8'>
+        <div className='text-center'>Loading questions...</div>
       </div>
     );
   }
 
   return (
-    <div className="p-8">
+    <div className='p-8'>
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className='flex items-center justify-between mb-6'>
         <div>
-          <h1 className="text-2xl font-bold text-[#1B2A4A]">Questions</h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <h1 className='text-2xl font-bold text-[#1B2A4A]'>Questions</h1>
+          <p className='text-sm text-gray-500 mt-1'>
             {filteredQuestions.length} of {questions.length} active questions
-            {activeFiltersCount > 0 && ` (${activeFiltersCount} filters active)`}
+            {activeFiltersCount > 0 &&
+              ` (${activeFiltersCount} filters active)`}
           </p>
         </div>
-        <div className="flex gap-3">
+        <div className='flex gap-3'>
           <button
-            onClick={() => window.location.href = "/admin/questions/new"}
-            className="flex items-center gap-2 px-4 py-2 bg-[#D32F2F] text-white rounded-lg hover:bg-[#B71C1C] transition-colors"
+            onClick={() => (window.location.href = "/admin/questions/new")}
+            className='flex items-center gap-2 px-4 py-2 bg-[#D32F2F] text-white rounded-lg hover:bg-[#B71C1C] transition-colors'
           >
-            <Plus className="w-4 h-4" />
+            <Plus className='w-4 h-4' />
             Add Question
           </button>
         </div>
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+      <div className='bg-white rounded-xl border border-gray-200 p-6 mb-6'>
         {/* Search Bar */}
-        <div className="mb-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+        <div className='mb-4'>
+          <div className='relative'>
+            <Search className='absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400' />
             <input
-              type="text"
-              placeholder="Search question text..."
+              type='text'
+              placeholder='Search question text...'
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#D32F2F] focus:border-transparent"
+              className='w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#D32F2F] focus:border-transparent'
             />
           </div>
         </div>
 
         {/* Filter Dropdowns */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+        <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3'>
           {/* Book Filter */}
           <select
             value={selectedBook}
             onChange={(e) => setSelectedBook(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#D32F2F] focus:border-transparent"
+            className='px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#D32F2F] focus:border-transparent'
           >
-            <option value="">All Books</option>
+            <option value=''>All Books</option>
             {books.map((book) => (
               <option key={book} value={book}>
                 {book.length > 30 ? book.substring(0, 30) + "..." : book}
@@ -239,9 +240,9 @@ export default function QuestionsPage() {
             value={selectedChapter}
             onChange={(e) => setSelectedChapter(e.target.value)}
             disabled={!selectedBook}
-            className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#D32F2F] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+            className='px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#D32F2F] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed'
           >
-            <option value="">All Chapters</option>
+            <option value=''>All Chapters</option>
             {chapters.map((chapter) => (
               <option key={chapter} value={chapter}>
                 Chapter {chapter}
@@ -253,43 +254,43 @@ export default function QuestionsPage() {
           <select
             value={selectedDifficulty}
             onChange={(e) => setSelectedDifficulty(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#D32F2F] focus:border-transparent"
+            className='px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#D32F2F] focus:border-transparent'
           >
-            <option value="">All Difficulties</option>
-            <option value="easy">Easy</option>
-            <option value="medium">Medium</option>
-            <option value="hard">Hard</option>
+            <option value=''>All Difficulties</option>
+            <option value='easy'>Easy</option>
+            <option value='medium'>Medium</option>
+            <option value='hard'>Hard</option>
           </select>
 
           {/* Study Eligible Filter */}
           <select
             value={studyFilter}
             onChange={(e) => setStudyFilter(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#D32F2F] focus:border-transparent"
+            className='px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#D32F2F] focus:border-transparent'
           >
-            <option value="">Study: All</option>
-            <option value="yes">Study: Yes</option>
-            <option value="no">Study: No</option>
+            <option value=''>Study: All</option>
+            <option value='yes'>Study: Yes</option>
+            <option value='no'>Study: No</option>
           </select>
 
           {/* Exam Eligible Filter */}
           <select
             value={examFilter}
             onChange={(e) => setExamFilter(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#D32F2F] focus:border-transparent"
+            className='px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#D32F2F] focus:border-transparent'
           >
-            <option value="">Exam: All</option>
-            <option value="yes">Exam: Yes</option>
-            <option value="no">Exam: No</option>
+            <option value=''>Exam: All</option>
+            <option value='yes'>Exam: Yes</option>
+            <option value='no'>Exam: No</option>
           </select>
         </div>
 
         {/* Clear Filters */}
         {activeFiltersCount > 0 && (
-          <div className="mt-4 flex justify-end">
+          <div className='mt-4 flex justify-end'>
             <button
               onClick={clearFilters}
-              className="text-sm text-gray-600 hover:text-gray-900 underline"
+              className='text-sm text-gray-600 hover:text-gray-900 underline'
             >
               Clear all filters
             </button>
@@ -298,60 +299,119 @@ export default function QuestionsPage() {
       </div>
 
       {/* Questions Table */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
+      <div className='bg-white rounded-xl border border-gray-200 overflow-hidden'>
+        <div className='overflow-x-auto'>
+          <table className='w-full'>
             <thead>
-              <tr className="bg-gray-50 border-b border-gray-200">
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+              <tr className='bg-gray-50 border-b border-gray-200'>
+                <th className='px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider'>
                   Question
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                <th className='px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider'>
                   Book / Chapter
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                <th className='px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider'>
                   Difficulty
                 </th>
-                <th className="px-6 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                <th className='px-6 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider'>
                   Study
                 </th>
-                <th className="px-6 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                <th className='px-6 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider'>
                   Exam
                 </th>
-                <th className="px-6 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                <th className='px-6 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider'>
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
+            <tbody className='divide-y divide-gray-200'>
               {filteredQuestions.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                  <td
+                    colSpan={6}
+                    className='px-6 py-12 text-center text-gray-500'
+                  >
                     No questions found matching your filters
                   </td>
                 </tr>
               ) : (
                 filteredQuestions.map((question) => (
-                  <tr key={question.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 text-sm text-gray-900 max-w-md">
+                  <tr key={question.id} className='hover:bg-gray-50'>
+                    <td className='px-6 py-4 text-sm text-gray-900 max-w-md'>
                       {question.question_text.substring(0, 100)}
                       {question.question_text.length > 100 && "..."}
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-600">
-                      <div className="font-medium text-gray-900">
+                    <td className='px-6 py-4 text-sm text-gray-600'>
+                      <div className='font-medium text-gray-900'>
                         {question.book_title.substring(0, 30)}
                         {question.book_title.length > 30 && "..."}
                       </div>
-                      <div className="text-gray-500">Ch. {question.chapter}</div>
+                      <div className='text-gray-500'>
+                        Ch. {question.chapter}
+                      </div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className='px-6 py-4'>
                       <span
-                        className={`inline-block px-2 py-1 text-xs font-medium rounded ${
+                        className={
                           question.difficulty === "easy"
-                            ? "bg-green-100 text-green-800"
+                            ? "inline-block px-2 py-1 text-xs font-medium rounded bg-green-100 text-green-800"
                             : question.difficulty === "medium"
-                            ? "bg-yellow-100 text-yellow-800"
-                            : "bg-red-100 text-red-800"
-                        }`}
+                              ? "inline-block px-2 py-1 text-xs font-medium rounded bg-yellow-100 text-yellow-800"
+                              : "inline-block px-2 py-1 text-xs font-medium rounded bg-red-100 text-red-800"
+                        }
                       >
                         {question.difficulty}
+                      </span>
+                    </td>
+                    <td className='px-6 py-4 text-center'>
+                      <span
+                        className={
+                          question.study_oligible
+                            ? "inline-block px-2 py-1 text-xs font-medium rounded bg-green-100 text-green-800"
+                            : "inline-block px-2 py-1 text-xs font-medium rounded bg-gray-100 text-gray-600"
+                        }
+                      >
+                        {question.study_oligible ? "Yes" : "No"}
+                      </span>
+                    </td>
+                    <td className='px-6 py-4 text-center'>
+                      <span
+                        className={
+                          question.exam_eligible
+                            ? "inline-block px-2 py-1 text-xs font-medium rounded bg-blue-100 text-blue-800"
+                            : "inline-block px-2 py-1 text-xs font-medium rounded bg-gray-100 text-gray-600"
+                        }
+                      >
+                        {question.exam_eligible ? "Yes" : "No"}
+                      </span>
+                    </td>
+                    <td className='px-6 py-4'>
+                      <div className='flex items-center justify-center gap-2'>
+                        <button
+                          onClick={() =>
+                            (window.location.href = `/admin/questions/${question.id}/edit`)
+                          }
+                          className='p-1.5 text-blue-600 hover:bg-blue-50 rounded'
+                          title='Edit'
+                        >
+                          <Edit className='w-4 h-4' />
+                        </button>
+                        <button
+                          onClick={() => deleteQuestion(question.id)}
+                          className='p-1.5 text-red-600 hover:bg-red-50 rounded'
+                          title='Delete'
+                        >
+                          <Trash2 className='w-4 h-4' />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}
