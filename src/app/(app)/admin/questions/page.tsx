@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase/client";
 import { Search, Edit, Trash2, Plus } from "lucide-react";
 
 type Question = {
@@ -69,6 +69,7 @@ export default function QuestionsPage() {
 
   async function loadQuestions() {
     try {
+      const supabase = createClient();
       const { data, error } = await supabase
         .from("questions")
         .select("*")
@@ -146,6 +147,7 @@ export default function QuestionsPage() {
     if (!confirm("Are you sure you want to delete this question?")) return;
 
     try {
+      const supabase = createClient();
       const { error } = await supabase
         .from("questions")
         .update({ is_active: false })
