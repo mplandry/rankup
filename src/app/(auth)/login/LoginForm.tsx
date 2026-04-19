@@ -73,6 +73,19 @@ export default function LoginForm() {
                 className='login-input'
               />
             </div>
+            <div style={{ textAlign: 'right', marginTop: '8px', marginBottom: '16px' }}>
+              <Link 
+                href="/reset-password" 
+                style={{ 
+                  fontSize: '13px', 
+                  color: '#C41E3A', 
+                  textDecoration: 'none',
+                  fontWeight: 500
+                }}
+              >
+                Forgot password?
+              </Link>
+            </div>
             {error && <div className='login-error'>{error}</div>}
             <button type='submit' disabled={loading} className='login-btn'>
               {loading ? "Signing in..." : "Sign In"}
