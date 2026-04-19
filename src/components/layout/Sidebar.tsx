@@ -1,4 +1,5 @@
-"use client";
+cat > (src / components / layout / Sidebar.tsx) << "ENDFILE";
+("use client");
 
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
@@ -61,14 +62,12 @@ export default function Sidebar({
     router.refresh();
   }
 
-  if (!mounted) {
-    return null;
-  }
-
   return (
     <>
-      {/* Mobile Header */}
-      <div className='fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-4 py-3 bg-[#1B2A4A] text-white md:hidden'>
+      <div
+        className='fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-4 py-3 bg-[#1B2A4A] text-white md:hidden'
+        style={{ opacity: mounted ? 1 : 0 }}
+      >
         <div className='flex items-center gap-3'>
           <div className='w-8 h-8 rounded-lg overflow-hidden'>
             <Image
@@ -91,8 +90,10 @@ export default function Sidebar({
         </button>
       </div>
 
-      {/* Desktop Sidebar */}
-      <div className='hidden md:flex flex-col fixed left-0 top-0 h-screen w-64 bg-[#1B2A4A] text-white z-50'>
+      <div
+        className='hidden md:flex flex-col fixed left-0 top-0 h-screen w-64 bg-[#1B2A4A] text-white z-50'
+        style={{ opacity: mounted ? 1 : 0, transition: "none" }}
+      >
         <div className='p-6 flex items-center gap-3'>
           <div className='w-10 h-10 rounded-lg overflow-hidden'>
             <Image
@@ -150,7 +151,6 @@ export default function Sidebar({
         </div>
       </div>
 
-      {/* Mobile Menu */}
       {mobileOpen && (
         <div className='fixed inset-0 z-30 md:hidden'>
           <div
@@ -206,3 +206,4 @@ export default function Sidebar({
     </>
   );
 }
+ENDFILE;
