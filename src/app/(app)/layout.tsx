@@ -1,9 +1,5 @@
-import AppLayoutClient from "@/components/layout/AppLayoutClient";
+import ClientAppLayout from "@/components/layout/ClientAppLayout";
 
-export default function AppLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return <AppLayoutClient>{children}</AppLayoutClient>;
+export default function AppLayout({ children }: { children: React.ReactNode }) {
+  return <ClientAppLayout>{children}</ClientAppLayout>;
 }
