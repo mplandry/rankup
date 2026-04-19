@@ -70,13 +70,30 @@ export default function QuestionsPage() {
   async function loadQuestions() {
     try {
       const supabase = createClient();
+
+      // First, try to get ALL questions without any filter
       const { data, error } = await supabase
         .from("questions")
         .select("*")
-        .eq("is_active", true)
-        .order("question_id", { ascending: false });
+        .limit(10); // Just get 10 to test
 
-      if (error) throw error;
+      console.log("Query result:", { data, error });
+
+      if (error) {
+        console.error("Supabase error:", error);
+        alert(`Database error: ${error.message}`);
+        throw error;
+      }
+
+      if (!data || data.length === 0) {
+        console.log("No data returned from database");
+        alert("No questions found in database");
+        setLoading(false);
+        return;
+      }
+
+      console.log("Found questions:", data.length);
+      console.log("First question:", data[0]);
 
       setQuestions(data || []);
 
@@ -84,9 +101,12 @@ export default function QuestionsPage() {
       const uniqueBooks = [
         ...new Set(data?.map((q) => q.book_title) || []),
       ].sort();
+
+      console.log("Unique books:", uniqueBooks);
       setBooks(uniqueBooks);
     } catch (error) {
       console.error("Error loading questions:", error);
+      alert(`Failed to load questions: ${error}`);
     } finally {
       setLoading(false);
     }
