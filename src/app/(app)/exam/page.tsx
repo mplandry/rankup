@@ -28,11 +28,20 @@ export default function ExamPage() {
       const { data: { session } } = await supabase.auth.getSession()
       if (!session) { router.push('/login'); return }
       setUser(session.user)
-      const { data } = await supabase
+      
+      // Fetch ALL exam-eligible questions (no limit)
+      const { data, error } = await supabase
         .from('questions')
         .select('*')
         .eq('is_active', true)
         .eq('exam_eligible', true)
+        .order('id')
+        .limit(100000)  // Set to very high number to get all questions
+      
+      if (error) {
+        console.error('Error fetching questions:', error)
+      }
+      
       setQuestions(data || [])
     }
     init()
