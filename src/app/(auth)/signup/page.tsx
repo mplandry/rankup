@@ -56,7 +56,8 @@ export default function SignupPage() {
         return;
       }
     }
-    router.push("/dashboard");
+    // Redirect to welcome page instead of dashboard
+    router.push("/welcome");
   }
 
   return (
