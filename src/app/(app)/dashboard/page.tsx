@@ -39,12 +39,16 @@ export default async function DashboardPage() {
   const sessions = (sessionsRes.data || []) as ExamSession[];
   const name = profileRes.data?.full_name?.split(" ")[0] || "there";
 
+    // Determine if this is their first time on the dashboard
+    const isFirstTime = !stats || stats.total_sessions === 0;
+    const greeting = isFirstTime ? `Welcome, ${name}!` : `Welcome back, ${name}!`;
+
   return (
     <div className='p-8 max-w-5xl mx-auto'>
       {/* Header */}
       <div className='mb-8'>
         <h1 className='text-2xl font-bold text-[#1B2A4A]'>
-          Welcome back, {name}
+          {greeting}}
         </h1>
         <p className='text-gray-500 mt-1'>
           Ready to prep for your promotional exam?
