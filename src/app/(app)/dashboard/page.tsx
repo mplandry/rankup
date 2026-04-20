@@ -48,7 +48,7 @@ export default async function DashboardPage() {
       {/* Header */}
       <div className='mb-8'>
         <h1 className='text-2xl font-bold text-[#1B2A4A]'>
-          {greeting}}
+          {greeting}
         </h1>
         <p className='text-gray-500 mt-1'>
           Ready to prep for your promotional exam?
