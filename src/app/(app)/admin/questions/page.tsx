@@ -14,10 +14,18 @@ type Question = {
   exam_eligible: boolean;
 };
 
+type DistRow = { correct_answer: string | null };
+
 export default function QuestionsPage() {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [filteredQuestions, setFilteredQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Answer distribution state
+  const [dist, setDist] = useState<Record<string, number>>({ A: 0, B: 0, C: 0, D: 0 });
+  const [distTotal, setDistTotal] = useState(0);
+  const [distPct, setDistPct] = useState<Record<string, number>>({ A: 0, B: 0, C: 0, D: 0 });
+  const [isSkewed, setIsSkewed] = useState(false);
 
   // Filter states
   const [searchText, setSearchText] = useState("");
@@ -33,6 +41,7 @@ export default function QuestionsPage() {
 
   useEffect(() => {
     loadQuestions();
+    loadDistribution();
   }, []);
 
   useEffect(() => {
@@ -90,6 +99,35 @@ export default function QuestionsPage() {
       console.error("Error loading questions:", error);
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function loadDistribution() {
+    try {
+      const supabase = createClient();
+      const { data: distRows } = await supabase
+        .from('questions')
+        .select('correct_answer')
+        .eq('is_active', true)
+        .eq('review_status', 'approved');
+
+      const newDist = { A: 0, B: 0, C: 0, D: 0 } as Record<string, number>;
+      for (const row of (distRows ?? []) as DistRow[]) {
+        const key = String(row.correct_answer ?? '').toUpperCase();
+        if (key in newDist) newDist[key]++;
+      }
+      const total = Object.values(newDist).reduce((a, b) => a + b, 0);
+      const pct = Object.fromEntries(
+        Object.entries(newDist).map(([k, v]) => [k, total > 0 ? Math.round((v / total) * 100) : 0])
+      ) as Record<string, number>;
+      const skewed = Object.values(pct).some((p) => p > 30 || p < 20) && total > 0;
+
+      setDist(newDist);
+      setDistTotal(total);
+      setDistPct(pct);
+      setIsSkewed(skewed);
+    } catch (error) {
+      console.error('Error loading answer distribution:', error);
     }
   }
 
@@ -297,6 +335,50 @@ export default function QuestionsPage() {
           </div>
         )}
       </div>
+
+      {/* Answer Distribution Panel */}
+      {distTotal > 0 && (
+        <div className="bg-white border border-gray-200 rounded-xl p-6 mb-6">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h2 className="font-semibold text-[#1B2A4A]">Answer Distribution</h2>
+              <p className="text-xs text-gray-400 mt-0.5">{distTotal} approved questions · target 20–30% each</p>
+            </div>
+            {isSkewed && (
+              <span className="text-xs font-bold bg-amber-100 text-amber-700 px-3 py-1 rounded-full">
+                ⚠ Imbalance Detected
+              </span>
+            )}
+          </div>
+          <div className="flex gap-4 mb-3">
+            {(['A','B','C','D'] as const).map((l) => {
+              const pct = distPct[l] ?? 0;
+              const isHigh = pct > 30;
+              const isLow = pct < 20 && distTotal > 0;
+              return (
+                <div key={l} className="flex-1 text-center">
+                  <div className={`text-lg font-black ${isHigh ? 'text-red-600' : isLow ? 'text-amber-500' : 'text-[#1B2A4A]'}`}>
+                    {pct}%
+                  </div>
+                  <div className="h-3 bg-gray-100 rounded-full overflow-hidden mt-1 mb-1">
+                    <div
+                      className={`h-full rounded-full ${isHigh ? 'bg-red-500' : isLow ? 'bg-amber-400' : 'bg-blue-500'}`}
+                      style={{ width: `${pct}%` }}
+                    />
+                  </div>
+                  <div className="text-sm font-bold text-gray-500">{l}</div>
+                  <div className="text-xs text-gray-400">{dist[l]}</div>
+                </div>
+              );
+            })}
+          </div>
+          {isSkewed && (
+            <div className="bg-amber-50 rounded-lg px-3 py-2 text-xs text-amber-800">
+              Ask your AI tool to vary correct answer placement more evenly in the next batch.
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Questions Table */}
       <div className='bg-white rounded-xl border border-gray-200 overflow-hidden'>
