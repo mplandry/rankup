@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
-import { BookOpen, Users, Upload, Database, List } from "lucide-react";
+import { BookOpen, Users, Upload, Database, List, ClipboardCheck } from "lucide-react";
 import ExamTypeSwitcher from "@/components/admin/ExamTypeSwitcher";
 import AdminReadingList from "@/components/admin/AdminReadingList";
 
@@ -11,7 +11,7 @@ export default async function AdminPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const [questionsRes, studentsRes, sessionsRes, profileRes] =
+  const [questionsRes, studentsRes, sessionsRes, profileRes, pendingReviewRes] =
     await Promise.all([
       supabase
         .from("questions")
@@ -27,7 +27,14 @@ export default async function AdminPage() {
         .eq("status", "completed")
         .eq("mode", "exam"),
       supabase.from("profiles").select("exam_type").eq("id", user!.id).single(),
+      supabase
+        .from("questions")
+        .select("*", { count: "exact", head: true })
+        .eq("is_active", true)
+        .in("review_status", ["pending", "needs_revision"]),
     ]);
+
+  const pendingReview = pendingReviewRes.count ?? 0;
 
   const stats = [
     {
@@ -124,6 +131,26 @@ export default async function AdminPage() {
               Bulk import from a CSV file
             </div>
           </div>
+        </Link>
+      </div>
+
+      <div className='grid grid-cols-1 md:grid-cols-3 gap-4 mb-8'>
+        <Link
+          href='/admin/review'
+          className='flex items-center gap-4 bg-white border border-gray-200 rounded-xl p-6 hover:border-red-300 hover:shadow-sm transition-all'
+        >
+          <div className='w-11 h-11 bg-amber-100 rounded-xl flex items-center justify-center'>
+            <ClipboardCheck className='w-5 h-5 text-amber-600' />
+          </div>
+          <div className='flex-1'>
+            <div className='font-semibold text-[#1B2A4A]'>Review Queue</div>
+            <div className='text-sm text-gray-500'>Approve questions for students</div>
+          </div>
+          {pendingReview > 0 && (
+            <span className='text-xs font-bold bg-amber-100 text-amber-700 px-2.5 py-1 rounded-full'>
+              {pendingReview}
+            </span>
+          )}
         </Link>
       </div>
 
