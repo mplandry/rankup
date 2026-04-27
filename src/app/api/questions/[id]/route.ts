@@ -51,3 +51,34 @@ export async function DELETE(_request: Request, { params }: Props) {
   if (error) return NextResponse.json({ error: error.message }, { status: 400 })
   return NextResponse.json({ ok: true })
 }
+
+// PATCH /api/questions/[id] — update review status (admin only)
+export async function PATCH(request: Request, { params }: Props) {
+  const { id } = await params
+  const supabase = await createClient()
+  const user = await requireAdmin(supabase)
+  if (!user) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+
+  const body = await request.json()
+
+  const allowed = ['review_status', 'review_notes', 'originality_reviewed',
+                   'originality_reviewed_by', 'originality_reviewed_at']
+  const updates: Record<string, unknown> = { updated_at: new Date().toISOString() }
+  for (const key of allowed) {
+    if (key in body) updates[key] = body[key]
+  }
+
+  if (Object.keys(updates).length === 1) {
+    return NextResponse.json({ error: 'No valid fields to update' }, { status: 400 })
+  }
+
+  const { data, error } = await supabase
+    .from('questions')
+    .update(updates)
+    .eq('id', id)
+    .select('id, review_status')
+    .single()
+
+  if (error) return NextResponse.json({ error: error.message }, { status: 400 })
+  return NextResponse.json(data)
+}
