@@ -160,7 +160,9 @@ export interface CsvQuestionRow {
 export interface CsvParseResult {
   valid: Omit<
     Question,
-    "id" | "created_at" | "updated_at" | "is_active" | "created_by"
+    | "id" | "created_at" | "updated_at" | "is_active" | "created_by"
+    | "review_status" | "review_notes" | "distractor_score" | "distractor_notes"
+    | "originality_reviewed" | "originality_reviewed_by" | "originality_reviewed_at"
   >[];
   errors: CsvRowError[];
 }
