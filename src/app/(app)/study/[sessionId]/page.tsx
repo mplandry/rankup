@@ -36,7 +36,7 @@ export default async function StudySessionPage({ params }: Props) {
 
   // Find first unanswered question index
   const firstUnanswered = sessionQuestions.findIndex((sq) => sq.user_answer === null)
-  const startIndex = firstUnanswered === -1 ? sessionQuestions.length - 1 : firstUnanswered
+  const startIndex = firstUnanswered === -1 ? sessionQuestions.length : firstUnanswered
 
   return (
     <StudySession

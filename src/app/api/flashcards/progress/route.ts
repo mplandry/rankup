@@ -9,7 +9,7 @@ export async function POST(req: Request) {
   if (!user)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { question_id, knew, ease_factor, interval_days, next_review_at } =
+  const { question_id, knew, ease_factor, interval_days, repetitions, next_review_at } =
     await req.json();
 
   const { error } = await supabase.from("flashcard_progress").upsert(
@@ -18,7 +18,7 @@ export async function POST(req: Request) {
       question_id,
       ease_factor,
       interval_days,
-      repetitions: knew ? 1 : 0,
+      repetitions: repetitions ?? (knew ? 1 : 0),
       next_review_at,
       last_reviewed_at: new Date().toISOString(),
     },

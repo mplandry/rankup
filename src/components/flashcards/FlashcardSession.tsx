@@ -78,6 +78,7 @@ export default function FlashcardSession({
           knew,
           ease_factor: easeFactor,
           interval_days: intervalDays,
+          repetitions,
           next_review_at: nextReview.toISOString(),
         }),
       });

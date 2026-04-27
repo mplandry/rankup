@@ -64,3 +64,42 @@ export async function POST(request: Request) {
 
   return NextResponse.json({ session_id: session.id });
 }
+
+export async function PATCH(request: Request) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const body = await request.json();
+  const { session_question_id, user_answer, flagged } = body;
+
+  if (!session_question_id) {
+    return NextResponse.json({ error: "session_question_id required" }, { status: 400 });
+  }
+
+  // Verify ownership via join
+  const { data: sq } = await supabase
+    .from("exam_session_questions")
+    .select("id, session:exam_sessions!inner(user_id)")
+    .eq("id", session_question_id)
+    .single();
+
+  if (!sq || (sq.session as any).user_id !== user.id) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+
+  const updates: Record<string, unknown> = {};
+  if (user_answer !== undefined) {
+    updates.user_answer = user_answer;
+    updates.answered_at = new Date().toISOString();
+  }
+  if (flagged !== undefined) updates.flagged = flagged;
+
+  const { error } = await supabase
+    .from("exam_session_questions")
+    .update(updates)
+    .eq("id", session_question_id);
+
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  return NextResponse.json({ ok: true });
+}
