@@ -39,6 +39,13 @@ export interface Question {
   exam_eligible: boolean;
   difficulty: Difficulty;
   is_active: boolean;
+  review_status: 'pending' | 'approved' | 'needs_revision';
+  review_notes: string | null;
+  distractor_score: number | null;
+  distractor_notes: string | null;
+  originality_reviewed: boolean;
+  originality_reviewed_by: string | null;
+  originality_reviewed_at: string | null;
   created_by: string | null;
   created_at: string;
   updated_at: string;
@@ -153,7 +160,9 @@ export interface CsvQuestionRow {
 export interface CsvParseResult {
   valid: Omit<
     Question,
-    "id" | "created_at" | "updated_at" | "is_active" | "created_by"
+    | "id" | "created_at" | "updated_at" | "is_active" | "created_by"
+    | "review_status" | "review_notes" | "distractor_score" | "distractor_notes"
+    | "originality_reviewed" | "originality_reviewed_by" | "originality_reviewed_at"
   >[];
   errors: CsvRowError[];
 }
@@ -162,6 +171,21 @@ export interface CsvRowError {
   row: number;
   field: string;
   message: string;
+}
+
+export interface ImportQualityResult {
+  inserted: number;
+  skipped: number;
+  message: string;
+  low_distractor_count: number;
+  duplicate_count: number;
+  answer_distribution: { A: number; B: number; C: number; D: number };
+  flagged_questions: Array<{
+    question_text: string;
+    flag_type: 'distractor' | 'duplicate';
+    score?: number;
+    match_pct?: number;
+  }>;
 }
 
 // For the answer submission during a session
