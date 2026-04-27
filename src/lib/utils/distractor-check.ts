@@ -43,8 +43,9 @@ Respond with JSON only, no explanation outside the JSON:
       messages: [{ role: 'user', content: prompt }],
     })
 
-    const text = message.content[0].type === 'text' ? message.content[0].text : ''
-    const parsed = JSON.parse(text.trim())
+    const raw = message.content[0].type === 'text' ? message.content[0].text : ''
+    const text = raw.trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '')
+    const parsed = JSON.parse(text)
     return {
       score: Math.max(0, Math.min(100, Number(parsed.score) || 50)),
       note: String(parsed.note || ''),

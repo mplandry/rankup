@@ -105,7 +105,7 @@ export default function CsvImporter() {
           </div>
           <div className="bg-white border border-gray-200 rounded-xl p-4 text-center">
             <div className="text-3xl font-black text-green-600">
-              {importResult.inserted - importResult.low_distractor_count - importResult.duplicate_count}
+              {Math.max(0, importResult.inserted - importResult.low_distractor_count)}
             </div>
             <div className="text-xs font-semibold text-gray-500 uppercase tracking-wide mt-1">
               Ready to Review

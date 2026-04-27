@@ -4,6 +4,8 @@ import { checkBatch } from '@/lib/utils/distractor-check'
 import { findDuplicates } from '@/lib/utils/duplicate-detect'
 import type { ImportQualityResult } from '@/types'
 
+export const maxDuration = 300 // 5 minutes — AI distractor checks can be slow on large CSVs
+
 const CHUNK_SIZE = 100
 
 export async function POST(request: Request) {

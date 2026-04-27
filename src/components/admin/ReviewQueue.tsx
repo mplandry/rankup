@@ -35,6 +35,7 @@ export default function ReviewQueue({ initialQuestions }: Props) {
   const [notes, setNotes] = useState('')
   const [originality, setOriginality] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [actionError, setActionError] = useState<string | null>(null)
 
   const current = questions[index] ?? null
   const total = questions.length
@@ -61,18 +62,25 @@ export default function ReviewQueue({ initialQuestions }: Props) {
     }
 
     setSaving(true)
+    setActionError(null)
     try {
-      await fetch(`/api/questions/${current.id}`, {
+      const res = await fetch(`/api/questions/${current.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           review_status: status,
           review_notes: notes || null,
           originality_reviewed: originality,
-          ...(originality ? { originality_reviewed_at: new Date().toISOString() } : {}),
         }),
       })
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        setActionError(data.error || `Server error (${res.status})`)
+        return
+      }
       advanceOrEnd(current.id, status)
+    } catch {
+      setActionError('Network error — action not saved')
     } finally {
       setSaving(false)
     }
@@ -261,6 +269,11 @@ export default function ReviewQueue({ initialQuestions }: Props) {
         </div>
 
         {/* Actions */}
+        {actionError && (
+          <div className="bg-red-50 border border-red-200 rounded-lg px-3 py-2 text-xs text-red-700">
+            {actionError}
+          </div>
+        )}
         <div className="flex gap-3">
           <button
             onClick={() => handleAction('needs_revision')}
