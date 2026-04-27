@@ -21,6 +21,7 @@ export async function POST(request: Request) {
     .from("questions")
     .select("*")
     .eq("is_active", true)
+    .eq("review_status", "approved")
     .eq("study_eligible", true)
     .in("exam_type", examTypes);
 
