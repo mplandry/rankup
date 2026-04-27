@@ -9,8 +9,12 @@ ALTER TABLE questions
     CHECK (distractor_score >= 0 AND distractor_score <= 100),
   ADD COLUMN IF NOT EXISTS distractor_notes       text,
   ADD COLUMN IF NOT EXISTS originality_reviewed   boolean     NOT NULL DEFAULT false,
-  ADD COLUMN IF NOT EXISTS originality_reviewed_by text,
+  ADD COLUMN IF NOT EXISTS originality_reviewed_by uuid,
   ADD COLUMN IF NOT EXISTS originality_reviewed_at timestamptz;
+
+-- Backfill: existing questions are grandfathered in as approved
+-- Only new questions inserted after this migration will start as pending
+UPDATE questions SET review_status = 'approved';
 
 -- Index for the review queue (pending/needs_revision queries)
 CREATE INDEX IF NOT EXISTS idx_questions_review_status
