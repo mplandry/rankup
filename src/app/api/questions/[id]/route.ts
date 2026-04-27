@@ -61,11 +61,23 @@ export async function PATCH(request: Request, { params }: Props) {
 
   const body = await request.json()
 
-  const allowed = ['review_status', 'review_notes', 'originality_reviewed',
-                   'originality_reviewed_by', 'originality_reviewed_at']
+  const allowed = ['review_status', 'review_notes', 'originality_reviewed']
   const updates: Record<string, unknown> = { updated_at: new Date().toISOString() }
   for (const key of allowed) {
     if (key in body) updates[key] = body[key]
+  }
+
+  // Server-side: populate audit fields based on originality_reviewed
+  if ('originality_reviewed' in body) {
+    if (body.originality_reviewed === true) {
+      updates.originality_reviewed_by = user.id
+      if (!updates.originality_reviewed_at) {
+        updates.originality_reviewed_at = new Date().toISOString()
+      }
+    } else {
+      updates.originality_reviewed_by = null
+      updates.originality_reviewed_at = null
+    }
   }
 
   if (Object.keys(updates).length === 1) {
