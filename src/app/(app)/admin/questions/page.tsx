@@ -741,7 +741,7 @@ export default function AdminQuestionsPage() {
     }
   };
 
-  const handleDelete = async (questionId: number) => {
+  const handleDelete = async (questionId: string) => {
     if (!confirm("Are you sure you want to delete this question?")) return;
 
     try {
@@ -761,7 +761,7 @@ export default function AdminQuestionsPage() {
   };
 
   const toggleEligibility = async (
-    questionId: number,
+    questionId: string,
     field: "study_eligible" | "exam_eligible",
     currentValue: boolean,
   ) => {
