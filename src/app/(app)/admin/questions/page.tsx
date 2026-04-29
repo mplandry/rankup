@@ -636,7 +636,7 @@ export default function AdminQuestionsPage() {
 
       if (data) {
         const dist = { A: 0, B: 0, C: 0, D: 0, total: data.length };
-        data.forEach((q) => {
+        data.forEach((q: Question) => {
           if (q.correct_answer in dist) {
             dist[q.correct_answer as "A" | "B" | "C" | "D"]++;
           }
