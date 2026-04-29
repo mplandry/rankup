@@ -407,7 +407,7 @@ function EditModal({
               Edition
             </label>
             <input
-              value={editedQuestion.edition}
+              value={editedQuestion.edition || ""}
               onChange={(e) => updateField("edition", e.target.value)}
               className='w-full px-2.5 py-2.5 border border-gray-200 rounded-lg text-sm'
             />
