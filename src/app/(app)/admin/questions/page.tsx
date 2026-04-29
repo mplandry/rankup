@@ -320,7 +320,7 @@ function EditModal({
         <div className='flex justify-between items-center mb-6'>
           <div>
             <div className='text-xl font-bold'>
-              Edit Question #{question.question_id}
+              Edit Question #{question.id}
             </div>
             <div className='text-[13px] text-gray-500 mt-1'>
               {question.book_title} · Ch. {question.chapter}
@@ -665,7 +665,7 @@ export default function AdminQuestionsPage() {
 
       const { data, count, error } = await query
         .range(from, to)
-        .order("question_id", { ascending: true });
+        .order("id", { ascending: true });
 
       if (error) throw error;
 
@@ -726,7 +726,7 @@ export default function AdminQuestionsPage() {
           page_end: editedQuestion.page_end,
           updated_at: new Date().toISOString(),
         })
-        .eq("question_id", editedQuestion.question_id);
+        .eq("id", editedQuestion.id);
 
       if (error) throw error;
 
@@ -748,7 +748,7 @@ export default function AdminQuestionsPage() {
       const { error } = await supabase
         .from("questions")
         .update({ is_active: false })
-        .eq("question_id", questionId);
+        .eq("id", questionId);
 
       if (error) throw error;
 
@@ -769,7 +769,7 @@ export default function AdminQuestionsPage() {
       const { error } = await supabase
         .from("questions")
         .update({ [field]: !currentValue })
-        .eq("question_id", questionId);
+        .eq("id", questionId);
 
       if (error) throw error;
       loadQuestions();
@@ -848,9 +848,9 @@ export default function AdminQuestionsPage() {
               </thead>
               <tbody>
                 {questions.map((q) => (
-                  <tr key={q.question_id} className='border-b border-gray-200'>
+                  <tr key={q.id} className='border-b border-gray-200'>
                     <td className='px-4 py-3.5 text-[13px] text-gray-500'>
-                      {q.question_id}
+                      {q.id}
                     </td>
                     <td className='px-4 py-3.5 text-[13px] max-w-[400px]'>
                       {q.question_text.substring(0, 100)}
@@ -867,7 +867,7 @@ export default function AdminQuestionsPage() {
                       <button
                         onClick={() =>
                           toggleEligibility(
-                            q.question_id,
+                            q.id,
                             "study_eligible",
                             q.study_eligible,
                           )
@@ -882,7 +882,7 @@ export default function AdminQuestionsPage() {
                       <button
                         onClick={() =>
                           toggleEligibility(
-                            q.question_id,
+                            q.id,
                             "exam_eligible",
                             q.exam_eligible,
                           )
@@ -903,7 +903,7 @@ export default function AdminQuestionsPage() {
                           ✏️
                         </button>
                         <button
-                          onClick={() => handleDelete(q.question_id)}
+                          onClick={() => handleDelete(q.id)}
                           className='px-2.5 py-1.5 bg-transparent border border-gray-200 rounded-md text-lg leading-none text-red-600 hover:bg-red-50'
                           title='Delete question'
                         >
