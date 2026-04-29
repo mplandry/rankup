@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useEffect, useState, useCallback } from "react";
-import { supabase } from "@/lib/supabase/client";
+import { createClient } from "@/lib/supabase/client";
+const supabase = createClient();
 import type { Question } from "@/lib/supabase/client";
 // ============================================================================
 // CONSTANTS
