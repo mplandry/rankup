@@ -1,0 +1,104 @@
+<h2>Section 3: Admin Review Queue</h2>
+<p class="subtitle">How the question review workflow looks in practice</p>
+
+<div style="display:flex;gap:16px;margin-top:24px;align-items:flex-start;">
+
+  <!-- Left: Queue list -->
+  <div style="width:240px;flex-shrink:0;background:#f8f9fb;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;">
+    <div style="padding:12px 14px;border-bottom:1px solid #e2e8f0;background:#fff;">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#64748b;">Review Queue</div>
+      <div style="font-size:12px;color:#94a3b8;margin-top:2px;">14 pending · 2 flagged</div>
+    </div>
+    <!-- Queue items -->
+    <div style="padding:8px;">
+      <div style="background:#1B2A4A;color:#fff;border-radius:8px;padding:10px 12px;margin-bottom:4px;cursor:pointer;">
+        <div style="font-size:11px;font-weight:600;color:#93c5fd;margin-bottom:2px;">PENDING · Score: 42</div>
+        <div style="font-size:12px;line-height:1.4;">When a structure fire involves a...</div>
+      </div>
+      <div style="background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:10px 12px;margin-bottom:4px;cursor:pointer;">
+        <div style="font-size:11px;font-weight:600;color:#f59e0b;margin-bottom:2px;">NEEDS REVISION</div>
+        <div style="font-size:12px;color:#475569;line-height:1.4;">The primary purpose of a salvage...</div>
+      </div>
+      <div style="background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:10px 12px;margin-bottom:4px;cursor:pointer;">
+        <div style="font-size:11px;font-weight:600;color:#94a3b8;margin-bottom:2px;">PENDING · Score: 78</div>
+        <div style="font-size:12px;color:#475569;line-height:1.4;">According to NFPA 1021, a company...</div>
+      </div>
+      <div style="background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:10px 12px;cursor:pointer;">
+        <div style="font-size:11px;font-weight:600;color:#94a3b8;margin-bottom:2px;">PENDING · Score: 91</div>
+        <div style="font-size:12px;color:#475569;line-height:1.4;">A lieutenant arriving first on scene...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right: Question detail -->
+  <div style="flex:1;min-width:0;">
+
+    <!-- Quality alert banner -->
+    <div style="background:#fef3c7;border:1px solid #fcd34d;border-radius:10px;padding:10px 14px;margin-bottom:12px;display:flex;align-items:flex-start;gap:10px;">
+      <div style="font-size:18px;flex-shrink:0;">⚠️</div>
+      <div>
+        <div style="font-size:12px;font-weight:700;color:#92400e;">Low Distractor Score: 42/100</div>
+        <div style="font-size:11px;color:#78350f;margin-top:2px;">AI flagged: Option C may be too obviously wrong — it uses vague language ("always" / "never") that experienced test-takers eliminate immediately. Consider rewriting.</div>
+      </div>
+    </div>
+
+    <!-- Question card -->
+    <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:18px;margin-bottom:12px;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+        <span style="font-size:11px;background:#fef9c3;color:#713f12;padding:2px 8px;border-radius:20px;font-weight:600;">MEDIUM</span>
+        <span style="font-size:11px;color:#94a3b8;">Fire Officer's Handbook · Ch. 4 · p.112</span>
+      </div>
+      <div style="font-size:14px;font-weight:600;color:#1B2A4A;line-height:1.6;margin-bottom:16px;">
+        When a structure fire involves a potential collapse zone, what is the minimum safe distance a company officer should establish for personnel operating in defensive mode?
+      </div>
+      <!-- Answer options -->
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="border:2px solid #e2e8f0;border-radius:8px;padding:10px 14px;display:flex;align-items:center;gap:10px;">
+          <span style="width:24px;height:24px;border-radius:50%;border:2px solid #cbd5e1;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#64748b;flex-shrink:0;">A</span>
+          <span style="font-size:13px;color:#334155;">One and a half times the building height</span>
+        </div>
+        <div style="border:2px solid #22c55e;background:#f0fdf4;border-radius:8px;padding:10px 14px;display:flex;align-items:center;gap:10px;">
+          <span style="width:24px;height:24px;border-radius:50%;background:#22c55e;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;">B</span>
+          <span style="font-size:13px;color:#166534;font-weight:500;">Equal to the height of the tallest wall</span>
+          <span style="margin-left:auto;font-size:10px;background:#22c55e;color:#fff;padding:2px 6px;border-radius:4px;font-weight:700;">CORRECT</span>
+        </div>
+        <div style="border:2px solid #fca5a5;background:#fef2f2;border-radius:8px;padding:10px 14px;display:flex;align-items:center;gap:10px;">
+          <span style="width:24px;height:24px;border-radius:50%;border:2px solid #fca5a5;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#ef4444;flex-shrink:0;">C</span>
+          <span style="font-size:13px;color:#991b1b;">You should never establish a collapse zone — always evacuate</span>
+          <span style="margin-left:auto;font-size:10px;background:#fee2e2;color:#ef4444;padding:2px 6px;border-radius:4px;font-weight:600;">⚠ FLAGGED</span>
+        </div>
+        <div style="border:2px solid #e2e8f0;border-radius:8px;padding:10px 14px;display:flex;align-items:center;gap:10px;">
+          <span style="width:24px;height:24px;border-radius:50%;border:2px solid #cbd5e1;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#64748b;flex-shrink:0;">D</span>
+          <span style="font-size:13px;color:#334155;">50 feet regardless of building height</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Originality check -->
+    <div style="background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:14px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;">
+      <div>
+        <div style="font-size:13px;font-weight:600;color:#1B2A4A;">Originality Reviewed</div>
+        <div style="font-size:11px;color:#94a3b8;margin-top:2px;">Confirm this question is not verbatim from source material</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div style="width:40px;height:22px;background:#e2e8f0;border-radius:11px;position:relative;cursor:pointer;">
+          <div style="width:18px;height:18px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;box-shadow:0 1px 3px rgba(0,0,0,.2);"></div>
+        </div>
+        <span style="font-size:12px;color:#94a3b8;">Not reviewed</span>
+      </div>
+    </div>
+
+    <!-- Notes + Actions -->
+    <div style="background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:14px;margin-bottom:12px;">
+      <div style="font-size:12px;font-weight:600;color:#475569;margin-bottom:6px;">Review Notes (optional)</div>
+      <div style="border:1px solid #e2e8f0;border-radius:6px;padding:8px 10px;font-size:12px;color:#94a3b8;min-height:48px;">Add a note about why this needs revision...</div>
+    </div>
+
+    <div style="display:flex;gap:10px;">
+      <button style="flex:1;padding:11px;border-radius:8px;border:2px solid #fca5a5;background:#fef2f2;color:#dc2626;font-weight:700;font-size:13px;cursor:pointer;">✗ Needs Revision</button>
+      <button style="flex:1;padding:11px;border-radius:8px;border:2px solid #e2e8f0;background:#f8fafc;color:#475569;font-weight:600;font-size:13px;cursor:pointer;">→ Skip</button>
+      <button style="flex:2;padding:11px;border-radius:8px;background:#1B2A4A;color:#fff;font-weight:700;font-size:13px;cursor:pointer;">✓ Approve</button>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,124 @@
+<h2>Section 4: Answer Distribution Panel</h2>
+<p class="subtitle">Admin view — checks that A/B/C/D correct answers are balanced across the question bank</p>
+
+<div style="margin-top:24px;">
+
+  <!-- Overall summary -->
+  <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:20px;margin-bottom:16px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <div>
+        <div style="font-size:15px;font-weight:700;color:#1B2A4A;">Overall Answer Distribution</div>
+        <div style="font-size:12px;color:#94a3b8;margin-top:2px;">1,247 approved questions · Target: 25% each</div>
+      </div>
+      <div style="background:#fef3c7;border:1px solid #fcd34d;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:600;color:#92400e;">⚠ Imbalance Detected</div>
+    </div>
+
+    <!-- Bar chart -->
+    <div style="display:flex;gap:12px;align-items:flex-end;height:120px;margin-bottom:12px;">
+      <!-- A -->
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
+        <div style="font-size:12px;font-weight:700;color:#1B2A4A;">18%</div>
+        <div style="width:100%;background:#3b82f6;border-radius:6px 6px 0 0;" style="height:86px;"></div>
+        <div style="width:100%;border-radius:6px 6px 0 0;background:#3b82f6;height:86px;"></div>
+      </div>
+      <!-- B -->
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
+        <div style="font-size:12px;font-weight:700;color:#1B2A4A;">27%</div>
+      </div>
+      <!-- C -->
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
+        <div style="font-size:12px;font-weight:700;color:#dc2626;">41%</div>
+      </div>
+      <!-- D -->
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
+        <div style="font-size:12px;font-weight:700;color:#1B2A4A;">14%</div>
+      </div>
+    </div>
+
+    <!-- Visual bars (using inline divs) -->
+    <div style="display:flex;gap:12px;align-items:flex-end;height:100px;margin-bottom:8px;">
+      <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;">
+        <div style="font-size:13px;font-weight:700;color:#3b82f6;margin-bottom:4px;">18%</div>
+        <div style="width:100%;background:#3b82f6;border-radius:6px 6px 0 0;height:54px;"></div>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;">
+        <div style="font-size:13px;font-weight:700;color:#22c55e;margin-bottom:4px;">27%</div>
+        <div style="width:100%;background:#22c55e;border-radius:6px 6px 0 0;height:81px;"></div>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;">
+        <div style="font-size:13px;font-weight:700;color:#dc2626;margin-bottom:4px;">41%</div>
+        <div style="width:100%;background:#dc2626;border-radius:6px 6px 0 0;height:100px;position:relative;">
+          <div style="position:absolute;top:-22px;left:50%;transform:translateX(-50%);font-size:10px;background:#dc2626;color:#fff;padding:2px 6px;border-radius:4px;white-space:nowrap;">Too high ↑</div>
+        </div>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;">
+        <div style="font-size:13px;font-weight:700;color:#f59e0b;margin-bottom:4px;">14%</div>
+        <div style="width:100%;background:#f59e0b;border-radius:6px 6px 0 0;height:42px;"></div>
+      </div>
+    </div>
+    <!-- Labels -->
+    <div style="display:flex;gap:12px;">
+      <div style="flex:1;text-align:center;font-size:13px;font-weight:700;color:#475569;">A</div>
+      <div style="flex:1;text-align:center;font-size:13px;font-weight:700;color:#475569;">B</div>
+      <div style="flex:1;text-align:center;font-size:13px;font-weight:700;color:#475569;">C</div>
+      <div style="flex:1;text-align:center;font-size:13px;font-weight:700;color:#475569;">D</div>
+    </div>
+
+    <!-- Target line note -->
+    <div style="margin-top:12px;padding:10px 14px;background:#f8fafc;border-radius:8px;font-size:12px;color:#64748b;">
+      Target range is <strong>20–30% per letter</strong>. C is over by 16 points. D is under by 11 points. Consider adjusting correct answers on ~200 questions when next importing a batch.
+    </div>
+  </div>
+
+  <!-- Per-book breakdown -->
+  <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:20px;">
+    <div style="font-size:14px;font-weight:700;color:#1B2A4A;margin-bottom:14px;">Breakdown by Book</div>
+    <table style="width:100%;border-collapse:collapse;font-size:12px;">
+      <thead>
+        <tr style="border-bottom:2px solid #f1f5f9;">
+          <th style="text-align:left;padding:6px 10px 10px 0;color:#94a3b8;font-weight:600;text-transform:uppercase;font-size:10px;letter-spacing:.05em;">Book</th>
+          <th style="text-align:center;padding:6px 8px 10px;color:#3b82f6;font-weight:700;">A</th>
+          <th style="text-align:center;padding:6px 8px 10px;color:#22c55e;font-weight:700;">B</th>
+          <th style="text-align:center;padding:6px 8px 10px;color:#dc2626;font-weight:700;">C</th>
+          <th style="text-align:center;padding:6px 8px 10px;color:#f59e0b;font-weight:700;">D</th>
+          <th style="text-align:center;padding:6px 8px 10px;color:#94a3b8;font-weight:600;text-transform:uppercase;font-size:10px;">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid #f1f5f9;">
+          <td style="padding:10px 10px 10px 0;color:#334155;font-weight:500;">Fire Officer's Handbook (5th)</td>
+          <td style="text-align:center;padding:10px 8px;color:#475569;">22%</td>
+          <td style="text-align:center;padding:10px 8px;color:#475569;">26%</td>
+          <td style="text-align:center;padding:10px 8px;color:#475569;">29%</td>
+          <td style="text-align:center;padding:10px 8px;color:#475569;">23%</td>
+          <td style="text-align:center;padding:10px 8px;"><span style="background:#dcfce7;color:#16a34a;padding:2px 8px;border-radius:20px;font-weight:600;font-size:11px;">✓ OK</span></td>
+        </tr>
+        <tr style="border-bottom:1px solid #f1f5f9;">
+          <td style="padding:10px 10px 10px 0;color:#334155;font-weight:500;">Company Officers (6th IFSTA)</td>
+          <td style="text-align:center;padding:10px 8px;color:#475569;">15%</td>
+          <td style="text-align:center;padding:10px 8px;color:#475569;">28%</td>
+          <td style="text-align:center;padding:10px 8px;color:#dc2626;font-weight:700;">48%</td>
+          <td style="text-align:center;padding:10px 8px;color:#475569;">9%</td>
+          <td style="text-align:center;padding:10px 8px;"><span style="background:#fee2e2;color:#dc2626;padding:2px 8px;border-radius:20px;font-weight:600;font-size:11px;">⚠ Skewed</span></td>
+        </tr>
+        <tr style="border-bottom:1px solid #f1f5f9;">
+          <td style="padding:10px 10px 10px 0;color:#334155;font-weight:500;">Building Construction (4th IFSTA)</td>
+          <td style="text-align:center;padding:10px 8px;color:#475569;">24%</td>
+          <td style="text-align:center;padding:10px 8px;color:#475569;">25%</td>
+          <td style="text-align:center;padding:10px 8px;color:#475569;">27%</td>
+          <td style="text-align:center;padding:10px 8px;color:#475569;">24%</td>
+          <td style="text-align:center;padding:10px 8px;"><span style="background:#dcfce7;color:#16a34a;padding:2px 8px;border-radius:20px;font-weight:600;font-size:11px;">✓ OK</span></td>
+        </tr>
+        <tr>
+          <td style="padding:10px 10px 10px 0;color:#334155;font-weight:500;">ERG 2024</td>
+          <td style="text-align:center;padding:10px 8px;color:#475569;">21%</td>
+          <td style="text-align:center;padding:10px 8px;color:#475569;">25%</td>
+          <td style="text-align:center;padding:10px 8px;color:#475569;">31%</td>
+          <td style="text-align:center;padding:10px 8px;color:#475569;">23%</td>
+          <td style="text-align:center;padding:10px 8px;"><span style="background:#dcfce7;color:#16a34a;padding:2px 8px;border-radius:20px;font-weight:600;font-size:11px;">✓ OK</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>

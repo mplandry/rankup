@@ -1,0 +1,7 @@
+{"type":"server-started","port":49177,"host":"127.0.0.1","url_host":"localhost","url":"http://localhost:49177","screen_dir":"/Users/michaellandry/fire-promo-prep/.superpowers/brainstorm/5390-1777297046/content","state_dir":"/Users/michaellandry/fire-promo-prep/.superpowers/brainstorm/5390-1777297046/state"}
+{"type":"screen-added","file":"/Users/michaellandry/fire-promo-prep/.superpowers/brainstorm/5390-1777297046/content/waiting.html"}
+{"type":"screen-added","file":"/Users/michaellandry/fire-promo-prep/.superpowers/brainstorm/5390-1777297046/content/review-queue.html"}
+{"type":"screen-added","file":"/Users/michaellandry/fire-promo-prep/.superpowers/brainstorm/5390-1777297046/content/review-queue-v2.html"}
+{"type":"screen-added","file":"/Users/michaellandry/fire-promo-prep/.superpowers/brainstorm/5390-1777297046/content/distribution.html"}
+{"type":"screen-added","file":"/Users/michaellandry/fire-promo-prep/.superpowers/brainstorm/5390-1777297046/content/import-results.html"}
+{"type":"server-stopped","reason":"idle timeout"}

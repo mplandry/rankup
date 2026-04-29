@@ -1,499 +1,964 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
-import { Search, Edit, Trash2, Plus } from "lucide-react";
+import React, { useEffect, useState, useCallback } from "react";
+import { supabase } from "@/lib/supabase/client";
+import type { Question } from "@/lib/supabase/client";
+// ============================================================================
+// CONSTANTS
+// ============================================================================
 
-type Question = {
-  id: string;
-  book_title: string;
+const ITEMS_PER_PAGE = 50;
+
+// ============================================================================
+// TYPES
+// ============================================================================
+
+interface FilterState {
+  bookTitle: string;
   chapter: string;
-  question_text: string;
   difficulty: string;
-  study_oligible: boolean;
-  exam_eligible: boolean;
-};
+  studyEligible: string;
+  examEligible: string;
+  searchText: string;
+}
 
-type DistRow = { correct_answer: string | null };
+interface AnswerDistribution {
+  A: number;
+  B: number;
+  C: number;
+  D: number;
+  total: number;
+}
 
-export default function QuestionsPage() {
+// ============================================================================
+// CHILD COMPONENTS
+// ============================================================================
+
+function AnswerDistributionChart({
+  distribution,
+}: {
+  distribution: AnswerDistribution;
+}) {
+  const { total } = distribution;
+
+  return (
+    <div className='bg-white border border-gray-200 rounded-xl p-7 mb-5'>
+      <div className='text-[15px] font-bold mb-1.5'>Answer Distribution</div>
+      <div className='text-xs text-gray-500 mb-5'>
+        {total} approved questions · target 20–30% each
+      </div>
+      <div className='grid grid-cols-4 gap-5'>
+        {(["A", "B", "C", "D"] as const).map((letter) => {
+          const count = distribution[letter];
+          const percentage = total > 0 ? Math.round((count / total) * 100) : 0;
+          return (
+            <div key={letter}>
+              <div className='text-xl font-bold mb-1.5'>{percentage}%</div>
+              <div className='h-2 bg-gray-200 rounded-full overflow-hidden mb-2'>
+                <div
+                  className='h-full bg-blue-500 rounded-full transition-all'
+                  style={{ width: `${percentage}%` }}
+                />
+              </div>
+              <div className='text-[13px] font-bold'>{letter}</div>
+              <div className='text-xs text-gray-500'>{count}</div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function FilterBar({
+  filters,
+  bookTitles,
+  chapters,
+  onFilterChange,
+  onClearFilters,
+  hasFilters,
+}: {
+  filters: FilterState;
+  bookTitles: string[];
+  chapters: string[];
+  onFilterChange: (key: keyof FilterState, value: string) => void;
+  onClearFilters: () => void;
+  hasFilters: boolean;
+}) {
+  return (
+    <>
+      <div className='mb-4'>
+        <input
+          type='text'
+          placeholder='Search question text...'
+          value={filters.searchText}
+          onChange={(e) => onFilterChange("searchText", e.target.value)}
+          className='w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm'
+        />
+      </div>
+
+      <div className='flex gap-3 mb-7 flex-wrap'>
+        <select
+          value={filters.bookTitle}
+          onChange={(e) => onFilterChange("bookTitle", e.target.value)}
+          className='flex-1 min-w-[200px] px-3 py-2 border border-gray-200 rounded-lg text-[13px] bg-white'
+        >
+          <option value=''>All Books</option>
+          {bookTitles.map((book) => (
+            <option key={book} value={book}>
+              {book}
+            </option>
+          ))}
+        </select>
+
+        <select
+          value={filters.chapter}
+          onChange={(e) => onFilterChange("chapter", e.target.value)}
+          className='flex-1 min-w-[150px] px-3 py-2 border border-gray-200 rounded-lg text-[13px] bg-white'
+        >
+          <option value=''>All Chapters</option>
+          {chapters.map((ch) => (
+            <option key={ch} value={ch}>
+              Chapter {ch}
+            </option>
+          ))}
+        </select>
+
+        <select
+          value={filters.difficulty}
+          onChange={(e) => onFilterChange("difficulty", e.target.value)}
+          className='flex-1 min-w-[150px] px-3 py-2 border border-gray-200 rounded-lg text-[13px] bg-white'
+        >
+          <option value=''>All Difficulties</option>
+          <option value='easy'>Easy</option>
+          <option value='medium'>Medium</option>
+          <option value='hard'>Hard</option>
+        </select>
+
+        <select
+          value={filters.studyEligible}
+          onChange={(e) => onFilterChange("studyEligible", e.target.value)}
+          className='flex-1 min-w-[120px] px-3 py-2 border border-gray-200 rounded-lg text-[13px] bg-white'
+        >
+          <option value=''>Study: All</option>
+          <option value='true'>Study: Yes</option>
+          <option value='false'>Study: No</option>
+        </select>
+
+        <select
+          value={filters.examEligible}
+          onChange={(e) => onFilterChange("examEligible", e.target.value)}
+          className='flex-1 min-w-[120px] px-3 py-2 border border-gray-200 rounded-lg text-[13px] bg-white'
+        >
+          <option value=''>Exam: All</option>
+          <option value='true'>Exam: Yes</option>
+          <option value='false'>Exam: No</option>
+        </select>
+
+        {hasFilters && (
+          <button
+            onClick={onClearFilters}
+            className='px-4 py-2 bg-transparent border border-gray-200 rounded-lg text-[13px] font-semibold text-gray-600 hover:bg-gray-50'
+          >
+            Clear Filters
+          </button>
+        )}
+      </div>
+    </>
+  );
+}
+
+function DifficultyBadge({ difficulty }: { difficulty: string }) {
+  const colors = {
+    easy: "bg-green-100 text-green-700",
+    medium: "bg-yellow-100 text-yellow-700",
+    hard: "bg-red-100 text-red-700",
+  };
+
+  return (
+    <span
+      className={`inline-block px-2 py-0.5 rounded text-[11px] font-semibold ${colors[difficulty as keyof typeof colors]}`}
+    >
+      {difficulty}
+    </span>
+  );
+}
+
+function Pagination({
+  currentPage,
+  totalPages,
+  totalCount,
+  itemsPerPage,
+  onPageChange,
+}: {
+  currentPage: number;
+  totalPages: number;
+  totalCount: number;
+  itemsPerPage: number;
+  onPageChange: (page: number) => void;
+}) {
+  const getPageNumbers = () => {
+    const pages: (number | string)[] = [];
+    const maxVisible = 7;
+
+    if (totalPages <= maxVisible) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      if (currentPage <= 3) {
+        for (let i = 1; i <= 5; i++) pages.push(i);
+        pages.push("...");
+        pages.push(totalPages);
+      } else if (currentPage >= totalPages - 2) {
+        pages.push(1);
+        pages.push("...");
+        for (let i = totalPages - 4; i <= totalPages; i++) pages.push(i);
+      } else {
+        pages.push(1);
+        pages.push("...");
+        for (let i = currentPage - 1; i <= currentPage + 1; i++) pages.push(i);
+        pages.push("...");
+        pages.push(totalPages);
+      }
+    }
+    return pages;
+  };
+
+  const startItem = (currentPage - 1) * itemsPerPage + 1;
+  const endItem = Math.min(currentPage * itemsPerPage, totalCount);
+
+  return (
+    <div className='flex justify-between items-center flex-wrap gap-4'>
+      <div className='text-[13px] text-gray-500'>
+        Showing {startItem}–{endItem} of {totalCount.toLocaleString()} questions
+      </div>
+
+      <div className='flex gap-1.5 flex-wrap'>
+        <button
+          onClick={() => onPageChange(1)}
+          disabled={currentPage === 1}
+          className='px-3 py-2 bg-white border border-gray-200 rounded-lg text-[13px] font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50'
+        >
+          First
+        </button>
+
+        <button
+          onClick={() => onPageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className='px-3 py-2 bg-white border border-gray-200 rounded-lg text-[13px] font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50'
+        >
+          ← Prev
+        </button>
+
+        {getPageNumbers().map((page, idx) =>
+          page === "..." ? (
+            <span
+              key={`ellipsis-${idx}`}
+              className='px-3 py-2 text-gray-400 flex items-center'
+            >
+              ...
+            </span>
+          ) : (
+            <button
+              key={page}
+              onClick={() => onPageChange(page as number)}
+              className={`px-3.5 py-2 border rounded-lg text-[13px] font-semibold ${
+                currentPage === page
+                  ? "bg-red-600 text-white border-red-600"
+                  : "bg-white border-gray-200 hover:bg-gray-50"
+              }`}
+            >
+              {page}
+            </button>
+          ),
+        )}
+
+        <button
+          onClick={() => onPageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className='px-3 py-2 bg-white border border-gray-200 rounded-lg text-[13px] font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50'
+        >
+          Next →
+        </button>
+
+        <button
+          onClick={() => onPageChange(totalPages)}
+          disabled={currentPage === totalPages}
+          className='px-3 py-2 bg-white border border-gray-200 rounded-lg text-[13px] font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50'
+        >
+          Last
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function EditModal({
+  question,
+  onClose,
+  onSave,
+  saving,
+}: {
+  question: Question;
+  onClose: () => void;
+  onSave: (question: Question) => Promise<void>;
+  saving: boolean;
+}) {
+  const [editedQuestion, setEditedQuestion] = useState<Question>(question);
+
+  const updateField = <K extends keyof Question>(
+    key: K,
+    value: Question[K],
+  ) => {
+    setEditedQuestion((prev) => ({ ...prev, [key]: value }));
+  };
+
+  return (
+    <div className='fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-5'>
+      <div className='bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-auto p-8'>
+        {/* Header */}
+        <div className='flex justify-between items-center mb-6'>
+          <div>
+            <div className='text-xl font-bold'>
+              Edit Question #{question.question_id}
+            </div>
+            <div className='text-[13px] text-gray-500 mt-1'>
+              {question.book_title} · Ch. {question.chapter}
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            className='text-gray-400 hover:text-gray-600 text-2xl leading-none p-2'
+          >
+            ×
+          </button>
+        </div>
+
+        {/* Question Text */}
+        <div className='mb-5'>
+          <label className='block text-[13px] font-semibold mb-1.5'>
+            Question Text
+          </label>
+          <textarea
+            value={editedQuestion.question_text}
+            onChange={(e) => updateField("question_text", e.target.value)}
+            className='w-full px-3 py-3 border border-gray-200 rounded-lg text-sm resize-y min-h-[100px]'
+          />
+        </div>
+
+        {/* Answer Options */}
+        <div className='mb-5'>
+          <label className='block text-[13px] font-semibold mb-3'>
+            Answer Options
+          </label>
+          <div className='space-y-3'>
+            {(["A", "B", "C", "D"] as const).map((letter) => {
+              const key = `answer_${letter.toLowerCase()}` as keyof Question;
+              return (
+                <div key={letter} className='flex gap-2 items-center'>
+                  <input
+                    type='radio'
+                    checked={editedQuestion.correct_answer === letter}
+                    onChange={() => updateField("correct_answer", letter)}
+                    className='w-4 h-4 cursor-pointer'
+                  />
+                  <span className='font-bold w-5'>{letter}.</span>
+                  <input
+                    value={editedQuestion[key] as string}
+                    onChange={(e) => updateField(key, e.target.value)}
+                    className='flex-1 px-2.5 py-2.5 border border-gray-200 rounded-lg text-sm'
+                  />
+                </div>
+              );
+            })}
+          </div>
+          <div className='text-xs text-gray-500 mt-2'>
+            Select the radio button for the correct answer
+          </div>
+        </div>
+
+        {/* Explanation */}
+        <div className='mb-5'>
+          <label className='block text-[13px] font-semibold mb-1.5'>
+            Explanation
+          </label>
+          <textarea
+            value={editedQuestion.explanation || ""}
+            onChange={(e) => updateField("explanation", e.target.value)}
+            className='w-full px-3 py-3 border border-gray-200 rounded-lg text-sm resize-y min-h-[80px]'
+          />
+        </div>
+
+        {/* Metadata Grid */}
+        <div className='grid grid-cols-2 gap-4 mb-5'>
+          <div>
+            <label className='block text-[13px] font-semibold mb-1.5'>
+              Book Title
+            </label>
+            <input
+              value={editedQuestion.book_title}
+              onChange={(e) => updateField("book_title", e.target.value)}
+              className='w-full px-2.5 py-2.5 border border-gray-200 rounded-lg text-sm'
+            />
+          </div>
+
+          <div>
+            <label className='block text-[13px] font-semibold mb-1.5'>
+              Edition
+            </label>
+            <input
+              value={editedQuestion.edition}
+              onChange={(e) => updateField("edition", e.target.value)}
+              className='w-full px-2.5 py-2.5 border border-gray-200 rounded-lg text-sm'
+            />
+          </div>
+
+          <div>
+            <label className='block text-[13px] font-semibold mb-1.5'>
+              Chapter
+            </label>
+            <input
+              value={editedQuestion.chapter}
+              onChange={(e) => updateField("chapter", e.target.value)}
+              className='w-full px-2.5 py-2.5 border border-gray-200 rounded-lg text-sm'
+            />
+          </div>
+
+          <div>
+            <label className='block text-[13px] font-semibold mb-1.5'>
+              Topic
+            </label>
+            <input
+              value={editedQuestion.topic || ""}
+              onChange={(e) => updateField("topic", e.target.value)}
+              className='w-full px-2.5 py-2.5 border border-gray-200 rounded-lg text-sm'
+            />
+          </div>
+
+          <div>
+            <label className='block text-[13px] font-semibold mb-1.5'>
+              Page Start
+            </label>
+            <input
+              type='number'
+              value={editedQuestion.page_start || ""}
+              onChange={(e) =>
+                updateField("page_start", parseInt(e.target.value) || null)
+              }
+              className='w-full px-2.5 py-2.5 border border-gray-200 rounded-lg text-sm'
+            />
+          </div>
+
+          <div>
+            <label className='block text-[13px] font-semibold mb-1.5'>
+              Page End
+            </label>
+            <input
+              type='number'
+              value={editedQuestion.page_end || ""}
+              onChange={(e) =>
+                updateField("page_end", parseInt(e.target.value) || null)
+              }
+              className='w-full px-2.5 py-2.5 border border-gray-200 rounded-lg text-sm'
+            />
+          </div>
+        </div>
+
+        {/* Settings */}
+        <div className='grid grid-cols-3 gap-4 mb-6'>
+          <div>
+            <label className='block text-[13px] font-semibold mb-1.5'>
+              Difficulty
+            </label>
+            <select
+              value={editedQuestion.difficulty}
+              onChange={(e) =>
+                updateField(
+                  "difficulty",
+                  e.target.value as "easy" | "medium" | "hard",
+                )
+              }
+              className='w-full px-2.5 py-2.5 border border-gray-200 rounded-lg text-sm bg-white'
+            >
+              <option value='easy'>Easy</option>
+              <option value='medium'>Medium</option>
+              <option value='hard'>Hard</option>
+            </select>
+          </div>
+
+          <div>
+            <label className='block text-[13px] font-semibold mb-1.5'>
+              Study Eligible
+            </label>
+            <select
+              value={editedQuestion.study_eligible ? "true" : "false"}
+              onChange={(e) =>
+                updateField("study_eligible", e.target.value === "true")
+              }
+              className='w-full px-2.5 py-2.5 border border-gray-200 rounded-lg text-sm bg-white'
+            >
+              <option value='true'>Yes</option>
+              <option value='false'>No</option>
+            </select>
+          </div>
+
+          <div>
+            <label className='block text-[13px] font-semibold mb-1.5'>
+              Exam Eligible
+            </label>
+            <select
+              value={editedQuestion.exam_eligible ? "true" : "false"}
+              onChange={(e) =>
+                updateField("exam_eligible", e.target.value === "true")
+              }
+              className='w-full px-2.5 py-2.5 border border-gray-200 rounded-lg text-sm bg-white'
+            >
+              <option value='true'>Yes</option>
+              <option value='false'>No</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className='flex gap-3 justify-end'>
+          <button
+            onClick={onClose}
+            disabled={saving}
+            className='px-5 py-2.5 bg-transparent border border-gray-200 rounded-lg text-sm font-semibold disabled:opacity-50 hover:bg-gray-50'
+          >
+            Cancel
+          </button>
+          <button
+            onClick={() => onSave(editedQuestion)}
+            disabled={saving}
+            className='px-5 py-2.5 bg-red-600 text-white rounded-lg text-sm font-semibold disabled:opacity-50 hover:bg-red-700'
+          >
+            {saving ? "Saving..." : "Save Changes"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// MAIN COMPONENT
+// ============================================================================
+
+export default function AdminQuestionsPage() {
+  // State
   const [questions, setQuestions] = useState<Question[]>([]);
-  const [filteredQuestions, setFilteredQuestions] = useState<Question[]>([]);
+  const [totalCount, setTotalCount] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
-
-  // Answer distribution state
-  const [dist, setDist] = useState<Record<string, number>>({ A: 0, B: 0, C: 0, D: 0 });
-  const [distTotal, setDistTotal] = useState(0);
-  const [distPct, setDistPct] = useState<Record<string, number>>({ A: 0, B: 0, C: 0, D: 0 });
-  const [isSkewed, setIsSkewed] = useState(false);
-
-  // Filter states
-  const [searchText, setSearchText] = useState("");
-  const [selectedBook, setSelectedBook] = useState("");
-  const [selectedChapter, setSelectedChapter] = useState("");
-  const [selectedDifficulty, setSelectedDifficulty] = useState("");
-  const [studyFilter, setStudyFilter] = useState("");
-  const [examFilter, setExamFilter] = useState("");
-
-  // Available options
-  const [books, setBooks] = useState<string[]>([]);
+  const [answerDist, setAnswerDist] = useState<AnswerDistribution>({
+    A: 0,
+    B: 0,
+    C: 0,
+    D: 0,
+    total: 0,
+  });
+  const [filters, setFilters] = useState<FilterState>({
+    bookTitle: "",
+    chapter: "",
+    difficulty: "",
+    studyEligible: "",
+    examEligible: "",
+    searchText: "",
+  });
+  const [editingQuestion, setEditingQuestion] = useState<Question | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [bookTitles, setBookTitles] = useState<string[]>([]);
   const [chapters, setChapters] = useState<string[]>([]);
 
+  // Load filter options on mount
   useEffect(() => {
-    loadQuestions();
-    loadDistribution();
-  }, []);
+    const loadFilterOptions = async () => {
+      const { data: booksData } = await supabase
+        .from("questions")
+        .select("book_title")
+        .eq("is_active", true);
 
-  useEffect(() => {
-    applyFilters();
-  }, [
-    questions,
-    searchText,
-    selectedBook,
-    selectedChapter,
-    selectedDifficulty,
-    studyFilter,
-    examFilter,
-  ]);
+      const uniqueBooks = [
+        ...new Set(booksData?.map((q) => q.book_title) || []),
+      ];
+      setBookTitles(uniqueBooks.sort());
 
-  useEffect(() => {
-    // Update chapters when book changes
-    if (selectedBook) {
-      const bookChapters = questions
-        .filter((q) => q.book_title === selectedBook)
-        .map((q) => q.chapter)
-        .filter((v, i, a) => a.indexOf(v) === i)
-        .sort((a, b) => {
+      const { data: chaptersData } = await supabase
+        .from("questions")
+        .select("chapter")
+        .eq("is_active", true);
+
+      const uniqueChapters = [
+        ...new Set(chaptersData?.map((q) => q.chapter) || []),
+      ];
+      setChapters(
+        uniqueChapters.sort((a, b) => {
           const numA = parseInt(a);
           const numB = parseInt(b);
-          return numA - numB;
-        });
-      setChapters(bookChapters);
-      setSelectedChapter("");
-    } else {
-      setChapters([]);
-      setSelectedChapter("");
-    }
-  }, [selectedBook, questions]);
+          if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
+          return a.localeCompare(b);
+        }),
+      );
+    };
+    loadFilterOptions();
+  }, []);
 
-  async function loadQuestions() {
+  // Build query with filters
+  const buildQuery = useCallback(
+    (baseQuery: any) => {
+      let query = baseQuery;
+      if (filters.bookTitle) query = query.eq("book_title", filters.bookTitle);
+      if (filters.chapter) query = query.eq("chapter", filters.chapter);
+      if (filters.difficulty)
+        query = query.eq("difficulty", filters.difficulty);
+      if (filters.studyEligible)
+        query = query.eq("study_eligible", filters.studyEligible === "true");
+      if (filters.examEligible)
+        query = query.eq("exam_eligible", filters.examEligible === "true");
+      if (filters.searchText)
+        query = query.ilike("question_text", `%${filters.searchText}%`);
+      return query;
+    },
+    [filters],
+  );
+
+  // Load answer distribution
+  const loadAnswerDistribution = useCallback(async () => {
     try {
-      const supabase = createClient();
-      const { data, error } = await supabase
-        .from("questions")
-        .select("*")
-        .eq("is_active", true)
-        .order("id", { ascending: false })
-        .limit(5000);
+      const query = buildQuery(
+        supabase
+          .from("questions")
+          .select("correct_answer")
+          .eq("is_active", true),
+      );
+      const { data } = await query;
+
+      if (data) {
+        const dist = { A: 0, B: 0, C: 0, D: 0, total: data.length };
+        data.forEach((q) => {
+          if (q.correct_answer in dist) {
+            dist[q.correct_answer as "A" | "B" | "C" | "D"]++;
+          }
+        });
+        setAnswerDist(dist);
+      }
+    } catch (error) {
+      console.error("Error loading answer distribution:", error);
+    }
+  }, [buildQuery]);
+
+  // Load questions with pagination
+  const loadQuestions = useCallback(async () => {
+    setLoading(true);
+
+    try {
+      const query = buildQuery(
+        supabase
+          .from("questions")
+          .select("*", { count: "exact" })
+          .eq("is_active", true),
+      );
+
+      const from = (currentPage - 1) * ITEMS_PER_PAGE;
+      const to = from + ITEMS_PER_PAGE - 1;
+
+      const { data, count, error } = await query
+        .range(from, to)
+        .order("question_id", { ascending: true });
 
       if (error) throw error;
 
       setQuestions(data || []);
-
-      // Extract unique books
-      const uniqueBooks = [
-        ...new Set(data?.map((q) => q.book_title) || []),
-      ].sort();
-      setBooks(uniqueBooks);
+      setTotalCount(count || 0);
     } catch (error) {
       console.error("Error loading questions:", error);
     } finally {
       setLoading(false);
     }
-  }
+  }, [currentPage, buildQuery]);
 
-  async function loadDistribution() {
+  // Reload when page or filters change
+  useEffect(() => {
+    loadQuestions();
+    loadAnswerDistribution();
+  }, [loadQuestions, loadAnswerDistribution]);
+
+  // Handlers
+  const updateFilter = (key: keyof FilterState, value: string) => {
+    setFilters((prev) => ({ ...prev, [key]: value }));
+    setCurrentPage(1);
+  };
+
+  const clearFilters = () => {
+    setFilters({
+      bookTitle: "",
+      chapter: "",
+      difficulty: "",
+      studyEligible: "",
+      examEligible: "",
+      searchText: "",
+    });
+    setCurrentPage(1);
+  };
+
+  const handleSaveEdit = async (editedQuestion: Question) => {
+    setSaving(true);
     try {
-      const supabase = createClient();
-      const { data: distRows } = await supabase
-        .from('questions')
-        .select('correct_answer')
-        .eq('is_active', true)
-        .eq('review_status', 'approved');
+      const { error } = await supabase
+        .from("questions")
+        .update({
+          question_text: editedQuestion.question_text,
+          answer_a: editedQuestion.answer_a,
+          answer_b: editedQuestion.answer_b,
+          answer_c: editedQuestion.answer_c,
+          answer_d: editedQuestion.answer_d,
+          correct_answer: editedQuestion.correct_answer,
+          explanation: editedQuestion.explanation,
+          difficulty: editedQuestion.difficulty,
+          study_eligible: editedQuestion.study_eligible,
+          exam_eligible: editedQuestion.exam_eligible,
+          book_title: editedQuestion.book_title,
+          edition: editedQuestion.edition,
+          chapter: editedQuestion.chapter,
+          topic: editedQuestion.topic,
+          page_start: editedQuestion.page_start,
+          page_end: editedQuestion.page_end,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("question_id", editedQuestion.question_id);
 
-      const newDist = { A: 0, B: 0, C: 0, D: 0 } as Record<string, number>;
-      for (const row of (distRows ?? []) as DistRow[]) {
-        const key = String(row.correct_answer ?? '').toUpperCase();
-        if (key in newDist) newDist[key]++;
-      }
-      const total = Object.values(newDist).reduce((a, b) => a + b, 0);
-      const pct = Object.fromEntries(
-        Object.entries(newDist).map(([k, v]) => [k, total > 0 ? Math.round((v / total) * 100) : 0])
-      ) as Record<string, number>;
-      const skewed = Object.values(pct).some((p) => p > 30 || p < 20) && total > 0;
+      if (error) throw error;
 
-      setDist(newDist);
-      setDistTotal(total);
-      setDistPct(pct);
-      setIsSkewed(skewed);
+      setEditingQuestion(null);
+      loadQuestions();
+      loadAnswerDistribution();
     } catch (error) {
-      console.error('Error loading answer distribution:', error);
+      console.error("Error saving question:", error);
+      alert("Failed to save question");
+    } finally {
+      setSaving(false);
     }
-  }
+  };
 
-  function applyFilters() {
-    let filtered = [...questions];
-
-    // Text search
-    if (searchText) {
-      filtered = filtered.filter((q) =>
-        q.question_text.toLowerCase().includes(searchText.toLowerCase()),
-      );
-    }
-
-    // Book filter
-    if (selectedBook) {
-      filtered = filtered.filter((q) => q.book_title === selectedBook);
-    }
-
-    // Chapter filter
-    if (selectedChapter) {
-      filtered = filtered.filter((q) => q.chapter === selectedChapter);
-    }
-
-    // Difficulty filter
-    if (selectedDifficulty) {
-      filtered = filtered.filter((q) => q.difficulty === selectedDifficulty);
-    }
-
-    // Study eligible filter
-    if (studyFilter === "yes") {
-      filtered = filtered.filter((q) => q.study_oligible === true);
-    } else if (studyFilter === "no") {
-      filtered = filtered.filter((q) => q.study_oligible === false);
-    }
-
-    // Exam eligible filter
-    if (examFilter === "yes") {
-      filtered = filtered.filter((q) => q.exam_eligible === true);
-    } else if (examFilter === "no") {
-      filtered = filtered.filter((q) => q.exam_eligible === false);
-    }
-
-    setFilteredQuestions(filtered);
-  }
-
-  function clearFilters() {
-    setSearchText("");
-    setSelectedBook("");
-    setSelectedChapter("");
-    setSelectedDifficulty("");
-    setStudyFilter("");
-    setExamFilter("");
-  }
-
-  async function deleteQuestion(id: string) {
+  const handleDelete = async (questionId: number) => {
     if (!confirm("Are you sure you want to delete this question?")) return;
 
     try {
-      const supabase = createClient();
       const { error } = await supabase
         .from("questions")
         .update({ is_active: false })
-        .eq("id", id);
+        .eq("question_id", questionId);
 
       if (error) throw error;
 
       loadQuestions();
+      loadAnswerDistribution();
     } catch (error) {
       console.error("Error deleting question:", error);
       alert("Failed to delete question");
     }
-  }
+  };
 
-  const activeFiltersCount = [
-    searchText,
-    selectedBook,
-    selectedChapter,
-    selectedDifficulty,
-    studyFilter,
-    examFilter,
-  ].filter(Boolean).length;
+  const toggleEligibility = async (
+    questionId: number,
+    field: "study_eligible" | "exam_eligible",
+    currentValue: boolean,
+  ) => {
+    try {
+      const { error } = await supabase
+        .from("questions")
+        .update({ [field]: !currentValue })
+        .eq("question_id", questionId);
 
-  if (loading) {
-    return (
-      <div className='p-8'>
-        <div className='text-center'>Loading questions...</div>
-      </div>
-    );
-  }
+      if (error) throw error;
+      loadQuestions();
+      if (field === "exam_eligible") loadAnswerDistribution();
+    } catch (error) {
+      console.error(`Error updating ${field}:`, error);
+      alert("Failed to update question");
+    }
+  };
+
+  const hasFilters = Object.values(filters).some((v) => v !== "");
+  const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
   return (
-    <div className='p-8'>
+    <div className='p-9 max-w-[1400px]'>
       {/* Header */}
-      <div className='flex items-center justify-between mb-6'>
-        <div>
-          <h1 className='text-2xl font-bold text-[#1B2A4A]'>Questions</h1>
-          <p className='text-sm text-gray-500 mt-1'>
-            {filteredQuestions.length} of {questions.length} active questions
-            {activeFiltersCount > 0 &&
-              ` (${activeFiltersCount} filters active)`}
-          </p>
-        </div>
-        <div className='flex gap-3'>
-          <button
-            onClick={() => (window.location.href = "/admin/questions/new")}
-            className='flex items-center gap-2 px-4 py-2 bg-[#D32F2F] text-white rounded-lg hover:bg-[#B71C1C] transition-colors'
-          >
-            <Plus className='w-4 h-4' />
-            Add Question
-          </button>
+      <div className='mb-7'>
+        <div className='text-[26px] font-bold mb-1'>Questions</div>
+        <div className='text-[13.5px] text-gray-500'>
+          {totalCount.toLocaleString()} of {totalCount.toLocaleString()} active
+          questions
+          {hasFilters && " (filtered)"}
         </div>
       </div>
 
       {/* Filters */}
-      <div className='bg-white rounded-xl border border-gray-200 p-6 mb-6'>
-        {/* Search Bar */}
-        <div className='mb-4'>
-          <div className='relative'>
-            <Search className='absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400' />
-            <input
-              type='text'
-              placeholder='Search question text...'
-              value={searchText}
-              onChange={(e) => setSearchText(e.target.value)}
-              className='w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#D32F2F] focus:border-transparent'
-            />
-          </div>
-        </div>
+      <FilterBar
+        filters={filters}
+        bookTitles={bookTitles}
+        chapters={chapters}
+        onFilterChange={updateFilter}
+        onClearFilters={clearFilters}
+        hasFilters={hasFilters}
+      />
 
-        {/* Filter Dropdowns */}
-        <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3'>
-          {/* Book Filter */}
-          <select
-            value={selectedBook}
-            onChange={(e) => setSelectedBook(e.target.value)}
-            className='px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#D32F2F] focus:border-transparent'
-          >
-            <option value=''>All Books</option>
-            {books.map((book) => (
-              <option key={book} value={book}>
-                {book.length > 30 ? book.substring(0, 30) + "..." : book}
-              </option>
-            ))}
-          </select>
+      {/* Answer Distribution */}
+      <AnswerDistributionChart distribution={answerDist} />
 
-          {/* Chapter Filter */}
-          <select
-            value={selectedChapter}
-            onChange={(e) => setSelectedChapter(e.target.value)}
-            disabled={!selectedBook}
-            className='px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#D32F2F] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed'
-          >
-            <option value=''>All Chapters</option>
-            {chapters.map((chapter) => (
-              <option key={chapter} value={chapter}>
-                Chapter {chapter}
-              </option>
-            ))}
-          </select>
-
-          {/* Difficulty Filter */}
-          <select
-            value={selectedDifficulty}
-            onChange={(e) => setSelectedDifficulty(e.target.value)}
-            className='px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#D32F2F] focus:border-transparent'
-          >
-            <option value=''>All Difficulties</option>
-            <option value='easy'>Easy</option>
-            <option value='medium'>Medium</option>
-            <option value='hard'>Hard</option>
-          </select>
-
-          {/* Study Eligible Filter */}
-          <select
-            value={studyFilter}
-            onChange={(e) => setStudyFilter(e.target.value)}
-            className='px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#D32F2F] focus:border-transparent'
-          >
-            <option value=''>Study: All</option>
-            <option value='yes'>Study: Yes</option>
-            <option value='no'>Study: No</option>
-          </select>
-
-          {/* Exam Eligible Filter */}
-          <select
-            value={examFilter}
-            onChange={(e) => setExamFilter(e.target.value)}
-            className='px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#D32F2F] focus:border-transparent'
-          >
-            <option value=''>Exam: All</option>
-            <option value='yes'>Exam: Yes</option>
-            <option value='no'>Exam: No</option>
-          </select>
-        </div>
-
-        {/* Clear Filters */}
-        {activeFiltersCount > 0 && (
-          <div className='mt-4 flex justify-end'>
-            <button
-              onClick={clearFilters}
-              className='text-sm text-gray-600 hover:text-gray-900 underline'
-            >
-              Clear all filters
-            </button>
-          </div>
-        )}
-      </div>
-
-      {/* Answer Distribution Panel */}
-      {distTotal > 0 && (
-        <div className="bg-white border border-gray-200 rounded-xl p-6 mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h2 className="font-semibold text-[#1B2A4A]">Answer Distribution</h2>
-              <p className="text-xs text-gray-400 mt-0.5">{distTotal} approved questions · target 20–30% each</p>
-            </div>
-            {isSkewed && (
-              <span className="text-xs font-bold bg-amber-100 text-amber-700 px-3 py-1 rounded-full">
-                ⚠ Imbalance Detected
-              </span>
-            )}
-          </div>
-          <div className="flex gap-4 mb-3">
-            {(['A','B','C','D'] as const).map((l) => {
-              const pct = distPct[l] ?? 0;
-              const isHigh = pct > 30;
-              const isLow = pct < 20 && distTotal > 0;
-              return (
-                <div key={l} className="flex-1 text-center">
-                  <div className={`text-lg font-black ${isHigh ? 'text-red-600' : isLow ? 'text-amber-500' : 'text-[#1B2A4A]'}`}>
-                    {pct}%
-                  </div>
-                  <div className="h-3 bg-gray-100 rounded-full overflow-hidden mt-1 mb-1">
-                    <div
-                      className={`h-full rounded-full ${isHigh ? 'bg-red-500' : isLow ? 'bg-amber-400' : 'bg-blue-500'}`}
-                      style={{ width: `${pct}%` }}
-                    />
-                  </div>
-                  <div className="text-sm font-bold text-gray-500">{l}</div>
-                  <div className="text-xs text-gray-400">{dist[l]}</div>
-                </div>
-              );
-            })}
-          </div>
-          {isSkewed && (
-            <div className="bg-amber-50 rounded-lg px-3 py-2 text-xs text-amber-800">
-              Ask your AI tool to vary correct answer placement more evenly in the next batch.
-            </div>
-          )}
+      {/* Loading State */}
+      {loading && (
+        <div className='text-center py-16 text-gray-500 bg-white border border-gray-200 rounded-xl'>
+          <div className='text-3xl mb-3'>⏳</div>
+          <div>Loading questions...</div>
         </div>
       )}
 
       {/* Questions Table */}
-      <div className='bg-white rounded-xl border border-gray-200 overflow-hidden'>
-        <div className='overflow-x-auto'>
-          <table className='w-full'>
-            <thead>
-              <tr className='bg-gray-50 border-b border-gray-200'>
-                <th className='px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider'>
-                  Question
-                </th>
-                <th className='px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider'>
-                  Book / Chapter
-                </th>
-                <th className='px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider'>
-                  Difficulty
-                </th>
-                <th className='px-6 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider'>
-                  Study
-                </th>
-                <th className='px-6 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider'>
-                  Exam
-                </th>
-                <th className='px-6 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider'>
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className='divide-y divide-gray-200'>
-              {filteredQuestions.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={6}
-                    className='px-6 py-12 text-center text-gray-500'
-                  >
-                    No questions found matching your filters
-                  </td>
+      {!loading && questions.length > 0 && (
+        <>
+          <div className='bg-white border border-gray-200 rounded-xl overflow-hidden mb-5'>
+            <table className='w-full'>
+              <thead>
+                <tr className='bg-gray-50'>
+                  <th className='px-4 py-3 text-left text-[11px] font-bold text-gray-500 uppercase tracking-wider border-b border-gray-200'>
+                    #
+                  </th>
+                  <th className='px-4 py-3 text-left text-[11px] font-bold text-gray-500 uppercase tracking-wider border-b border-gray-200'>
+                    Question
+                  </th>
+                  <th className='px-4 py-3 text-left text-[11px] font-bold text-gray-500 uppercase tracking-wider border-b border-gray-200'>
+                    Book / Chapter
+                  </th>
+                  <th className='px-4 py-3 text-center text-[11px] font-bold text-gray-500 uppercase tracking-wider border-b border-gray-200'>
+                    Difficulty
+                  </th>
+                  <th className='px-4 py-3 text-center text-[11px] font-bold text-gray-500 uppercase tracking-wider border-b border-gray-200'>
+                    Study
+                  </th>
+                  <th className='px-4 py-3 text-center text-[11px] font-bold text-gray-500 uppercase tracking-wider border-b border-gray-200'>
+                    Exam
+                  </th>
+                  <th className='px-4 py-3 text-center text-[11px] font-bold text-gray-500 uppercase tracking-wider border-b border-gray-200'>
+                    Actions
+                  </th>
                 </tr>
-              ) : (
-                filteredQuestions.map((question) => (
-                  <tr key={question.id} className='hover:bg-gray-50'>
-                    <td className='px-6 py-4 text-sm text-gray-900 max-w-md'>
-                      {question.question_text.substring(0, 100)}
-                      {question.question_text.length > 100 && "..."}
+              </thead>
+              <tbody>
+                {questions.map((q) => (
+                  <tr key={q.question_id} className='border-b border-gray-200'>
+                    <td className='px-4 py-3.5 text-[13px] text-gray-500'>
+                      {q.question_id}
                     </td>
-                    <td className='px-6 py-4 text-sm text-gray-600'>
-                      <div className='font-medium text-gray-900'>
-                        {question.book_title.substring(0, 30)}
-                        {question.book_title.length > 30 && "..."}
-                      </div>
-                      <div className='text-gray-500'>
-                        Ch. {question.chapter}
-                      </div>
+                    <td className='px-4 py-3.5 text-[13px] max-w-[400px]'>
+                      {q.question_text.substring(0, 100)}
+                      {q.question_text.length > 100 && "..."}
                     </td>
-                    <td className='px-6 py-4'>
-                      <span
-                        className={
-                          question.difficulty === "easy"
-                            ? "inline-block px-2 py-1 text-xs font-medium rounded bg-green-100 text-green-800"
-                            : question.difficulty === "medium"
-                              ? "inline-block px-2 py-1 text-xs font-medium rounded bg-yellow-100 text-yellow-800"
-                              : "inline-block px-2 py-1 text-xs font-medium rounded bg-red-100 text-red-800"
+                    <td className='px-4 py-3.5 text-xs'>
+                      <div className='font-semibold mb-0.5'>{q.book_title}</div>
+                      <div className='text-gray-500'>Ch. {q.chapter}</div>
+                    </td>
+                    <td className='px-4 py-3.5 text-center'>
+                      <DifficultyBadge difficulty={q.difficulty} />
+                    </td>
+                    <td className='px-4 py-3.5 text-center'>
+                      <button
+                        onClick={() =>
+                          toggleEligibility(
+                            q.question_id,
+                            "study_eligible",
+                            q.study_eligible,
+                          )
                         }
+                        className={`px-2.5 py-1 text-[11px] font-bold ${q.study_eligible ? "text-green-700" : "text-gray-400"}`}
+                        title={`Click to ${q.study_eligible ? "disable" : "enable"} for study mode`}
                       >
-                        {question.difficulty}
-                      </span>
+                        {q.study_eligible ? "Yes" : "No"}
+                      </button>
                     </td>
-                    <td className='px-6 py-4 text-center'>
-                      <span
-                        className={
-                          question.study_oligible
-                            ? "inline-block px-2 py-1 text-xs font-medium rounded bg-green-100 text-green-800"
-                            : "inline-block px-2 py-1 text-xs font-medium rounded bg-gray-100 text-gray-600"
+                    <td className='px-4 py-3.5 text-center'>
+                      <button
+                        onClick={() =>
+                          toggleEligibility(
+                            q.question_id,
+                            "exam_eligible",
+                            q.exam_eligible,
+                          )
                         }
+                        className={`px-2.5 py-1 text-[11px] font-bold ${q.exam_eligible ? "text-green-700" : "text-gray-400"}`}
+                        title={`Click to ${q.exam_eligible ? "disable" : "enable"} for exam mode`}
                       >
-                        {question.study_oligible ? "Yes" : "No"}
-                      </span>
+                        {q.exam_eligible ? "Yes" : "No"}
+                      </button>
                     </td>
-                    <td className='px-6 py-4 text-center'>
-                      <span
-                        className={
-                          question.exam_eligible
-                            ? "inline-block px-2 py-1 text-xs font-medium rounded bg-blue-100 text-blue-800"
-                            : "inline-block px-2 py-1 text-xs font-medium rounded bg-gray-100 text-gray-600"
-                        }
-                      >
-                        {question.exam_eligible ? "Yes" : "No"}
-                      </span>
-                    </td>
-                    <td className='px-6 py-4'>
-                      <div className='flex items-center justify-center gap-2'>
+                    <td className='px-4 py-3.5'>
+                      <div className='flex gap-2 justify-center'>
                         <button
-                          onClick={() =>
-                            (window.location.href = `/admin/questions/${question.id}/edit`)
-                          }
-                          className='p-1.5 text-blue-600 hover:bg-blue-50 rounded'
-                          title='Edit'
+                          onClick={() => setEditingQuestion(q)}
+                          className='px-2.5 py-1.5 bg-transparent border border-gray-200 rounded-md text-lg leading-none hover:bg-gray-50'
+                          title='Edit question'
                         >
-                          <Edit className='w-4 h-4' />
+                          ✏️
                         </button>
                         <button
-                          onClick={() => deleteQuestion(question.id)}
-                          className='p-1.5 text-red-600 hover:bg-red-50 rounded'
-                          title='Delete'
+                          onClick={() => handleDelete(q.question_id)}
+                          className='px-2.5 py-1.5 bg-transparent border border-gray-200 rounded-md text-lg leading-none text-red-600 hover:bg-red-50'
+                          title='Delete question'
                         >
-                          <Trash2 className='w-4 h-4' />
+                          🗑️
                         </button>
                       </div>
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Pagination */}
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalCount={totalCount}
+            itemsPerPage={ITEMS_PER_PAGE}
+            onPageChange={setCurrentPage}
+          />
+        </>
+      )}
+
+      {/* Empty State */}
+      {!loading && questions.length === 0 && (
+        <div className='bg-white border border-gray-200 rounded-xl p-16 text-center'>
+          <div className='text-5xl mb-3'>📋</div>
+          <div className='text-base font-semibold mb-1.5'>
+            No questions found
+          </div>
+          <div className='text-[13px] text-gray-500'>
+            {hasFilters
+              ? "Try adjusting your filters"
+              : "Start by importing questions from CSV"}
+          </div>
+          {hasFilters && (
+            <button
+              onClick={clearFilters}
+              className='mt-4 px-5 py-2.5 bg-red-600 text-white rounded-lg text-sm font-semibold hover:bg-red-700'
+            >
+              Clear All Filters
+            </button>
+          )}
         </div>
-      </div>
+      )}
+
+      {/* Edit Modal */}
+      {editingQuestion && (
+        <EditModal
+          question={editingQuestion}
+          onClose={() => setEditingQuestion(null)}
+          onSave={handleSaveEdit}
+          saving={saving}
+        />
+      )}
     </div>
   );
 }
