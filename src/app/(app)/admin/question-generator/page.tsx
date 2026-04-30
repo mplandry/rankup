@@ -83,7 +83,7 @@ export default function QuestionGenerator() {
         <div style={{ fontSize: 26, fontWeight: 700, marginBottom: 4 }}>
           🎯 Question Generator
         </div>
-        <div style={{ fontSize: 13.5, color: "var(--text-muted)" }}>
+        <div style={{ fontSize: 13.5, color: "#6B7280" }}>
           Upload book screenshots → AI generates questions → Import to database
         </div>
       </div>
@@ -93,8 +93,8 @@ export default function QuestionGenerator() {
           {/* Screenshot Upload */}
           <div
             style={{
-              background: "var(--white)",
-              border: "1px solid var(--border)",
+              background: "#FFFFFF",
+              border: "1px solid #E5E7EB",
               borderRadius: 12,
               padding: 28,
               marginBottom: 20,
@@ -111,20 +111,20 @@ export default function QuestionGenerator() {
               }}
               onDragOver={(e) => e.preventDefault()}
               style={{
-                border: "2px dashed var(--border)",
+                border: "2px dashed #E5E7EB",
                 borderRadius: 12,
                 padding: "60px 40px",
                 textAlign: "center",
                 cursor: "pointer",
-                background: "var(--bg)",
+                background: "#F9FAFB",
                 marginBottom: 16,
               }}
             >
-              <Upload style={{ width: 48, height: 48, margin: "0 auto 16px", color: "var(--text-muted)" }} />
+              <Upload style={{ width: 48, height: 48, margin: "0 auto 16px", color: "#6B7280" }} />
               <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 8 }}>
                 Drop screenshots here or click to browse
               </div>
-              <div style={{ fontSize: 13, color: "var(--text-muted)" }}>
+              <div style={{ fontSize: 13, color: "#6B7280" }}>
                 Upload 1-15 book pages (PNG, JPG, PDF)
               </div>
               <input
@@ -137,7 +137,7 @@ export default function QuestionGenerator() {
               />
             </div>
             {screenshots.length > 0 && (
-              <div style={{ fontSize: 13, color: "var(--green)", fontWeight: 600 }}>
+              <div style={{ fontSize: 13, color: "#10B981", fontWeight: 600 }}>
                 ✓ {screenshots.length} file{screenshots.length > 1 ? "s" : ""} uploaded
               </div>
             )}
@@ -146,8 +146,8 @@ export default function QuestionGenerator() {
           {/* Metadata Form */}
           <div
             style={{
-              background: "var(--white)",
-              border: "1px solid var(--border)",
+              background: "#FFFFFF",
+              border: "1px solid #E5E7EB",
               borderRadius: 12,
               padding: 28,
               marginBottom: 20,
@@ -158,7 +158,7 @@ export default function QuestionGenerator() {
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
               <div>
-                <label style={{ display: "block", fontSize: 13, marginBottom: 6, color: "var(--text-muted)" }}>
+                <label style={{ display: "block", fontSize: 13, marginBottom: 6, color: "#6B7280" }}>
                   Book Title *
                 </label>
                 <input
@@ -169,14 +169,14 @@ export default function QuestionGenerator() {
                   style={{
                     width: "100%",
                     padding: "10px 12px",
-                    border: "1px solid var(--border)",
+                    border: "1px solid #E5E7EB",
                     borderRadius: 8,
                     fontSize: 14,
                   }}
                 />
               </div>
               <div>
-                <label style={{ display: "block", fontSize: 13, marginBottom: 6, color: "var(--text-muted)" }}>
+                <label style={{ display: "block", fontSize: 13, marginBottom: 6, color: "#6B7280" }}>
                   Edition *
                 </label>
                 <input
@@ -187,7 +187,7 @@ export default function QuestionGenerator() {
                   style={{
                     width: "100%",
                     padding: "10px 12px",
-                    border: "1px solid var(--border)",
+                    border: "1px solid #E5E7EB",
                     borderRadius: 8,
                     fontSize: 14,
                   }}
@@ -196,7 +196,7 @@ export default function QuestionGenerator() {
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16 }}>
               <div>
-                <label style={{ display: "block", fontSize: 13, marginBottom: 6, color: "var(--text-muted)" }}>
+                <label style={{ display: "block", fontSize: 13, marginBottom: 6, color: "#6B7280" }}>
                   Chapter *
                 </label>
                 <input
@@ -207,14 +207,14 @@ export default function QuestionGenerator() {
                   style={{
                     width: "100%",
                     padding: "10px 12px",
-                    border: "1px solid var(--border)",
+                    border: "1px solid #E5E7EB",
                     borderRadius: 8,
                     fontSize: 14,
                   }}
                 />
               </div>
               <div>
-                <label style={{ display: "block", fontSize: 13, marginBottom: 6, color: "var(--text-muted)" }}>
+                <label style={{ display: "block", fontSize: 13, marginBottom: 6, color: "#6B7280" }}>
                   Page Start
                 </label>
                 <input
@@ -225,14 +225,14 @@ export default function QuestionGenerator() {
                   style={{
                     width: "100%",
                     padding: "10px 12px",
-                    border: "1px solid var(--border)",
+                    border: "1px solid #E5E7EB",
                     borderRadius: 8,
                     fontSize: 14,
                   }}
                 />
               </div>
               <div>
-                <label style={{ display: "block", fontSize: 13, marginBottom: 6, color: "var(--text-muted)" }}>
+                <label style={{ display: "block", fontSize: 13, marginBottom: 6, color: "#6B7280" }}>
                   Page End
                 </label>
                 <input
@@ -243,7 +243,7 @@ export default function QuestionGenerator() {
                   style={{
                     width: "100%",
                     padding: "10px 12px",
-                    border: "1px solid var(--border)",
+                    border: "1px solid #E5E7EB",
                     borderRadius: 8,
                     fontSize: 14,
                   }}
@@ -255,8 +255,8 @@ export default function QuestionGenerator() {
           {/* Strategy Selection */}
           <div
             style={{
-              background: "var(--white)",
-              border: "1px solid var(--border)",
+              background: "#FFFFFF",
+              border: "1px solid #E5E7EB",
               borderRadius: 12,
               padding: 28,
               marginBottom: 20,
@@ -271,7 +271,7 @@ export default function QuestionGenerator() {
               style={{
                 width: "100%",
                 padding: "10px 12px",
-                border: "1px solid var(--border)",
+                border: "1px solid #E5E7EB",
                 borderRadius: 8,
                 fontSize: 14,
               }}
@@ -309,8 +309,8 @@ export default function QuestionGenerator() {
       {stage === "processing" && (
         <div
           style={{
-            background: "var(--white)",
-            border: "1px solid var(--border)",
+            background: "#FFFFFF",
+            border: "1px solid #E5E7EB",
             borderRadius: 12,
             padding: 28,
           }}
