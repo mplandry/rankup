@@ -154,7 +154,7 @@ export default async function AdminPage() {
           className='flex items-center gap-4 bg-white border border-gray-200 rounded-xl p-6 hover:border-red-300 hover:shadow-sm transition-all'
         >
           <div className='w-11 h-11 bg-amber-100 rounded-xl flex items-center justify-center'>
-            <ClipboardCheck, Sparkles, Wand2 className='w-5 h-5 text-amber-600' />
+            <ClipboardCheck className='w-5 h-5 text-amber-600' />
           </div>
           <div className='flex-1'>
         <Link
