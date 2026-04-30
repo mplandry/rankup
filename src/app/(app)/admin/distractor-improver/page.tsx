@@ -412,7 +412,7 @@ Respond with ONLY a JSON object in this exact format:
               style={{
                 flex: 1,
                 padding: "12px 24px",
-                background: "var(--red)",
+                background: "#DC2626",
                 color: "#fff",
                 border: "none",
                 borderRadius: 10,
