@@ -129,6 +129,7 @@ export default async function AdminPage() {
             <div className='font-semibold text-[#1B2A4A]'>Import CSV</div>
             <div className='text-sm text-gray-500'>
               Bulk import from a CSV file
+            </div>
           </div>
         </Link>
         <Link
