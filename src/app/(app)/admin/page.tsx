@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
-import { BookOpen, Users, Upload, Database, List, ClipboardCheck } from "lucide-react";
+import { BookOpen, Users, Upload, Database, List, ClipboardCheck, Sparkles, Wand2 } from "lucide-react";
 import ExamTypeSwitcher from "@/components/admin/ExamTypeSwitcher";
 import AdminReadingList from "@/components/admin/AdminReadingList";
 
@@ -71,7 +71,7 @@ export default async function AdminPage() {
         />
       </div>
 
-      <div className='grid grid-cols-1 md:grid-cols-3 gap-4 mb-8'>
+      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8'>
         {stats.map(({ label, value, icon: Icon, href }) => (
           <Link
             key={label}
@@ -89,7 +89,7 @@ export default async function AdminPage() {
         ))}
       </div>
 
-      <div className='grid grid-cols-1 md:grid-cols-3 gap-4 mb-8'>
+      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8'>
         <Link
           href='/admin/questions'
           className='flex items-center gap-4 bg-white border border-gray-200 rounded-xl p-6 hover:border-red-300 hover:shadow-sm transition-all'
@@ -129,20 +129,47 @@ export default async function AdminPage() {
             <div className='font-semibold text-[#1B2A4A]'>Import CSV</div>
             <div className='text-sm text-gray-500'>
               Bulk import from a CSV file
+          </div>
+        </Link>
+        <Link
+          href="/admin/question-generator"
+          className="flex items-center gap-4 bg-white border border-gray-200 rounded-xl p-6 hover:border-red-300 hover:shadow-sm transition-all"
+        >
+          <div className="w-11 h-11 bg-pink-100 rounded-xl flex items-center justify-center">
+            <Wand2 className="w-5 h-5 text-pink-600" />
+          </div>
+          <div>
+            <div className="font-semibold text-[#1B2A4A]">AI Generator</div>
+            <div className="text-sm text-gray-500">
+              Screenshots to questions
             </div>
           </div>
         </Link>
       </div>
 
-      <div className='grid grid-cols-1 md:grid-cols-3 gap-4 mb-8'>
+      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8'>
         <Link
           href='/admin/review'
           className='flex items-center gap-4 bg-white border border-gray-200 rounded-xl p-6 hover:border-red-300 hover:shadow-sm transition-all'
         >
           <div className='w-11 h-11 bg-amber-100 rounded-xl flex items-center justify-center'>
-            <ClipboardCheck className='w-5 h-5 text-amber-600' />
+            <ClipboardCheck, Sparkles, Wand2 className='w-5 h-5 text-amber-600' />
           </div>
           <div className='flex-1'>
+        <Link
+          href="/admin/distractor-improver"
+          className="flex items-center gap-4 bg-white border border-gray-200 rounded-xl p-6 hover:border-red-300 hover:shadow-sm transition-all"
+        >
+          <div className="w-11 h-11 bg-orange-100 rounded-xl flex items-center justify-center">
+            <Sparkles className="w-5 h-5 text-orange-600" />
+          </div>
+          <div>
+            <div className="font-semibold text-[#1B2A4A]">AI Improver</div>
+            <div className="text-sm text-gray-500">
+              Enhance question quality
+            </div>
+          </div>
+        </Link>
             <div className='font-semibold text-[#1B2A4A]'>Review Queue</div>
             <div className='text-sm text-gray-500'>Approve questions for students</div>
           </div>
