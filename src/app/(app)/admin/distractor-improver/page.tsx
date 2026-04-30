@@ -151,7 +151,7 @@ Respond with ONLY a JSON object in this exact format:
   "answer_d": "improved answer D text"
 }`;
 
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
+    const response = await fetch("/api/improve-question", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -223,11 +223,11 @@ Respond with ONLY a JSON object in this exact format:
         }
       });
 
-      const results = await Promise.all(promises);
-      improved.push(...results);
+      const batchResults = await Promise.all(promises);
+      improved.push(...batchResults);
 
-      setProgress(Math.round((newStats.processed / total) * 100));
       setStats({ ...newStats });
+      setProgress(Math.round((newStats.processed / total) * 100));
 
       if (i + batchSize < total) {
         await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -260,9 +260,7 @@ Respond with ONLY a JSON object in this exact format:
     setLogs([]);
     setStats({ processed: 0, improved: 0, skipped: 0, errors: 0 });
     setProgress(0);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   return (
@@ -277,72 +275,42 @@ Respond with ONLY a JSON object in this exact format:
         </div>
       </div>
 
-      {!uploadedData && (
+      {!uploadedData && !showProgress && (
         <div
+          onClick={() => fileInputRef.current?.click()}
+          onDrop={(e) => {
+            e.preventDefault();
+            handleFileSelect(e.dataTransfer.files[0]);
+          }}
+          onDragOver={(e) => e.preventDefault()}
           style={{
-            background: "var(--white)",
             border: "2px dashed var(--border)",
             borderRadius: 12,
             padding: "60px 40px",
             textAlign: "center",
             cursor: "pointer",
-            transition: "all 0.2s",
-          }}
-          onClick={() => fileInputRef.current?.click()}
-          onDragOver={(e) => {
-            e.preventDefault();
-            e.currentTarget.style.borderColor = "var(--blue)";
-            e.currentTarget.style.background = "#E8F4FD";
-          }}
-          onDragLeave={(e) => {
-            e.currentTarget.style.borderColor = "var(--border)";
-            e.currentTarget.style.background = "var(--white)";
-          }}
-          onDrop={(e) => {
-            e.preventDefault();
-            e.currentTarget.style.borderColor = "var(--border)";
-            e.currentTarget.style.background = "var(--white)";
-            if (e.dataTransfer.files.length) {
-              handleFileSelect(e.dataTransfer.files[0]);
-            }
+            background: "var(--bg)",
           }}
         >
           <div style={{ fontSize: 48, marginBottom: 16 }}>📄</div>
-          <div style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>
+          <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 8 }}>
             Drop CSV file here or click to browse
           </div>
           <div style={{ fontSize: 13, color: "var(--text-muted)" }}>
             Supports standard RankUp CSV format with question_text and answer
             columns
           </div>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".csv"
+            onChange={(e) => handleFileSelect(e.target.files?.[0] || null)}
+            style={{ display: "none" }}
+          />
         </div>
       )}
 
-      <input
-        ref={fileInputRef}
-        type='file'
-        accept='.csv'
-        style={{ display: "none" }}
-        onChange={(e) => handleFileSelect(e.target.files?.[0] || null)}
-      />
-
-      {uploadedData && !showProgress && (
-        <div
-          style={{
-            background: "#E8F4FD",
-            border: "1px solid #9DCEF5",
-            borderRadius: 10,
-            padding: "12px 16px",
-            marginBottom: 20,
-          }}
-        >
-          <div style={{ fontSize: 13.5, color: "#0066CC", fontWeight: 600 }}>
-            ✓ Loaded {uploadedData.length} questions from {fileName}
-          </div>
-        </div>
-      )}
-
-      {showSettings && (
+      {uploadedData && showSettings && (
         <div
           style={{
             background: "var(--white)",
@@ -352,6 +320,10 @@ Respond with ONLY a JSON object in this exact format:
             marginBottom: 20,
           }}
         >
+          <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 20 }}>
+            ✓ Loaded {uploadedData.length} questions from {fileName}
+          </div>
+
           <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 20 }}>
             Improvement Settings
           </div>
@@ -373,16 +345,25 @@ Respond with ONLY a JSON object in this exact format:
               style={{
                 width: "100%",
                 padding: "10px 12px",
-                fontSize: 14,
                 border: "1px solid var(--border)",
                 borderRadius: 8,
+                fontSize: 14,
               }}
             >
-              <option value='plausible'>More plausible (default)</option>
-              <option value='technical'>More technical depth</option>
-              <option value='conceptual'>Similar concepts</option>
-              <option value='aggressive'>Aggressive (hardest)</option>
+              <option value="plausible">More plausible (default)</option>
+              <option value="technical">More technical</option>
+              <option value="conceptual">More conceptual</option>
+              <option value="aggressive">Aggressive (hardest)</option>
             </select>
+            <div
+              style={{
+                fontSize: 12,
+                color: "var(--text-muted)",
+                marginTop: 6,
+              }}
+            >
+              {strategies[strategy]}
+            </div>
           </div>
 
           <div style={{ marginBottom: 24 }}>
@@ -397,9 +378,9 @@ Respond with ONLY a JSON object in this exact format:
               Batch size: {batchSize} questions at a time
             </label>
             <input
-              type='range'
-              min='1'
-              max='10'
+              type="range"
+              min="1"
+              max="10"
               value={batchSize}
               onChange={(e) => setBatchSize(parseInt(e.target.value))}
               style={{ width: "100%" }}
@@ -428,7 +409,6 @@ Respond with ONLY a JSON object in this exact format:
               style={{
                 padding: "12px 24px",
                 background: "transparent",
-                color: "var(--text)",
                 border: "1px solid var(--border)",
                 borderRadius: 10,
                 fontSize: 14,
@@ -464,19 +444,19 @@ Respond with ONLY a JSON object in this exact format:
           <div
             style={{
               background: "#F5F5F5",
-              height: 8,
               borderRadius: 99,
-              overflow: "hidden",
+              height: 8,
               marginBottom: 24,
+              overflow: "hidden",
             }}
           >
             <div
               style={{
                 height: "100%",
-                background: "var(--red)",
-                borderRadius: 99,
+                background: "#DC2626",
                 width: `${progress}%`,
                 transition: "width 0.3s",
+                borderRadius: 99,
               }}
             />
           </div>
@@ -497,19 +477,18 @@ Respond with ONLY a JSON object in this exact format:
             ].map((stat) => (
               <div
                 key={stat.label}
-                style={{ background: "#F8F9FA", borderRadius: 8, padding: 16 }}
+                style={{
+                  background: "var(--bg)",
+                  padding: "12px 16px",
+                  borderRadius: 8,
+                  textAlign: "center",
+                }}
               >
-                <div
-                  style={{
-                    fontSize: 12,
-                    color: "var(--text-muted)",
-                    marginBottom: 4,
-                  }}
-                >
-                  {stat.label}
-                </div>
-                <div style={{ fontSize: 22, fontWeight: 600 }}>
+                <div style={{ fontSize: 24, fontWeight: 700 }}>
                   {stat.value}
+                </div>
+                <div style={{ fontSize: 11, color: "var(--text-muted)" }}>
+                  {stat.label}
                 </div>
               </div>
             ))}
@@ -518,31 +497,31 @@ Respond with ONLY a JSON object in this exact format:
           <div
             ref={logPanelRef}
             style={{
-              background: "#F8F9FA",
-              borderRadius: 8,
-              padding: 12,
-              maxHeight: 200,
+              maxHeight: 300,
               overflowY: "auto",
-              fontFamily: "monospace",
+              background: "#1e1e1e",
+              color: "#d4d4d4",
+              padding: 16,
+              borderRadius: 8,
               fontSize: 12,
-              lineHeight: 1.6,
-              marginBottom: 16,
+              fontFamily: "monospace",
+              marginBottom: 20,
             }}
           >
-            {logs.map((log, i) => (
+            {logs.map((l, i) => (
               <div
                 key={i}
                 style={{
                   color:
-                    log.type === "success"
-                      ? "#16A34A"
-                      : log.type === "error"
-                        ? "#DC2626"
-                        : "#6B7280",
-                  marginBottom: 2,
+                    l.type === "success"
+                      ? "#4ade80"
+                      : l.type === "error"
+                        ? "#f87171"
+                        : "#d4d4d4",
+                  marginBottom: 4,
                 }}
               >
-                [{log.timestamp.toLocaleTimeString()}] {log.message}
+                [{l.timestamp.toLocaleTimeString()}] {l.message}
               </div>
             ))}
           </div>
@@ -553,7 +532,7 @@ Respond with ONLY a JSON object in this exact format:
               style={{
                 width: "100%",
                 padding: "12px 24px",
-                background: "var(--red)",
+                background: "#DC2626",
                 color: "#fff",
                 border: "none",
                 borderRadius: 10,
