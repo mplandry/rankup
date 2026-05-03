@@ -948,12 +948,14 @@ export default function AdminQuestionsPage() {
                     <td className='px-4 py-3.5 text-[13px] text-gray-500'>
                       {q.id}
                     </td>
-                    <td className='px-4 py-3.5 text-[13px] max-w-[400px]'>
+                    <td className='px-4 py-3.5 text-[13px] text-gray-900 max-w-[400px]'>
                       {q.question_text.substring(0, 100)}
                       {q.question_text.length > 100 && "..."}
                     </td>
                     <td className='px-4 py-3.5 text-xs'>
-                      <div className='font-semibold mb-0.5'>{q.book_title}</div>
+                      <div className='font-semibold mb-0.5 text-gray-900'>
+                        {q.book_title}
+                      </div>
                       <div className='text-gray-500'>Ch. {q.chapter}</div>
                     </td>
                     <td className='px-4 py-3.5 text-center'>
