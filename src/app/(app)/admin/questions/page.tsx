@@ -94,7 +94,7 @@ function FilterBar({
           placeholder='Search question text...'
           value={filters.searchText}
           onChange={(e) => onFilterChange("searchText", e.target.value)}
-          className='w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm'
+          className='w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-400'
         />
       </div>
 
