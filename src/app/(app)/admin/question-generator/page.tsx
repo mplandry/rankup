@@ -102,10 +102,19 @@ export default function QuestionGenerator() {
       });
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || "Failed to generate questions");
-      }
+        const errorText = await response.text();
 
+        // Try to parse as JSON if possible
+        try {
+          const errorJson = JSON.parse(errorText);
+          throw new Error(errorJson.error || `API error: ${response.status}`);
+        } catch {
+          // If not JSON, use the text directly
+          throw new Error(
+            `API error ${response.status}: ${errorText.substring(0, 200)}`,
+          );
+        }
+      }
       setProgress(50);
 
       const data = await response.json();
