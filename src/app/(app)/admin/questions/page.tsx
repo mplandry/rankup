@@ -514,7 +514,7 @@ function EditModal({
               Chapter
             </label>
             <input
-              value={editedQuestion.chapter}
+              value={editedQuestion.chapter ?? ""}
               onChange={(e) => updateField("chapter", e.target.value)}
               className='w-full px-2.5 py-2.5 border border-gray-200 rounded-lg text-sm'
             />
@@ -537,7 +537,7 @@ function EditModal({
             </label>
             <input
               type='number'
-              value={editedQuestion.page_start || ""}
+              value={editedQuestion.page_start ?? ""}
               onChange={(e) =>
                 updateField("page_start", parseInt(e.target.value) || 0)
               }
@@ -551,7 +551,7 @@ function EditModal({
             </label>
             <input
               type='number'
-              value={editedQuestion.page_end || ""}
+              value={editedQuestion.page_end ?? ""}
               onChange={(e) =>
                 updateField("page_end", parseInt(e.target.value) || 0)
               }
