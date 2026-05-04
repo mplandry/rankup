@@ -72,3 +72,9 @@ export interface CategoryBreakdown {
   percentage: number;
 }
 
+export interface ImportQualityResult {
+  total: number;
+  passed: number;
+  failed: number;
+  errors: Array<{ row: number; message: string }>;
+}
