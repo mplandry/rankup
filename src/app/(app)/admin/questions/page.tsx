@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
-import type { Question } from "@/types";
+import type { Profile } from "@/types";
 
 const supabase = createClient();
 
