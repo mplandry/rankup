@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import ExamSession from "@/components/exam/ExamSession";
-import type { Question, ExamSession } from "@/types";
+import type { Question, ExamSession as ExamSessionType } from "@/types";
 
 interface Props {
   params: Promise<{ sessionId: string }>;
