@@ -1,7 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import ExamSession from "@/components/exam/ExamSession";
-import type { Question } from "@/types";
 
 interface Props {
   params: Promise<{ sessionId: string }>;
@@ -21,7 +19,7 @@ export default async function ExamSessionPage({ params }: Props) {
     redirect("/login");
   }
 
-  // Fetch session data
+  // Fetch session data to verify ownership
   const { data: sessionData } = await supabase
     .from("exam_sessions")
     .select("*")
@@ -33,19 +31,6 @@ export default async function ExamSessionPage({ params }: Props) {
     redirect("/dashboard");
   }
 
-  // Fetch session questions with question details
-  const { data: sessionQuestions } = await supabase
-    .from("exam_session_questions")
-    .select(
-      `
-      *,
-      question:questions(*)
-    `,
-    )
-    .eq("session_id", sessionId)
-    .order("created_at", { ascending: true });
-
-  return (
-    <ExamSession session={sessionData} questions={sessionQuestions || []} />
-  );
+  // Just redirect to results for now - the exam session page might not be needed
+  redirect(`/exam/${sessionId}/results`);
 }
