@@ -515,7 +515,9 @@ function EditModal({
             </label>
             <input
               value={editedQuestion.chapter ?? ""}
-              onChange={(e) => updateField("chapter", e.target.value)}
+              onChange={(e) =>
+                updateField("chapter", parseInt(e.target.value) || 0)
+              }
               className='w-full px-2.5 py-2.5 border border-gray-200 rounded-lg text-sm'
             />
           </div>
