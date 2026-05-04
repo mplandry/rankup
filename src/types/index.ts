@@ -56,4 +56,19 @@ export interface ExamSession {
   total_questions: number;
   completed_at: string;
   created_at: string;
+  export interface ExamSessionQuestion {
+  id: string;
+  session_id: string;
+  question_id: string;
+  user_answer: string | null;
+  is_correct: boolean;
+  question: Question;
 }
+
+export interface CategoryBreakdown {
+  category: string;
+  correct: number;
+  total: number;
+  percentage: number;
+}
+

@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import ExamSession from "@/components/exam/ExamSession";
-import type { Question, ExamSession as ExamSessionType } from "@/types";
+import type { Question, ExamSessionQuestion, CategoryBreakdown } from "@/types";
 
 type ExamSessionQuestion = {
   id: string;
@@ -10,6 +10,8 @@ type ExamSessionQuestion = {
   user_answer: string;
   is_correct: boolean;
   question: Question;
+  type ExamSessionQuestion = any;
+type CategoryBreakdown = any;
 };
 
 interface Props {
