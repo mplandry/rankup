@@ -1,12 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { checkBatch } from "@/lib/utils/distractor-check";
-import { findDuplicates } from "@/lib/utils/duplicate-detect";
-type ImportQualityResult = any;
 
-export const maxDuration = 300; // 5 minutes – AI distractor checks can be slow on large CSVs
+export const maxDuration = 300; // 5 minutes
 
-// CSV Import Route with Enhanced Quality Checks
+// Simplified CSV Import Route - Basic Validation Only
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
@@ -71,7 +68,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 1. Parse questions
+    // Parse questions
     const questions = rows.slice(1).map((row, i) => {
       const values = row.split(",").map((v) => v.trim());
       const obj: any = {};
@@ -82,44 +79,9 @@ export async function POST(request: NextRequest) {
       return obj;
     });
 
-    // 2. Run AI distractor quality checks
-    const distractorResults = await checkBatch(questions);
-
-    // 3. Run duplicate detection (temporarily disabled - signature mismatch)
-    const duplicateResults: any[] = []; // await findDuplicates(questions);
-
-    // 4. Build combined quality report
+    // Basic validation
     const errors: Array<{ row: number; message: string }> = [];
-    const warnings: Array<{ row: number; message: string }> = [];
 
-    // 5. Low-score distractor warnings
-    const LOW_SCORE_THRESHOLD = 60;
-    const flagged_questions: ImportQualityResult["flagged_questions"] = [];
-
-    questions.forEach((q, i) => {
-      const score = distractorResults[i]?.score;
-      if (score !== undefined && score < LOW_SCORE_THRESHOLD) {
-        warnings.push({
-          row: q.row,
-          message: `Low distractor quality (${score}/100). ${distractorResults[i]?.reasoning}`,
-        });
-        flagged_questions.push({
-          row: q.row,
-          question: q.question_text,
-          score,
-          reasoning: distractorResults[i]?.reasoning,
-        });
-      }
-    });
-    // 6. Duplicate warnings (temporarily disabled)
-    // duplicateResults.forEach((dup) => {
-    //   warnings.push({
-    //     row: dup.row,
-    //     message: `Possible duplicate of row ${dup.matchRow}`,
-    //   });
-    // });
-
-    // 7. Basic validation errors
     questions.forEach((q) => {
       if (!["A", "B", "C", "D"].includes(q.correct_answer.toUpperCase())) {
         errors.push({
@@ -132,26 +94,16 @@ export async function POST(request: NextRequest) {
       }
     });
 
-    const passed = errors.length === 0;
-    const qualityResult: ImportQualityResult = {
-      total: questions.length,
-      passed: passed ? questions.length : 0,
-      failed: errors.length,
-      errors,
-      warnings,
-      flagged_questions,
-    };
-
     // If there are blocking errors, return them
     if (errors.length > 0) {
       return NextResponse.json({
         success: false,
-        quality: qualityResult,
+        errors,
         message: `Import blocked: ${errors.length} validation error(s)`,
       });
     }
 
-    // 8. Insert questions
+    // Insert questions
     const insertData = questions.map((q) => ({
       book_title: q.book_title,
       edition: q.edition,
@@ -188,7 +140,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       inserted: questions.length,
-      quality: qualityResult,
       message: `Successfully imported ${questions.length} questions for ${examType} exam`,
     });
   } catch (error: any) {
