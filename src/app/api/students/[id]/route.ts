@@ -3,10 +3,13 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const supabase = await createClient();
+
+    // Await params (Next.js 15 requirement)
+    const { id } = await params;
 
     // Check if user is admin
     const {
@@ -45,7 +48,7 @@ export async function PATCH(
         ...filteredUpdates,
         updated_at: new Date().toISOString(),
       })
-      .eq("id", params.id)
+      .eq("id", id)
       .select()
       .single();
 
@@ -64,10 +67,13 @@ export async function PATCH(
 // Keep existing DELETE method
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const supabase = await createClient();
+
+    // Await params (Next.js 15 requirement)
+    const { id } = await params;
 
     // Check if user is admin
     const {
@@ -88,7 +94,7 @@ export async function DELETE(
     }
 
     // Delete from auth.users (cascade will handle profiles)
-    const { error } = await supabase.auth.admin.deleteUser(params.id);
+    const { error } = await supabase.auth.admin.deleteUser(id);
 
     if (error) throw error;
 
