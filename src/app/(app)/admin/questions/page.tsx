@@ -539,7 +539,7 @@ function EditModal({
               type='number'
               value={editedQuestion.page_start || ""}
               onChange={(e) =>
-                updateField("page_start", parseInt(e.target.value) || null)
+                updateField("page_start", parseInt(e.target.value) || 0
               }
               className='w-full px-2.5 py-2.5 border border-gray-200 rounded-lg text-sm'
             />
@@ -553,7 +553,7 @@ function EditModal({
               type='number'
               value={editedQuestion.page_end || ""}
               onChange={(e) =>
-                updateField("page_end", parseInt(e.target.value) || null)
+                updateField("page_end", parseInt(e.target.value) || 0
               }
               className='w-full px-2.5 py-2.5 border border-gray-200 rounded-lg text-sm'
             />
