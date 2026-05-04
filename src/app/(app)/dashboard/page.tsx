@@ -36,7 +36,7 @@ export default async function DashboardPage() {
   ]);
 
   const stats = statsRes.data as UserStatsCache | null;
-  const sessions = (sessionsRes.data || []) as ExamSession[];
+  const sessions = (sessionsRes.data || []) as any[];
   const name = profileRes.data?.full_name?.split(" ")[0] || "there";
 
   // Determine if this is their first time on the dashboard
