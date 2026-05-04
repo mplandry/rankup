@@ -2,9 +2,8 @@
 
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import type { Profile, UserStatsCache } from "@/types";
-
-type StudentWithStats = Profile & { user_stats_cache: UserStatsCache | null };
+import type { Profile } from "@/types";
+type StudentWithStats = Profile & { user_stats_cache: any | null };
 
 // ============================================================================
 // UTILITY FUNCTIONS

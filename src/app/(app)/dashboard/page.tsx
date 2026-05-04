@@ -8,7 +8,7 @@ import {
   Target,
   Flame,
 } from "lucide-react";
-import type { UserStatsCache, ExamSession } from "@/types";
+import type { ExamSession } from "@/types";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -35,7 +35,7 @@ export default async function DashboardPage() {
     supabase.from("profiles").select("full_name").eq("id", user.id).single(),
   ]);
 
-  const stats = statsRes.data as UserStatsCache | null;
+  const stats = statsRes.data as any | null;
   const sessions = (sessionsRes.data || []) as any[];
   const name = profileRes.data?.full_name?.split(" ")[0] || "there";
 
