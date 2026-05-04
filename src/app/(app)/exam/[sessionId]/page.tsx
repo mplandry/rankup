@@ -3,6 +3,15 @@ import { redirect } from "next/navigation";
 import ExamSession from "@/components/exam/ExamSession";
 import type { Question, ExamSession as ExamSessionType } from "@/types";
 
+type ExamSessionQuestion = {
+  id: string;
+  session_id: string;
+  question_id: string;
+  user_answer: string;
+  is_correct: boolean;
+  question: Question;
+};
+
 interface Props {
   params: Promise<{ sessionId: string }>;
 }
@@ -58,11 +67,7 @@ export default async function ExamSessionPage({ params }: Props) {
       sessionId={sessionId}
       timeLimitSecs={session.time_limit_secs ?? 5400}
       startedAt={session.started_at}
-      sessionQuestions={
-        sessionQuestions as unknown as (ExamSessionQuestion & {
-          question: ExamQuestion;
-        })[]
-      }
+      sessionQuestions={sessionQuestions as any}
     />
   );
 }
