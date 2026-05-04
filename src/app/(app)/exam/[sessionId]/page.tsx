@@ -1,75 +1,51 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import ExamSession from "@/components/exam/ExamSession";
-import type { Question, ExamSessionQuestion, CategoryBreakdown } from "@/types";
-
-type ExamSessionQuestion = {
-  id: string;
-  session_id: string;
-  question_id: string;
-  user_answer: string;
-  is_correct: boolean;
-  question: Question;
-  type ExamSessionQuestion = any;
-type CategoryBreakdown = any;
-};
+import type { Question } from "@/types";
 
 interface Props {
   params: Promise<{ sessionId: string }>;
 }
 
 export default async function ExamSessionPage({ params }: Props) {
-  const { sessionId } = await params;
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
 
-  const { data: session } = await supabase
+  // Await params (Next.js 15 requirement)
+  const { sessionId } = await params;
+
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (!session) {
+    redirect("/login");
+  }
+
+  // Fetch session data
+  const { data: sessionData } = await supabase
     .from("exam_sessions")
     .select("*")
     .eq("id", sessionId)
-    .eq("user_id", user.id)
+    .eq("user_id", session.user.id)
     .single();
 
-  if (!session || session.mode !== "exam") redirect("/exam");
-  if (session.status === "completed") redirect(`/exam/${sessionId}/results`);
+  if (!sessionData) {
+    redirect("/dashboard");
+  }
 
-  // Load questions WITHOUT correct_answer (security: never send to client)
+  // Fetch session questions with question details
   const { data: sessionQuestions } = await supabase
     .from("exam_session_questions")
     .select(
       `
-      id,
-      session_id,
-      question_id,
-      question_order,
-      user_answer,
-      is_correct,
-      flagged,
-      answered_at,
-      time_spent_secs,
-      question:questions(
-        id, source_id, book_title, edition, chapter, topic,
-        page_start, page_end, question_text,
-        answer_a, answer_b, answer_c, answer_d,
-        study_eligible, exam_eligible, difficulty,
-        is_active, created_by, created_at, updated_at
-      )
+      *,
+      question:questions(*)
     `,
     )
     .eq("session_id", sessionId)
-    .order("question_order");
-
-  if (!sessionQuestions || sessionQuestions.length === 0) redirect("/exam");
+    .order("created_at", { ascending: true });
 
   return (
-    <ExamSession
-      sessionId={sessionId}
-      timeLimitSecs={session.time_limit_secs ?? 5400}
-      startedAt={session.started_at}
-      sessionQuestions={sessionQuestions as any}
-    />
+    <ExamSession session={sessionData} questions={sessionQuestions || []} />
   );
 }
