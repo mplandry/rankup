@@ -76,9 +76,18 @@ export interface ImportQualityResult {
   total: number;
   passed: number;
   failed: number;
+  inserted: number;
+  low_distractor_count: number;
+  duplicate_count: number;
   errors: Array<{ row: number; message: string }>;
   warnings?: Array<{ row: number; message: string }>;
   flagged_questions?: Array<any>;
+  answer_distribution?: {
+    A: number;
+    B: number;
+    C: number;
+    D: number;
+  };
 }
 
 // Utility Types
