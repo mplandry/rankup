@@ -35,14 +35,14 @@ export default function CsvImporter() {
   }
 
   async function handleImport() {
-    if (!parseResult || parseResult.valid.length === 0) return;
+    if (!parseResult || parseResult.data.length === 0) return;
     setImporting(true);
     setImportError("");
     try {
       const res = await fetch("/api/import", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ questions: parseResult.valid }),
+        body: JSON.stringify({ questions: parseResult.data }),
       });
       const data: ImportQualityResult = await res.json();
       if (!res.ok && res.status !== 207) throw new Error((data as any).error || "Import failed");
@@ -243,7 +243,7 @@ export default function CsvImporter() {
             <div className="bg-green-50 border border-green-200 rounded-lg p-4 flex items-center gap-3">
               <CheckCircle2 className="w-5 h-5 text-green-600" />
               <div>
-                <div className="font-semibold text-green-800">{parseResult.valid.length}</div>
+                <div className="font-semibold text-green-800">{parseResult.data.length}</div>
                 <div className="text-xs text-green-700">Valid questions</div>
               </div>
             </div>
@@ -271,24 +271,24 @@ export default function CsvImporter() {
             </div>
           )}
 
-          {parseResult.valid.length > 0 && (
+          {parseResult.data.length > 0 && (
             <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-start gap-2">
               <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
               <p className="text-xs text-amber-800">
-                Import will run AI distractor quality checks on all {parseResult.valid.length} questions.
+                Import will run AI distractor quality checks on all {parseResult.data.length} questions.
                 This may take 30–60 seconds for large batches.
               </p>
             </div>
           )}
 
-          {parseResult.valid.length > 0 && (
+          {parseResult.data.length > 0 && (
             <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
               <div className="px-4 py-3 bg-gray-50 border-b border-gray-200 flex items-center gap-2">
                 <FileText className="w-4 h-4 text-gray-400" />
                 <span className="text-sm font-medium text-gray-700">Preview (first 3 rows)</span>
               </div>
               <div className="divide-y divide-gray-100">
-                {parseResult.valid.slice(0, 3).map((q, i) => (
+                {parseResult.data.slice(0, 3).map((q, i) => (
                   <div key={i} className="px-4 py-3 text-xs">
                     <div className="font-medium text-gray-800 mb-1">{q.question_text.substring(0, 100)}…</div>
                     <div className="text-gray-500">{q.book_title} · {q.chapter}</div>
@@ -306,7 +306,7 @@ export default function CsvImporter() {
 
           <button
             onClick={handleImport}
-            disabled={importing || parseResult.valid.length === 0}
+            disabled={importing || parseResult.data.length === 0}
             className="w-full bg-[#C0392B] hover:bg-[#a93226] text-white font-semibold py-3 rounded-lg transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
           >
             {importing ? (
@@ -315,7 +315,7 @@ export default function CsvImporter() {
                 Running quality checks & importing…
               </>
             ) : (
-              `Import ${parseResult.valid.length} Question${parseResult.valid.length !== 1 ? "s" : ""}`
+              `Import ${parseResult.data.length} Question${parseResult.data.length !== 1 ? "s" : ""}`
             )}
           </button>
         </div>
