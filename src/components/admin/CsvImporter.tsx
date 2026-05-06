@@ -354,7 +354,8 @@ export default function CsvImporter() {
               <div className='space-y-1 max-h-48 overflow-auto'>
                 {parseResult.errors.map((err, i) => (
                   <div key={i} className='text-xs text-red-700'>
-                    Row {err.row} · <strong>{err.field}</strong>: {err.message}
+                    Row {err.row}
+                    {err.field ? ` · ${err.field}` : ""}: {err.message}
                   </div>
                 ))}
               </div>

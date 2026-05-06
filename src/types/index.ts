@@ -66,7 +66,7 @@ export interface CategoryBreakdown {
 // CSV Import Types
 export interface CsvParseResult {
   data: any[];
-  errors: Array<{ row: number; message: string }>;
+  errors: Array<{ row: number; message: string; field?: string }>;
   meta?: {
     fields?: string[];
   };
@@ -79,7 +79,7 @@ export interface ImportQualityResult {
   inserted: number;
   low_distractor_count: number;
   duplicate_count: number;
-  errors: Array<{ row: number; message: string }>;
+  errors: Array<{ row: number; message: string; field?: string }>;
   warnings?: Array<{ row: number; message: string }>;
   flagged_questions?: Array<any>;
   answer_distribution?: {
