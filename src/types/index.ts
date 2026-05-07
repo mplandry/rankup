@@ -53,6 +53,7 @@ export interface ExamSessionQuestion {
   question_id: string;
   user_answer: string | null;
   is_correct: boolean;
+  flagged?: boolean;
   question: Question;
 }
 
