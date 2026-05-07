@@ -274,7 +274,7 @@ function EditStudentModal({
               type='text'
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              className='w-full px-3 py-2 border border-gray-200 rounded-lg text-sm'
+              className='w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-900'
             />
           </div>
 
@@ -286,7 +286,7 @@ function EditStudentModal({
               type='text'
               value={department}
               onChange={(e) => setDepartment(e.target.value)}
-              className='w-full px-3 py-2 border border-gray-200 rounded-lg text-sm'
+              className='w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-900'
               placeholder='e.g., Boston Fire Department'
             />
           </div>
@@ -297,7 +297,7 @@ function EditStudentModal({
             </label>
             <select
               value={examType}
-              className='w-full px-3 py-2 border border-gray-200 rounded-lg text-sm'
+              className='w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-900'
               onChange={(e) =>
                 setExamType(e.target.value as "lieutenant" | "captain")
               }
