@@ -95,3 +95,5 @@ export type ExamType = "lieutenant" | "captain";
 export type Difficulty = "easy" | "medium" | "hard";
 export type Mode = "study" | "exam";
 export type UserRole = "student" | "admin";
+export type ExamQuestion = Question;
+export type Answer = "A" | "B" | "C" | "D";
