@@ -63,6 +63,14 @@ export interface CategoryBreakdown {
   total: number;
   percentage: number;
 }
+export interface WeakArea {
+  book_title?: string | null;
+  chapter?: number | null;
+  topic?: string | null;
+  pct?: number | null;
+  attempts?: number | null;
+  correct?: number | null;
+}
 
 // CSV Import Types
 export interface CsvParseResult {
