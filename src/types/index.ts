@@ -94,3 +94,4 @@ export interface ImportQualityResult {
 export type ExamType = "lieutenant" | "captain";
 export type Difficulty = "easy" | "medium" | "hard";
 export type Mode = "study" | "exam";
+export type UserRole = "student" | "admin";
