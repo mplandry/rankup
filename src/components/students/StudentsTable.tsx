@@ -297,8 +297,10 @@ function EditStudentModal({
             </label>
             <select
               value={examType}
-              onChange={(e) => setExamType(e.target.value)}
               className='w-full px-3 py-2 border border-gray-200 rounded-lg text-sm'
+              onChange={(e) =>
+                setExamType(e.target.value as "lieutenant" | "captain")
+              }
             >
               <option value='lieutenant'>Lieutenant</option>
               <option value='captain'>Captain</option>

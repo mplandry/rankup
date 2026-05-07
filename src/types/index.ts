@@ -98,7 +98,37 @@ export interface ImportQualityResult {
     D: number;
   };
 }
+export interface CsvRowError {
+  row: number;
+  field: string;
+  message: string;
+}
 
+export interface CsvQuestionRow {
+  question_id?: string;
+  question_text: string;
+  answer_a: string;
+  answer_b: string;
+  answer_c: string;
+  answer_d: string;
+  correct_answer: string;
+  book_title: string;
+  edition?: string;
+  chapter: string;
+  topic?: string;
+  page_start?: string;
+  page_end?: string;
+  explanation?: string;
+  difficulty?: string;
+  study_eligible?: string | boolean;
+  exam_eligible?: string | boolean;
+}
+
+// Updated CsvParseResult to use 'valid' array instead of 'data'
+export interface CsvParseResult {
+  valid: Array<{...}>;
+  errors: CsvRowError[];
+}
 // Utility Types
 export type ExamType = "lieutenant" | "captain";
 export type Difficulty = "easy" | "medium" | "hard";
