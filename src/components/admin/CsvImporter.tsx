@@ -324,7 +324,7 @@ export default function CsvImporter() {
               <CheckCircle2 className='w-5 h-5 text-green-600' />
               <div>
                 <div className='font-semibold text-green-800'>
-                  {parseResult.data.length}
+                  {parseResult.valid.length}
                 </div>
                 <div className='text-xs text-green-700'>Valid questions</div>
               </div>
@@ -362,18 +362,18 @@ export default function CsvImporter() {
             </div>
           )}
 
-          {parseResult.data.length > 0 && (
+          {parseResult.valid.length > 0 && (
             <div className='bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-start gap-2'>
               <AlertTriangle className='w-4 h-4 text-amber-600 shrink-0 mt-0.5' />
               <p className='text-xs text-amber-800'>
                 Import will run AI distractor quality checks on all{" "}
-                {parseResult.data.length} questions. This may take 30–60 seconds
+                {parseResult.valid.length} questions This may take 30–60 seconds
                 for large batches.
               </p>
             </div>
           )}
 
-          {parseResult.data.length > 0 && (
+          {parseResult.valid.length > 0 && (
             <div className='bg-white border border-gray-200 rounded-xl overflow-hidden'>
               <div className='px-4 py-3 bg-gray-50 border-b border-gray-200 flex items-center gap-2'>
                 <FileText className='w-4 h-4 text-gray-400' />
@@ -382,7 +382,7 @@ export default function CsvImporter() {
                 </span>
               </div>
               <div className='divide-y divide-gray-100'>
-                {parseResult.data.slice(0, 3).map((q, i) => (
+                {parseResult.valid.slice(0, 3).map((q, i) => (
                   <div key={i} className='px-4 py-3 text-xs'>
                     <div className='font-medium text-gray-800 mb-1'>
                       {q.question_text.substring(0, 100)}…
@@ -404,7 +404,7 @@ export default function CsvImporter() {
 
           <button
             onClick={handleImport}
-            disabled={importing || parseResult.data.length === 0}
+            disabled={importing || parseResult.valid.length === 0}
             className='w-full bg-[#C0392B] hover:bg-[#a93226] text-white font-semibold py-3 rounded-lg transition-colors disabled:opacity-50 flex items-center justify-center gap-2'
           >
             {importing ? (
@@ -413,7 +413,7 @@ export default function CsvImporter() {
                 Running quality checks & importing…
               </>
             ) : (
-              `Import ${parseResult.data.length} Question${parseResult.data.length !== 1 ? "s" : ""}`
+              `Import ${parseResult.valid.length} Question${parseResult.valid.length !== 1 ? "s" : ""}`
             )}
           </button>
         </div>

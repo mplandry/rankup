@@ -1,138 +1,98 @@
-// Core Types
-export interface Profile {
-  id: string;
-  email: string;
-  full_name: string | null;
-  department: string | null;
-  exam_type: "lieutenant" | "captain";
-  is_admin: boolean;
-  created_at: string;
-  last_sign_in_at: string | null;
+import { createClient } from "@/lib/supabase/server";
+import { NextResponse } from "next/server";
+import { Resend } from "resend";
+
+function getResendClient() {
+  return new Resend(process.env.RESEND_API_KEY || "");
 }
 
-export interface Question {
-  id: string;
-  question_number: number;
-  book_title: string;
-  edition: string;
-  chapter: number | null;
-  topic: string | null;
-  page_start: number | null;
-  page_end: number | null;
-  question_text: string;
-  answer_a: string;
-  answer_b: string;
-  answer_c: string;
-  answer_d: string;
-  correct_answer: string;
-  explanation: string | null;
-  difficulty: "easy" | "medium" | "hard";
-  study_eligible: boolean;
-  exam_eligible: boolean;
-  is_active: boolean;
-  exam_type: "lieutenant" | "captain";
-  created_at: string;
-  updated_at: string;
-}
+export async function POST() {
+  try {
+    const resend = getResendClient();
+    const supabase = await createClient();
 
-export interface ExamSession {
-  id: string;
-  user_id: string;
-  mode: "study" | "exam";
-  score: number;
-  score_percent: number;
-  total_questions: number;
-  started_at: string;
-  completed_at: string | null;
-  created_at: string;
-}
+    // Check if user is admin
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
-export interface ExamSessionQuestion {
-  id: string;
-  session_id: string;
-  question_id: string;
-  user_answer: string | null;
-  is_correct: boolean;
-  flagged?: boolean;
-  question: Question;
-}
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", session.user.id)
+      .single();
 
-export interface CategoryBreakdown {
-  category: string;
-  correct: number;
-  total: number;
-  percentage: number;
-}
-export interface WeakArea {
-  book_title?: string | null;
-  chapter?: number | null;
-  topic?: string | null;
-  pct?: number | null;
-  attempts?: number | null;
-  correct?: number | null;
-}
+    if (profile?.role !== "admin") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
 
-// CSV Import Types
-export interface CsvParseResult {
-  data: any[];
-  errors: Array<{ row: number; message: string; field?: string }>;
-  meta?: {
-    fields?: string[];
-  };
-}
+    // Find students inactive for 30+ days
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-export interface ImportQualityResult {
-  total: number;
-  passed: number;
-  failed: number;
-  inserted: number;
-  low_distractor_count: number;
-  duplicate_count: number;
-  errors: Array<{ row: number; message: string; field?: string }>;
-  warnings?: Array<{ row: number; message: string }>;
-  flagged_questions?: Array<any>;
-  answer_distribution?: {
-    A: number;
-    B: number;
-    C: number;
-    D: number;
-  };
-}
-export interface CsvRowError {
-  row: number;
-  field: string;
-  message: string;
-}
+    const { data: inactiveStudents, error } = await supabase
+      .from("profiles")
+      .select("id, email, full_name, last_sign_in_at")
+      .eq("role", "student")
+      .or(
+        `last_sign_in_at.is.null,last_sign_in_at.lt.${thirtyDaysAgo.toISOString()}`,
+      );
 
-export interface CsvQuestionRow {
-  question_id?: string;
-  question_text: string;
-  answer_a: string;
-  answer_b: string;
-  answer_c: string;
-  answer_d: string;
-  correct_answer: string;
-  book_title: string;
-  edition?: string;
-  chapter: string;
-  topic?: string;
-  page_start?: string;
-  page_end?: string;
-  explanation?: string;
-  difficulty?: string;
-  study_eligible?: string | boolean;
-  exam_eligible?: string | boolean;
-}
+    if (error) throw error;
 
-// Updated CsvParseResult to use 'valid' array instead of 'data'
-export interface CsvParseResult {
-  valid: Array<{...}>;
-  errors: CsvRowError[];
+    // Send emails
+    let sentCount = 0;
+    for (const student of inactiveStudents || []) {
+      try {
+        await resend.emails.send({
+          from: "RankUp <onboarding@resend.dev>",
+          to: student.email,
+          subject: "We miss you at RankUp! 🔥",
+          html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+              <h2>Hey ${student.full_name || "there"}! 👋</h2>
+              <p>We noticed you haven't been on RankUp in a while. Your promotional exam is coming up soon!</p>
+              <p><strong>Don't let your study streak break!</strong></p>
+              <ul>
+                <li>📚 Your question bank is waiting</li>
+                <li>📝 Practice exams ready to go</li>
+                <li>🎯 Track your progress toward passing</li>
+              </ul>
+              <p style="margin-top: 30px;">
+                <a href="https://rankupfire.com" style="background: #dc2626; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: bold;">
+                  Get Back to Studying 🔥
+                </a>
+              </p>
+              <p style="color: #666; font-size: 12px; margin-top: 40px;">
+                You're receiving this because you're registered for RankUp. 
+                ${
+                  student.last_sign_in_at
+                    ? `Last active: ${new Date(student.last_sign_in_at).toLocaleDateString()}`
+                    : "You haven't logged in yet!"
+                }
+              </p>
+            </div>
+          `,
+        });
+        sentCount++;
+      } catch (emailError) {
+        console.error(`Failed to email ${student.email}:`, emailError);
+      }
+    }
+
+    return NextResponse.json({
+      success: true,
+      count: sentCount,
+      total: inactiveStudents?.length || 0,
+    });
+  } catch (error) {
+    console.error("Error emailing inactive students:", error);
+    return NextResponse.json(
+      { error: "Failed to send emails" },
+      { status: 500 },
+    );
+  }
 }
-// Utility Types
-export type ExamType = "lieutenant" | "captain";
-export type Difficulty = "easy" | "medium" | "hard";
-export type Mode = "study" | "exam";
-export type UserRole = "student" | "admin";
-export type ExamQuestion = Question;
-export type Answer = "A" | "B" | "C" | "D";
