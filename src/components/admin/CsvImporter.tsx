@@ -64,7 +64,7 @@ export default function CsvImporter() {
       const res = await fetch("/api/import", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ questions: parseResult.data }),
+        body: JSON.stringify({ questions: parseResult.valid }),
       });
       const data: ImportQualityResult = await res.json();
       if (!res.ok && res.status !== 207)
