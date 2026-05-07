@@ -57,7 +57,7 @@ export default function CsvImporter() {
   }
 
   async function handleImport() {
-    if (!parseResult || parseResult.data.length === 0) return;
+    if (!parseResult || parseResult.valid.length === 0) return;
     setImporting(true);
     setImportError("");
     try {
