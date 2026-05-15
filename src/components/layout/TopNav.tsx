@@ -15,6 +15,7 @@ import {
   Upload,
   Users,
   CreditCard,
+  Banknote,
 } from "lucide-react";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
@@ -26,6 +27,7 @@ const studentNav = [
   { name: "Exam", href: "/exam", icon: FileText },
   { name: "Flashcards", href: "/flashcards", icon: CreditCard },
   { name: "Progress", href: "/progress", icon: BarChart3 },
+  { name: "Pricing", href: "/pricing", icon: Banknote },
 ];
 
 const adminNav = [

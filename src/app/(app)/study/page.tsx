@@ -1,5 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import StudyConfigClient from "@/components/study/StudyConfig";
+import { trackSessionCompletion } from "@/lib/referral-tracker";
+import TrialExpirationPrompt from "@/components/TrialExpirationPrompt";
 
 export const dynamic = "force-dynamic";
 
@@ -117,6 +119,7 @@ export default async function StudyPage() {
 
   return (
     <div className='p-8 max-w-2xl mx-auto'>
+      <TrialExpirationPrompt />
       <div className='mb-8'>
         <h1 className='text-2xl font-bold text-[#1B2A4A]'>Study Mode</h1>
         <p className='text-gray-500 mt-1'>
