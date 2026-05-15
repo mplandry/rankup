@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase";
-import Sidebar from "@/components/Sidebar";
+import { supabase } from "@/lib/supabase/client";
 import SubscriptionBadge from "@/components/SubscriptionBadge";
 import ReferralCard from "@/components/ReferralCard";
 import TrialExpirationPrompt from "@/components/TrialExpirationPrompt";
