@@ -1,4 +1,3 @@
-// src/app/(app)/pricing/page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -128,342 +127,341 @@ export default function PricingPage() {
 
   if (!user) return null;
 
+  return (
+    <div
+      style={{
+        flex: 1,
+        padding: "36px 40px",
+        maxWidth: 1200,
+        margin: "0 auto",
+      }}
+    >
+      {/* Header */}
+      <div style={{ textAlign: "center", marginBottom: 40 }}>
+        <div
+          style={{
+            fontSize: 32,
+            fontWeight: 700,
+            marginBottom: 8,
+            color: "#1B2A4A",
+          }}
+        >
+          1,700 Questions. One Exam. Zero Wasted Time.
+        </div>
+        <div style={{ fontSize: 15, color: "#64748b", marginBottom: 16 }}>
+          100% MA reading list coverage • Built by MA firefighters for MA
+          firefighters
+        </div>
+
+        {/* Payment status alerts */}
+        {paymentStatus === "success" && (
+          <div
+            style={{
+              background: "#d1fae5",
+              border: "1px solid #6ee7b7",
+              borderRadius: 10,
+              padding: 14,
+              marginBottom: 20,
+              fontSize: 14,
+              color: "#065f46",
+              fontWeight: 600,
+            }}
+          >
+            ✅ Payment successful! You now have full access to RankUp.
+          </div>
+        )}
+        {paymentStatus === "canceled" && (
+          <div
+            style={{
+              background: "#fee2e2",
+              border: "1px solid #fca5a5",
+              borderRadius: 10,
+              padding: 14,
+              marginBottom: 20,
+              fontSize: 14,
+              color: "#991b1b",
+              fontWeight: 600,
+            }}
+          >
+            Payment was canceled. You can try again below.
+          </div>
+        )}
+
+        {/* Social proof */}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            gap: 24,
+            fontSize: 13,
+            color: "#64748b",
+            marginTop: 20,
+            flexWrap: "wrap",
+          }}
+        >
+          <div>✓ 1,700 MA-specific questions</div>
+          <div>✓ 33% less than FiredUp</div>
+          <div>✓ Exam date: April 7, 2026</div>
+        </div>
+      </div>
+
+      {/* Competitive advantage callout */}
       <div
         style={{
-          flex: 1,
-          padding: "36px 40px",
-          maxWidth: 1200,
-          margin: "0 auto",
+          background: "linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)",
+          border: "1px solid #fcd34d",
+          borderRadius: 12,
+          padding: 20,
+          marginBottom: 32,
+          textAlign: "center",
         }}
       >
-        {/* Header */}
-        <div style={{ textAlign: "center", marginBottom: 40 }}>
-          <div
-            style={{
-              fontSize: 32,
-              fontWeight: 700,
-              marginBottom: 8,
-              color: "#1B2A4A",
-            }}
-          >
-            1,700 Questions. One Exam. Zero Wasted Time.
-          </div>
-          <div style={{ fontSize: 15, color: "#64748b", marginBottom: 16 }}>
-            100% MA reading list coverage • Built by MA firefighters for MA
-            firefighters
-          </div>
-
-          {/* Payment status alerts */}
-          {paymentStatus === "success" && (
-            <div
-              style={{
-                background: "#d1fae5",
-                border: "1px solid #6ee7b7",
-                borderRadius: 10,
-                padding: 14,
-                marginBottom: 20,
-                fontSize: 14,
-                color: "#065f46",
-                fontWeight: 600,
-              }}
-            >
-              ✅ Payment successful! You now have full access to RankUp.
-            </div>
-          )}
-          {paymentStatus === "canceled" && (
-            <div
-              style={{
-                background: "#fee2e2",
-                border: "1px solid #fca5a5",
-                borderRadius: 10,
-                padding: 14,
-                marginBottom: 20,
-                fontSize: 14,
-                color: "#991b1b",
-                fontWeight: 600,
-              }}
-            >
-              Payment was canceled. You can try again below.
-            </div>
-          )}
-
-          {/* Social proof */}
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              gap: 24,
-              fontSize: 13,
-              color: "#64748b",
-              marginTop: 20,
-              flexWrap: "wrap",
-            }}
-          >
-            <div>✓ 1,700 MA-specific questions</div>
-            <div>✓ 33% less than FiredUp</div>
-            <div>✓ Exam date: April 7, 2026</div>
-          </div>
-        </div>
-
-        {/* Competitive advantage callout */}
         <div
           style={{
-            background: "linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)",
-            border: "1px solid #fcd34d",
-            borderRadius: 12,
-            padding: 20,
-            marginBottom: 32,
-            textAlign: "center",
+            fontSize: 16,
+            fontWeight: 600,
+            color: "#92400e",
+            marginBottom: 6,
           }}
         >
+          🎯 Why pay $450 for nationwide content?
+        </div>
+        <div style={{ fontSize: 14, color: "#78350f" }}>
+          Every question is from the actual MA reading list — no California
+          building codes, no Texas-specific content. Just what you need to pass
+          on April 7th.
+        </div>
+      </div>
+
+      {/* Pricing cards */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+          gap: 20,
+          marginBottom: 40,
+        }}
+      >
+        {PRICING_TIERS.map((tier) => (
           <div
+            key={tier.id}
             style={{
-              fontSize: 16,
-              fontWeight: 600,
-              color: "#92400e",
-              marginBottom: 6,
+              background: "#fff",
+              border: tier.recommended
+                ? "2px solid var(--red)"
+                : "1px solid #e0e6ed",
+              borderRadius: 14,
+              padding: 28,
+              position: "relative",
+              boxShadow: tier.recommended
+                ? "0 10px 30px rgba(220, 38, 38, 0.15)"
+                : "none",
             }}
           >
-            🎯 Why pay $450 for nationwide content?
-          </div>
-          <div style={{ fontSize: 14, color: "#78350f" }}>
-            Every question is from the actual MA reading list — no California
-            building codes, no Texas-specific content. Just what you need to
-            pass on April 7th.
-          </div>
-        </div>
-
-        {/* Pricing cards */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-            gap: 20,
-            marginBottom: 40,
-          }}
-        >
-          {PRICING_TIERS.map((tier) => (
-            <div
-              key={tier.id}
-              style={{
-                background: "#fff",
-                border: tier.recommended
-                  ? "2px solid var(--red)"
-                  : "1px solid #e0e6ed",
-                borderRadius: 14,
-                padding: 28,
-                position: "relative",
-                boxShadow: tier.recommended
-                  ? "0 10px 30px rgba(220, 38, 38, 0.15)"
-                  : "none",
-              }}
-            >
-              {/* Badge */}
-              {tier.badge && (
-                <div
-                  style={{
-                    position: "absolute",
-                    top: -12,
-                    left: "50%",
-                    transform: "translateX(-50%)",
-                    background: tier.recommended ? "var(--red)" : "#f59e0b",
-                    color: "#fff",
-                    padding: "4px 12px",
-                    borderRadius: 6,
-                    fontSize: 11,
-                    fontWeight: 700,
-                    letterSpacing: "0.05em",
-                  }}
-                >
-                  {tier.badge}
-                </div>
-              )}
-
-              {/* Plan name */}
+            {/* Badge */}
+            {tier.badge && (
               <div
                 style={{
-                  fontSize: 20,
+                  position: "absolute",
+                  top: -12,
+                  left: "50%",
+                  transform: "translateX(-50%)",
+                  background: tier.recommended ? "var(--red)" : "#f59e0b",
+                  color: "#fff",
+                  padding: "4px 12px",
+                  borderRadius: 6,
+                  fontSize: 11,
                   fontWeight: 700,
-                  color: "#1B2A4A",
-                  marginBottom: 8,
+                  letterSpacing: "0.05em",
                 }}
               >
-                {tier.name}
+                {tier.badge}
               </div>
+            )}
 
-              {/* Description */}
-              <div style={{ fontSize: 13, color: "#64748b", marginBottom: 20 }}>
-                {tier.description}
-              </div>
+            {/* Plan name */}
+            <div
+              style={{
+                fontSize: 20,
+                fontWeight: 700,
+                color: "#1B2A4A",
+                marginBottom: 8,
+              }}
+            >
+              {tier.name}
+            </div>
 
-              {/* Price */}
-              <div style={{ marginBottom: 24 }}>
-                <span
+            {/* Description */}
+            <div style={{ fontSize: 13, color: "#64748b", marginBottom: 20 }}>
+              {tier.description}
+            </div>
+
+            {/* Price */}
+            <div style={{ marginBottom: 24 }}>
+              <span
+                style={{
+                  fontSize: 48,
+                  fontWeight: 800,
+                  color: tier.recommended ? "var(--red)" : "#1B2A4A",
+                }}
+              >
+                {tier.price}
+              </span>
+              <span style={{ fontSize: 16, color: "#64748b", fontWeight: 600 }}>
+                {tier.period}
+              </span>
+            </div>
+
+            {/* Features */}
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 10,
+                marginBottom: 24,
+              }}
+            >
+              {tier.features.map((feature, i) => (
+                <div
+                  key={i}
                   style={{
-                    fontSize: 48,
-                    fontWeight: 800,
-                    color: tier.recommended ? "var(--red)" : "#1B2A4A",
+                    display: "flex",
+                    alignItems: "flex-start",
+                    gap: 8,
+                    fontSize: 13,
+                    color: "#475569",
                   }}
                 >
-                  {tier.price}
-                </span>
-                <span
-                  style={{ fontSize: 16, color: "#64748b", fontWeight: 600 }}
-                >
-                  {tier.period}
-                </span>
-              </div>
-
-              {/* Features */}
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 10,
-                  marginBottom: 24,
-                }}
-              >
-                {tier.features.map((feature, i) => (
-                  <div
-                    key={i}
+                  <span
                     style={{
-                      display: "flex",
-                      alignItems: "flex-start",
-                      gap: 8,
-                      fontSize: 13,
-                      color: "#475569",
+                      color: tier.recommended ? "var(--red)" : "#10b981",
+                      fontSize: 16,
                     }}
                   >
-                    <span
-                      style={{
-                        color: tier.recommended ? "var(--red)" : "#10b981",
-                        fontSize: 16,
-                      }}
-                    >
-                      ✓
-                    </span>
-                    <span>{feature}</span>
-                  </div>
-                ))}
-              </div>
-
-              {/* CTA button */}
-              <button
-                onClick={() => handleSubscribe(tier.id)}
-                disabled={loading === tier.id}
-                style={{
-                  width: "100%",
-                  padding: "13px 24px",
-                  background: tier.recommended ? "var(--red)" : "#1B2A4A",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: 10,
-                  fontSize: 15,
-                  fontWeight: 600,
-                  cursor: loading === tier.id ? "not-allowed" : "pointer",
-                  opacity: loading === tier.id ? 0.6 : 1,
-                }}
-              >
-                {loading === tier.id
-                  ? "Loading..."
-                  : tier.id === "department"
-                    ? "Contact Us"
-                    : "Get Started"}
-              </button>
+                    ✓
+                  </span>
+                  <span>{feature}</span>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
 
-        {/* Testimonial */}
+            {/* CTA button */}
+            <button
+              onClick={() => handleSubscribe(tier.id)}
+              disabled={loading === tier.id}
+              style={{
+                width: "100%",
+                padding: "13px 24px",
+                background: tier.recommended ? "var(--red)" : "#1B2A4A",
+                color: "#fff",
+                border: "none",
+                borderRadius: 10,
+                fontSize: 15,
+                fontWeight: 600,
+                cursor: loading === tier.id ? "not-allowed" : "pointer",
+                opacity: loading === tier.id ? 0.6 : 1,
+              }}
+            >
+              {loading === tier.id
+                ? "Loading..."
+                : tier.id === "department"
+                  ? "Contact Us"
+                  : "Get Started"}
+            </button>
+          </div>
+        ))}
+      </div>
+
+      {/* Testimonial */}
+      <div
+        style={{
+          background: "#f8fafc",
+          border: "1px solid #e0e6ed",
+          borderRadius: 12,
+          padding: 28,
+          textAlign: "center",
+        }}
+      >
         <div
           style={{
-            background: "#f8fafc",
-            border: "1px solid #e0e6ed",
-            borderRadius: 12,
-            padding: 28,
-            textAlign: "center",
+            fontSize: 18,
+            fontStyle: "italic",
+            color: "#475569",
+            marginBottom: 12,
+            lineHeight: 1.6,
           }}
         >
-          <div
-            style={{
-              fontSize: 18,
-              fontStyle: "italic",
-              color: "#475569",
-              marginBottom: 12,
-              lineHeight: 1.6,
-            }}
-          >
-            "Every question was from the actual reading list. No fluff, no
-            wasted time studying irrelevant material. Worth every dollar."
-          </div>
-          <div style={{ fontSize: 14, fontWeight: 600, color: "#1B2A4A" }}>
-            — MA Firefighter (Beta User)
-          </div>
+          "Every question was from the actual reading list. No fluff, no wasted
+          time studying irrelevant material. Worth every dollar."
         </div>
+        <div style={{ fontSize: 14, fontWeight: 600, color: "#1B2A4A" }}>
+          — MA Firefighter (Beta User)
+        </div>
+      </div>
 
-        {/* FAQ */}
-        <div style={{ marginTop: 40 }}>
-          <div
-            style={{
-              fontSize: 20,
-              fontWeight: 700,
-              color: "#1B2A4A",
-              marginBottom: 20,
-            }}
-          >
-            Frequently Asked Questions
+      {/* FAQ */}
+      <div style={{ marginTop: 40 }}>
+        <div
+          style={{
+            fontSize: 20,
+            fontWeight: 700,
+            color: "#1B2A4A",
+            marginBottom: 20,
+          }}
+        >
+          Frequently Asked Questions
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          <div>
+            <div
+              style={{
+                fontSize: 15,
+                fontWeight: 600,
+                color: "#1B2A4A",
+                marginBottom: 6,
+              }}
+            >
+              What happens after my trial ends?
+            </div>
+            <div style={{ fontSize: 14, color: "#64748b" }}>
+              You'll get downgraded to limited access (10 questions/day).
+              Subscribe anytime to unlock everything again.
+            </div>
           </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-            <div>
-              <div
-                style={{
-                  fontSize: 15,
-                  fontWeight: 600,
-                  color: "#1B2A4A",
-                  marginBottom: 6,
-                }}
-              >
-                What happens after my trial ends?
-              </div>
-              <div style={{ fontSize: 14, color: "#64748b" }}>
-                You'll get downgraded to limited access (10 questions/day).
-                Subscribe anytime to unlock everything again.
-              </div>
+          <div>
+            <div
+              style={{
+                fontSize: 15,
+                fontWeight: 600,
+                color: "#1B2A4A",
+                marginBottom: 6,
+              }}
+            >
+              Can I cancel my monthly subscription?
             </div>
-            <div>
-              <div
-                style={{
-                  fontSize: 15,
-                  fontWeight: 600,
-                  color: "#1B2A4A",
-                  marginBottom: 6,
-                }}
-              >
-                Can I cancel my monthly subscription?
-              </div>
-              <div style={{ fontSize: 14, color: "#64748b" }}>
-                Yes, cancel anytime. We'll save your progress for 90 days if you
-                want to come back.
-              </div>
+            <div style={{ fontSize: 14, color: "#64748b" }}>
+              Yes, cancel anytime. We'll save your progress for 90 days if you
+              want to come back.
             </div>
-            <div>
-              <div
-                style={{
-                  fontSize: 15,
-                  fontWeight: 600,
-                  color: "#1B2A4A",
-                  marginBottom: 6,
-                }}
-              >
-                Is the Exam Prep Bundle really a better deal?
-              </div>
-              <div style={{ fontSize: 14, color: "#64748b" }}>
-                Yes! 9 months of monthly = $360. Exam Prep Bundle = $300
-                one-time through exam day. Saves you $60.
-              </div>
+          </div>
+          <div>
+            <div
+              style={{
+                fontSize: 15,
+                fontWeight: 600,
+                color: "#1B2A4A",
+                marginBottom: 6,
+              }}
+            >
+              Is the Exam Prep Bundle really a better deal?
+            </div>
+            <div style={{ fontSize: 14, color: "#64748b" }}>
+              Yes! 9 months of monthly = $360. Exam Prep Bundle = $300 one-time
+              through exam day. Saves you $60.
             </div>
           </div>
         </div>
       </div>
     </div>
+  );
 }
