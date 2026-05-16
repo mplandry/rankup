@@ -128,12 +128,8 @@ export default function PricingPage() {
 
   if (!user) return null;
 
-  return (
-    <div style={{ display: "flex" }}>
-      <Sidebar userName={userName} userEmail={user?.email || ""} />
       <div
         style={{
-          marginLeft: "var(--sidebar-w)",
           flex: 1,
           padding: "36px 40px",
           maxWidth: 1200,
@@ -470,5 +466,4 @@ export default function PricingPage() {
         </div>
       </div>
     </div>
-  );
 }
