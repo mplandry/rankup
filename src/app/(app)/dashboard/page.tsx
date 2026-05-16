@@ -49,8 +49,6 @@ export default function DashboardPage() {
 
   if (!user) return null;
 
-  return (
-  
     <div style={{ padding: "36px 40px", maxWidth: 1200 }}>
         {/* Trial Expiration Prompt */}
         <TrialExpirationPrompt />
@@ -204,6 +202,5 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
-    </div>
+    </div> 
   );
-}
