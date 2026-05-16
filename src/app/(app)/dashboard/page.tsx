@@ -6,7 +6,6 @@ import { supabase } from "@/lib/supabase/client";
 import SubscriptionBadge from "@/components/SubscriptionBadge";
 import ReferralCard from "@/components/ReferralCard";
 import TrialExpirationPrompt from "@/components/TrialExpirationPrompt";
-import Sidebar from "@/components/components/layout/Sidebar";
 
 export default function DashboardPage() {
   const [user, setUser] = useState<any>(null);
@@ -51,16 +50,8 @@ export default function DashboardPage() {
   if (!user) return null;
 
   return (
-    <div style={{ display: "flex" }}>
-      <Sidebar userName={userName} userEmail={user?.email || ""} />
-      <div
-        style={{
-          marginLeft: "var(--sidebar-w)",
-          flex: 1,
-          padding: "36px 40px",
-          maxWidth: 1200,
-        }}
-      >
+  
+    <div style={{ padding: "36px 40px", maxWidth: 1200 }}>
         {/* Trial Expiration Prompt */}
         <TrialExpirationPrompt />
 
