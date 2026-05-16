@@ -2,8 +2,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase";
-
+import { supabase } from "@/lib/supabase/client";
 interface ReferralStats {
   referralCode: string;
   shareUrl: string;
