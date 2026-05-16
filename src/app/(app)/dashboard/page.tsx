@@ -6,6 +6,7 @@ import { supabase } from "@/lib/supabase/client";
 import SubscriptionBadge from "@/components/SubscriptionBadge";
 import ReferralCard from "@/components/ReferralCard";
 import TrialExpirationPrompt from "@/components/TrialExpirationPrompt";
+import Sidebar from "@/components/components/layout/Sidebar";
 
 export default function DashboardPage() {
   const [user, setUser] = useState<any>(null);
