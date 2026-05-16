@@ -64,8 +64,8 @@ export async function GET(req: NextRequest) {
       totalBonusWeeks: Math.floor(totalBonusDays / 7),
       referrals: referrals?.map((r) => ({
         id: r.id,
-        name: r.profiles?.full_name || "Firefighter",
-        email: r.profiles?.email || "",
+        name: r.profiles?.[0]?.full_name || "Firefighter",
+        email: r.profiles?.[0]?.email || "",
         signedUpAt: r.signed_up_at,
         bonusGranted: !!r.bonus_granted_at,
         completedFirstSession: !!r.first_session_completed_at,
