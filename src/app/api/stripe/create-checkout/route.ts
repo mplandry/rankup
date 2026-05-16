@@ -17,6 +17,7 @@ const supabase = createClient(
     },
   },
 );
+
 export async function POST(request: NextRequest) {
   try {
     const { priceId, userId } = await request.json();
