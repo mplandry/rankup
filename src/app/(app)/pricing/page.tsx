@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+
 interface PricingTier {
   id: string;
   name: string;
@@ -75,9 +76,9 @@ export default function PricingPage() {
 
   useEffect(() => {
     const init = async () => {
+      const supabase = createClient();
       const {
         data: { session },
-      const supabase = createClient();
       } = await supabase.auth.getSession();
       if (!session) {
         router.push("/login");
