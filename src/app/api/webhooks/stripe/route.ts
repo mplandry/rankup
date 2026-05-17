@@ -1,9 +1,7 @@
 // src/app/api/webhooks/stripe/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { createServiceRoleClient } from "@/lib/supabase/service-role";
 import Stripe from "stripe";
 
-// Force dynamic rendering
 export const dynamic = "force-dynamic";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
@@ -11,6 +9,9 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 });
 
 export async function POST(request: NextRequest) {
+  // Dynamic import to avoid build-time evaluation
+  const { createServiceRoleClient } =
+    await import("@/lib/supabase/service-role");
   const supabase = createServiceRoleClient();
 
   const body = await request.text();
