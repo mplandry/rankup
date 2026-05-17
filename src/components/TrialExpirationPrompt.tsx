@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase/client";
+import { createClient } from "@/lib/supabase/client";
 
 export default function TrialExpirationPrompt() {
   const [show, setShow] = useState(false);
@@ -19,6 +19,7 @@ export default function TrialExpirationPrompt() {
   }, []);
 
   const checkStatus = async () => {
+    const supabase = createClient();
     try {
       const {
         data: { session },
@@ -44,25 +45,23 @@ export default function TrialExpirationPrompt() {
 
       const trialEndsAt = new Date(profile.trial_ends_at);
       const extendedDays = profile.trial_extended_days || 0;
-      trialEndsAt.setDate(trialEndsAt.getDate() + extendedDays);
+      const effectiveEndDate = new Date(trialEndsAt);
+      effectiveEndDate.setDate(effectiveEndDate.getDate() + extendedDays);
 
       const now = new Date();
       const daysRemaining = Math.ceil(
-        (trialEndsAt.getTime() - now.getTime()) / (1000 * 60 * 60 * 24),
+        (effectiveEndDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24),
       );
 
-      const trialStatus = {
-        expired: daysRemaining <= 0,
+      const isExpired = daysRemaining <= 0;
+
+      setStatus({
+        expired: isExpired,
         daysRemaining: Math.max(0, daysRemaining),
         subscriptionStatus: profile.subscription_status,
-      };
+      });
 
-      setStatus(trialStatus);
-
-      if (
-        trialStatus.expired ||
-        (trialStatus.daysRemaining <= 7 && trialStatus.daysRemaining > 0)
-      ) {
+      if (isExpired || daysRemaining <= 3) {
         setShow(true);
       }
     } catch (error) {
@@ -70,126 +69,26 @@ export default function TrialExpirationPrompt() {
     }
   };
 
-  if (!show || !status || status.subscriptionStatus === "active") return null;
+  if (!show || !status) return null;
 
   if (status.expired) {
     return (
-      <div
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: "rgba(0, 0, 0, 0.7)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          zIndex: 9999,
-          padding: 20,
-        }}
-      >
-        <div
-          style={{
-            background: "#fff",
-            borderRadius: 16,
-            padding: 40,
-            maxWidth: 500,
-            width: "100%",
-            boxShadow: "0 20px 60px rgba(0,0,0,0.3)",
-          }}
-        >
-          <div style={{ textAlign: "center", marginBottom: 24 }}>
-            <div
-              style={{
-                width: 64,
-                height: 64,
-                background: "#fee2e2",
-                borderRadius: "50%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: 32,
-                margin: "0 auto 16px",
-              }}
-            >
-              ⏰
-            </div>
-            <h2
-              style={{
-                fontSize: 24,
-                fontWeight: 700,
-                color: "#1B2A4A",
-                marginBottom: 8,
-              }}
-            >
-              Your trial has expired
-            </h2>
-            <p style={{ fontSize: 14, color: "#64748b" }}>
-              You're now limited to 10 questions per day
-            </p>
-          </div>
-
-          <div
-            style={{
-              background: "#f8fafc",
-              borderRadius: 10,
-              padding: 16,
-              marginBottom: 24,
-            }}
-          >
-            <div style={{ fontSize: 13, color: "#475569", marginBottom: 12 }}>
-              <strong>Subscribe to unlock:</strong>
-            </div>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: 8,
-                fontSize: 13,
-                color: "#64748b",
-              }}
-            >
-              <div>✓ Unlimited study mode</div>
-              <div>✓ 90-question exam simulations</div>
-              <div>✓ Weak area analysis</div>
-              <div>✓ Performance tracking</div>
+      <div className="fixed top-0 left-0 right-0 bg-gradient-to-r from-red-600 to-red-700 text-white py-4 px-6 shadow-lg z-50">
+        <div className="max-w-6xl mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="text-3xl">⚠️</div>
+            <div>
+              <div className="font-bold text-lg">Your trial has expired</div>
+              <div className="text-sm opacity-90">
+                Subscribe now to continue accessing all features
+              </div>
             </div>
           </div>
-
           <button
             onClick={() => router.push("/pricing")}
-            style={{
-              width: "100%",
-              padding: "14px",
-              background: "var(--red)",
-              color: "#fff",
-              border: "none",
-              borderRadius: 10,
-              fontSize: 15,
-              fontWeight: 600,
-              cursor: "pointer",
-              marginBottom: 12,
-            }}
+            className="bg-white text-red-600 px-6 py-2.5 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
           >
-            View Pricing Plans
-          </button>
-
-          <button
-            onClick={() => setShow(false)}
-            style={{
-              width: "100%",
-              padding: "10px",
-              background: "transparent",
-              border: "1px solid #e0e6ed",
-              borderRadius: 8,
-              fontSize: 13,
-              fontWeight: 600,
-              color: "#64748b",
-              cursor: "pointer",
-            }}
-          >
-            Continue with limited access
+            View Plans
           </button>
         </div>
       </div>
@@ -197,64 +96,35 @@ export default function TrialExpirationPrompt() {
   }
 
   return (
-    <div
-      style={{
-        background: "linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)",
-        border: "1px solid #fcd34d",
-        borderRadius: 12,
-        padding: 16,
-        marginBottom: 20,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        gap: 16,
-      }}
-    >
-      <div style={{ flex: 1 }}>
-        <div
-          style={{
-            fontSize: 15,
-            fontWeight: 600,
-            color: "#92400e",
-            marginBottom: 4,
-          }}
-        >
-          ⏰ {status.daysRemaining}{" "}
-          {status.daysRemaining === 1 ? "day" : "days"} left in your trial
+    <div className="fixed top-0 left-0 right-0 bg-gradient-to-r from-yellow-500 to-orange-500 text-white py-4 px-6 shadow-lg z-50">
+      <div className="max-w-6xl mx-auto flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <div className="text-3xl">⏰</div>
+          <div>
+            <div className="font-bold text-lg">
+              {status.daysRemaining} day
+              {status.daysRemaining !== 1 ? "s" : ""} remaining in your trial
+            </div>
+            <div className="text-sm opacity-90">
+              Subscribe now to keep your progress and continue studying
+            </div>
+          </div>
         </div>
-        <div style={{ fontSize: 13, color: "#78350f" }}>
-          Subscribe now to keep unlimited access through exam day
+        <div className="flex gap-3">
+          <button
+            onClick={() => setShow(false)}
+            className="text-white hover:text-gray-200 px-4 py-2"
+          >
+            Dismiss
+          </button>
+          <button
+            onClick={() => router.push("/pricing")}
+            className="bg-white text-orange-600 px-6 py-2.5 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
+          >
+            View Plans
+          </button>
         </div>
       </div>
-      <button
-        onClick={() => router.push("/pricing")}
-        style={{
-          padding: "10px 20px",
-          background: "#f59e0b",
-          color: "#fff",
-          border: "none",
-          borderRadius: 8,
-          fontSize: 13,
-          fontWeight: 600,
-          cursor: "pointer",
-          whiteSpace: "nowrap",
-        }}
-      >
-        View Plans
-      </button>
-      <button
-        onClick={() => setShow(false)}
-        style={{
-          padding: 8,
-          background: "transparent",
-          border: "none",
-          color: "#92400e",
-          cursor: "pointer",
-          fontSize: 18,
-        }}
-      >
-        ✕
-      </button>
     </div>
   );
 }
