@@ -214,7 +214,7 @@ export default function AdminReadingList() {
 
       {activeTab === "captain" && (
         <div className="mb-4 bg-yellow-50 border border-yellow-300 rounded-lg px-4 py-2.5 text-sm text-yellow-800 font-semibold">
-          📅 MA Statewide Captain Exam: April 7, 2026 · 4 source materials (including 1 statute)
+          📅 MA Statewide Captain Exam: TBD · 4 source materials (including 1 statute)
         </div>
       )}
 
