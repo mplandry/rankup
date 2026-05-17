@@ -1,7 +1,7 @@
-export function createServiceRoleClient() {
-  const { createClient } = require("@supabase/supabase-js");
+import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 
-  return createClient(
+export function createServiceRoleClient() {
+  return createSupabaseClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!,
     {

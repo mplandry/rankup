@@ -3,6 +3,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServiceRoleClient } from "@/lib/supabase/service-role";
 import Stripe from "stripe";
 
+// Force dynamic rendering
+export const dynamic = "force-dynamic";
+
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2026-04-22.dahlia",
 });
