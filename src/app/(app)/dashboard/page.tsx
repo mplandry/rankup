@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase/client";
+import { createClient } from "@/lib/supabase/client";
 import SubscriptionBadge from "@/components/SubscriptionBadge";
 import ReferralCard from "@/components/ReferralCard";
 import TrialExpirationPrompt from "@/components/TrialExpirationPrompt";
@@ -14,6 +14,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const init = async () => {
+      const supabase = createClient();
       const {
         data: { session },
       } = await supabase.auth.getSession();
@@ -50,158 +51,76 @@ export default function DashboardPage() {
   if (!user) return null;
 
   return (
-    <div style={{ padding: "36px 40px", maxWidth: 1200 }}>
-      {/* Trial Expiration Prompt */}
+    <>
       <TrialExpirationPrompt />
-
-      {/* Header with Subscription Badge */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "flex-start",
-          marginBottom: 32,
-        }}
-      >
-        <div>
-          <div style={{ fontSize: 28, fontWeight: 700, marginBottom: 4 }}>
-            Welcome back, {userName}
+      <div className="p-9 max-w-[1400px]">
+        <div className="mb-7 flex items-start justify-between">
+          <div>
+            <div className="text-[26px] font-bold mb-1">
+              Welcome back, {userName}
+            </div>
+            <div className="text-[13.5px] text-gray-500">
+              Ready to continue your training?
+            </div>
           </div>
-          <div style={{ fontSize: 14, color: "var(--text-muted)" }}>
-            Here's your study progress
+          <SubscriptionBadge />
+        </div>
+
+        <div className="grid grid-cols-3 gap-5 mb-7">
+          <div className="bg-white border border-gray-200 rounded-xl p-7">
+            <div className="text-[13px] font-bold text-gray-500 uppercase mb-1.5">
+              Study Sessions
+            </div>
+            <div className="text-[32px] font-bold text-gray-900">
+              {stats?.totalSessions || 0}
+            </div>
+          </div>
+
+          <div className="bg-white border border-gray-200 rounded-xl p-7">
+            <div className="text-[13px] font-bold text-gray-500 uppercase mb-1.5">
+              Questions Answered
+            </div>
+            <div className="text-[32px] font-bold text-gray-900">
+              {stats?.totalQuestions || 0}
+            </div>
+          </div>
+
+          <div className="bg-white border border-gray-200 rounded-xl p-7">
+            <div className="text-[13px] font-bold text-gray-500 uppercase mb-1.5">
+              Average Score
+            </div>
+            <div className="text-[32px] font-bold text-gray-900">
+              {stats?.avgScore || 0}%
+            </div>
           </div>
         </div>
-        <SubscriptionBadge />
-      </div>
 
-      {/* Stats Cards */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-          gap: 16,
-          marginBottom: 32,
-        }}
-      >
-        {[
-          {
-            label: "Study Sessions",
-            value: stats?.totalSessions || 0,
-            icon: "📚",
-            color: "var(--red)",
-          },
-          {
-            label: "Questions Answered",
-            value: stats?.totalQuestions || 0,
-            icon: "✍️",
-            color: "#3b82f6",
-          },
-          {
-            label: "Average Score",
-            value: `${stats?.avgScore || 0}%`,
-            icon: "📊",
-            color: "#10b981",
-          },
-        ].map((item, i) => (
+        <div className="grid grid-cols-2 gap-5 mb-7">
           <div
-            key={i}
-            style={{
-              background: "var(--white)",
-              border: "1px solid var(--border)",
-              borderRadius: 12,
-              padding: 20,
-            }}
+            onClick={() => router.push("/study")}
+            className="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-xl p-9 cursor-pointer hover:shadow-lg transition-shadow"
           >
-            <div style={{ fontSize: 32, marginBottom: 8 }}>{item.icon}</div>
-            <div
-              style={{
-                fontSize: 24,
-                fontWeight: 700,
-                color: item.color,
-                marginBottom: 4,
-              }}
-            >
-              {item.value}
-            </div>
-            <div style={{ fontSize: 13, color: "var(--text-muted)" }}>
-              {item.label}
+            <div className="text-5xl mb-4">📖</div>
+            <div className="text-[22px] font-bold mb-2">Study Mode</div>
+            <div className="text-blue-100 text-sm">
+              Practice with instant feedback and explanations
             </div>
           </div>
-        ))}
-      </div>
 
-      {/* Referral Card */}
-      <ReferralCard />
-
-      {/* Quick Actions */}
-      <div
-        style={{
-          background: "var(--white)",
-          border: "1px solid var(--border)",
-          borderRadius: 12,
-          padding: 24,
-        }}
-      >
-        <div style={{ fontSize: 18, fontWeight: 700, marginBottom: 16 }}>
-          Quick Actions
-        </div>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-            gap: 12,
-          }}
-        >
-          <button
-            onClick={() => router.push("/study")}
-            style={{
-              padding: "14px 20px",
-              background: "var(--red)",
-              color: "#fff",
-              border: "none",
-              borderRadius: 10,
-              fontSize: 14,
-              fontWeight: 600,
-              cursor: "pointer",
-              textAlign: "left",
-            }}
-          >
-            🔥 Start Study Session
-          </button>
-          <button
+          <div
             onClick={() => router.push("/exam")}
-            style={{
-              padding: "14px 20px",
-              background: "#3b82f6",
-              color: "#fff",
-              border: "none",
-              borderRadius: 10,
-              fontSize: 14,
-              fontWeight: 600,
-              cursor: "pointer",
-              textAlign: "left",
-            }}
+            className="bg-gradient-to-br from-red-500 to-red-600 text-white rounded-xl p-9 cursor-pointer hover:shadow-lg transition-shadow"
           >
-            📝 Take Practice Exam
-          </button>
-          <button
-            onClick={() => router.push("/flashcards")}
-            style={{
-              padding: "14px 20px",
-              background: "#10b981",
-              color: "#fff",
-              border: "none",
-              borderRadius: 10,
-              fontSize: 14,
-              fontWeight: 600,
-              cursor: "pointer",
-              textAlign: "left",
-            }}
-          >
-            🎯 Review Flashcards
-          </button>
+            <div className="text-5xl mb-4">🎯</div>
+            <div className="text-[22px] font-bold mb-2">Exam Mode</div>
+            <div className="text-red-100 text-sm">
+              Timed 90-question exams with results at the end
+            </div>
+          </div>
         </div>
+
+        <ReferralCard />
       </div>
-    </div>
+    </>
   );
 }
