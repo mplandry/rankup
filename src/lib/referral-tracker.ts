@@ -1,8 +1,9 @@
 // src/lib/referral-tracker.ts
 
-import { supabase } from "./supabase/client";
+import { createClient } from "./supabase/client";
 
 export async function trackSessionCompletion(userId: string): Promise<void> {
+  const supabase = createClient();
   try {
     const { data: profile } = await supabase
       .from("profiles")
@@ -41,6 +42,7 @@ export async function checkTrialStatus(userId: string): Promise<{
   daysRemaining: number;
   subscriptionStatus: string;
 }> {
+  const supabase = createClient();
   try {
     const { data: profile } = await supabase
       .from("profiles")
