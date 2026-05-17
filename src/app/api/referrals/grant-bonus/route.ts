@@ -1,9 +1,10 @@
 // src/app/api/referrals/grant-bonus/route.ts
 
 import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase/client";
+import { createClient } from "@/lib/supabase/client";
 
 export async function POST(req: NextRequest) {
+  const supabase = createClient();
   try {
     const { userId } = await req.json();
 
@@ -23,29 +24,13 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("referred_by")
-      .eq("id", userId)
-      .single();
-
-    if (!profile?.referred_by) {
-      return NextResponse.json({
-        success: false,
-        message: "User has no referrer",
-      });
-    }
-
-    console.log(
-      `✅ Granted referral bonus to user ${profile.referred_by} for referee ${userId}`,
-    );
-
     return NextResponse.json({
       success: true,
-      message: "Referral bonus granted",
+      message: "Referral bonus granted successfully",
+      data,
     });
   } catch (error: any) {
-    console.error("Error in grant-bonus endpoint:", error);
+    console.error("Error in grant-bonus route:", error);
     return NextResponse.json(
       { error: "Internal server error", details: error.message },
       { status: 500 },
