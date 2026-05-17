@@ -12,6 +12,7 @@ export default function SignupPage() {
   const [form, setForm] = useState({
     full_name: "",
     department: "",
+    custom_department: "",
     email: "",
     password: "",
     exam_type: "",
@@ -30,13 +31,24 @@ export default function SignupPage() {
       setError("Please select which exam you are preparing for.");
       return;
     }
+    
+    // Use custom department if "Other" is selected
+    const finalDepartment = form.department === "Other" 
+      ? form.custom_department 
+      : form.department;
+    
+    if (!finalDepartment) {
+      setError("Please specify your department.");
+      return;
+    }
+    
     setLoading(true);
     const supabase = createClient();
     const { data, error: signUpError } = await supabase.auth.signUp({
       email: form.email,
       password: form.password,
       options: {
-        data: { full_name: form.full_name, department: form.department },
+        data: { full_name: form.full_name, department: finalDepartment },
         emailRedirectTo: `${location.origin}/auth/callback`,
       },
     });
@@ -191,9 +203,21 @@ export default function SignupPage() {
                 <option value="Worcester">Worcester</option>
                 <option value="Other">Other / Not Listed</option>
               </select>
-                className='login-input'
-              />
             </div>
+
+            {form.department === "Other" && (
+              <div className='login-field'>
+                <label className='login-label'>Specify Your Department</label>
+                <input
+                  type='text'
+                  required
+                  value={form.custom_department}
+                  onChange={(e) => set("custom_department", e.target.value)}
+                  placeholder='Enter your fire department'
+                  className='login-input'
+                />
+              </div>
+            )}
 
             <div className='login-field'>
               <label className='login-label'>
