@@ -67,7 +67,7 @@ export default function WelcomePage() {
                 { icon: '1️⃣', text: 'Check your email inbox (and spam folder)' },
                 { icon: '2️⃣', text: 'Click the confirmation link in the email' },
                 { icon: '3️⃣', text: 'Start studying with 1,500+ practice questions' },
-                { icon: '4️⃣', text: 'Ace your promotional exam on April 7, 2026!' }
+                { icon: '4️⃣', text: 'Ace your promotional exam!' }
               ].map(({ icon, text }) => (
                 <div key={text} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                   <span style={{ fontSize: 20, flexShrink: 0 }}>{icon}</span>

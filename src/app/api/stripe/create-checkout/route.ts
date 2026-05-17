@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
                 pricing.plan === "monthly"
                   ? "Full access to all study materials"
                   : pricing.plan === "exam_prep"
-                    ? "One-time payment - access until April 7, 2026"
+                    ? "One-time payment - access until exam day"
                     : "Department group pricing (5+ firefighters)",
             },
             unit_amount: pricing.amount,

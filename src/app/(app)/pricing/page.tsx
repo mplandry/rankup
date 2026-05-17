@@ -40,7 +40,7 @@ const PRICING_TIERS: PricingTier[] = [
     description: "Best value - full access until exam day",
     features: [
       "Everything in Monthly",
-      "Access until April 7, 2026",
+      "Access until exam day",
       "No recurring charges",
       "33% less than FiredUp",
       "Save $60+ vs monthly",
@@ -203,7 +203,7 @@ export default function PricingPage() {
         >
           <div>✓ 1,700 MA-specific questions</div>
           <div>✓ 33% less than FiredUp</div>
-          <div>✓ Exam date: April 7, 2026</div>
+          <div>✓ Exam date: TBD</div>
         </div>
       </div>
 
@@ -230,8 +230,7 @@ export default function PricingPage() {
         </div>
         <div style={{ fontSize: 14, color: "#78350f" }}>
           Every question is from the actual MA reading list — no California
-          building codes, no Texas-specific content. Just what you need to pass
-          on April 7th.
+          building codes, no Texas-specific content. Just what you need to pass.
         </div>
       </div>
 
