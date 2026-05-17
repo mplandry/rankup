@@ -5,14 +5,11 @@ import Stripe from "stripe";
 export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
-  // Initialize Stripe client at runtime to avoid build-time evaluation
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
     apiVersion: "2026-04-22.dahlia",
   });
 
-  // Dynamic import to avoid build-time evaluation
-  const { createServiceRoleClient } =
-    await import("@/lib/supabase/service-role");
+  const { createServiceRoleClient } = await import("@/lib/supabase/service-role");
   const supabase = createServiceRoleClient();
 
   try {
@@ -25,7 +22,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get user profile
     const { data: profile } = await supabase
       .from("profiles")
       .select("stripe_customer_id, email, full_name")
@@ -36,31 +32,23 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // Create or retrieve Stripe customer
     let customerId = profile.stripe_customer_id;
 
     if (!customerId) {
       const customer = await stripe.customers.create({
         email: profile.email,
         name: profile.full_name || undefined,
-        metadata: {
-          supabase_user_id: userId,
-        },
+        metadata: { supabase_user_id: userId },
       });
       customerId = customer.id;
 
-      // Save customer ID to profile
       await supabase
         .from("profiles")
         .update({ stripe_customer_id: customerId })
         .eq("id", userId);
     }
 
-    // Determine pricing based on priceId
-    const pricingMap: Record
-      string,
-      { amount: number; plan: string; mode: "subscription" | "payment" }
-    > = {
+    const pricingMap: Record<string, { amount: number; plan: string; mode: "subscription" | "payment" }> = {
       monthly: { amount: 4000, plan: "monthly", mode: "subscription" },
       exam_prep: { amount: 30000, plan: "exam_prep", mode: "payment" },
       department: { amount: 25000, plan: "department", mode: "payment" },
@@ -71,7 +59,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid price ID" }, { status: 400 });
     }
 
-    // Create checkout session
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       line_items: [
@@ -94,9 +81,7 @@ export async function POST(request: NextRequest) {
             },
             unit_amount: pricing.amount,
             ...(pricing.mode === "subscription" && {
-              recurring: {
-                interval: "month",
-              },
+              recurring: { interval: "month" },
             }),
           },
           quantity: 1,
