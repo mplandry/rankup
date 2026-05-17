@@ -47,73 +47,88 @@ export default function DashboardPage() {
     user?.user_metadata?.full_name ||
     user?.email?.split("@")[0] ||
     "Firefighter";
-
-  if (!user) return null;
-
+  if (!user) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          minHeight: "100vh",
+        }}
+      >
+        <div style={{ textAlign: "center" }}>
+          <div style={{ fontSize: "24px", marginBottom: "8px" }}>
+            Loading...
+          </div>
+        </div>
+      </div>
+    );
+  }
   return (
     <>
       <TrialExpirationPrompt />
-      <div className="p-9 max-w-[1400px]">
-        <div className="mb-7 flex items-start justify-between">
+      <div className='p-9 max-w-[1400px]'>
+        <div className='mb-7 flex items-start justify-between'>
           <div>
-            <div className="text-[26px] font-bold mb-1">
+            <div className='text-[26px] font-bold mb-1'>
               Welcome back, {userName}
             </div>
-            <div className="text-[13.5px] text-gray-500">
+            <div className='text-[13.5px] text-gray-500'>
               Ready to continue your training?
             </div>
           </div>
           <SubscriptionBadge />
         </div>
 
-        <div className="grid grid-cols-3 gap-5 mb-7">
-          <div className="bg-white border border-gray-200 rounded-xl p-7">
-            <div className="text-[13px] font-bold text-gray-500 uppercase mb-1.5">
+        <div className='grid grid-cols-3 gap-5 mb-7'>
+          <div className='bg-white border border-gray-200 rounded-xl p-7'>
+            <div className='text-[13px] font-bold text-gray-500 uppercase mb-1.5'>
               Study Sessions
             </div>
-            <div className="text-[32px] font-bold text-gray-900">
+            <div className='text-[32px] font-bold text-gray-900'>
               {stats?.totalSessions || 0}
             </div>
           </div>
 
-          <div className="bg-white border border-gray-200 rounded-xl p-7">
-            <div className="text-[13px] font-bold text-gray-500 uppercase mb-1.5">
+          <div className='bg-white border border-gray-200 rounded-xl p-7'>
+            <div className='text-[13px] font-bold text-gray-500 uppercase mb-1.5'>
               Questions Answered
             </div>
-            <div className="text-[32px] font-bold text-gray-900">
+            <div className='text-[32px] font-bold text-gray-900'>
               {stats?.totalQuestions || 0}
             </div>
           </div>
 
-          <div className="bg-white border border-gray-200 rounded-xl p-7">
-            <div className="text-[13px] font-bold text-gray-500 uppercase mb-1.5">
+          <div className='bg-white border border-gray-200 rounded-xl p-7'>
+            <div className='text-[13px] font-bold text-gray-500 uppercase mb-1.5'>
               Average Score
             </div>
-            <div className="text-[32px] font-bold text-gray-900">
+            <div className='text-[32px] font-bold text-gray-900'>
               {stats?.avgScore || 0}%
             </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-5 mb-7">
+        <div className='grid grid-cols-2 gap-5 mb-7'>
           <div
             onClick={() => router.push("/study")}
-            className="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-xl p-9 cursor-pointer hover:shadow-lg transition-shadow"
+            className='bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-xl p-9 cursor-pointer hover:shadow-lg transition-shadow'
           >
-            <div className="text-5xl mb-4">📖</div>
-            <div className="text-[22px] font-bold mb-2">Study Mode</div>
-            <div className="text-blue-100 text-sm">
+            <div className='text-5xl mb-4'>📖</div>
+            <div className='text-[22px] font-bold mb-2'>Study Mode</div>
+            <div className='text-blue-100 text-sm'>
               Practice with instant feedback and explanations
             </div>
           </div>
 
           <div
             onClick={() => router.push("/exam")}
-            className="bg-gradient-to-br from-red-500 to-red-600 text-white rounded-xl p-9 cursor-pointer hover:shadow-lg transition-shadow"
+            className='bg-gradient-to-br from-red-500 to-red-600 text-white rounded-xl p-9 cursor-pointer hover:shadow-lg transition-shadow'
           >
-            <div className="text-5xl mb-4">🎯</div>
-            <div className="text-[22px] font-bold mb-2">Exam Mode</div>
-            <div className="text-red-100 text-sm">
+            <div className='text-5xl mb-4'>🎯</div>
+            <div className='text-[22px] font-bold mb-2'>Exam Mode</div>
+            <div className='text-red-100 text-sm'>
               Timed 90-question exams with results at the end
             </div>
           </div>
