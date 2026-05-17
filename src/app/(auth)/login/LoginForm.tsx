@@ -19,17 +19,26 @@ export default function LoginForm() {
     e.preventDefault();
     setError("");
     setLoading(true);
-    const supabase = createClient();
-    const { error: authError } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    if (authError) {
-      setError(authError.message);
-      setLoading(false);
-    } else {
+
+    try {
+      const supabase = createClient();
+      const { error: authError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (authError) {
+        setError(authError.message);
+        setLoading(false);
+        return;
+      }
+
+      // Success - redirect
       router.push(redirect);
       router.refresh();
+    } catch (err) {
+      setError("An unexpected error occurred");
+      setLoading(false);
     }
   }
 
