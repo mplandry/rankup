@@ -5,14 +5,16 @@ import Stripe from "stripe";
 export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
+  // Initialize Stripe client at runtime to avoid build-time evaluation
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+    apiVersion: "2026-04-22.dahlia",
+  });
+
   // Dynamic import to avoid build-time evaluation
   const { createServiceRoleClient } =
     await import("@/lib/supabase/service-role");
   const supabase = createServiceRoleClient();
-export async function POST(request: NextRequest) {
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-    apiVersion: "2026-04-22.dahlia",
-  });
+
   try {
     const { priceId, userId } = await request.json();
 
@@ -55,7 +57,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Determine pricing based on priceId
-    const pricingMap: Record<
+    const pricingMap: Record
       string,
       { amount: number; plan: string; mode: "subscription" | "payment" }
     > = {
