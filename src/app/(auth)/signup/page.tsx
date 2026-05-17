@@ -95,6 +95,7 @@ export default function SignupPage() {
               <label className='login-label'>Department</label>
               <input
                 type='text'
+                required
                 value={form.department}
                 onChange={(e) => set("department", e.target.value)}
                 placeholder='City Fire Dept'
