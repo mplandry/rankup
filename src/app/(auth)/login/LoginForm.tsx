@@ -34,8 +34,9 @@ export default function LoginForm() {
       }
 
       // Success - redirect
-      router.push(redirect);
-      router.refresh();
+      // Success - wait a moment for session to persist, then redirect
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      window.location.href = redirect;
     } catch (err) {
       setError("An unexpected error occurred");
       setLoading(false);
@@ -82,14 +83,20 @@ export default function LoginForm() {
                 className='login-input'
               />
             </div>
-            <div style={{ textAlign: 'right', marginTop: '8px', marginBottom: '16px' }}>
-              <Link 
-                href="/reset-password" 
-                style={{ 
-                  fontSize: '13px', 
-                  color: '#C41E3A', 
-                  textDecoration: 'none',
-                  fontWeight: 500
+            <div
+              style={{
+                textAlign: "right",
+                marginTop: "8px",
+                marginBottom: "16px",
+              }}
+            >
+              <Link
+                href='/reset-password'
+                style={{
+                  fontSize: "13px",
+                  color: "#C41E3A",
+                  textDecoration: "none",
+                  fontWeight: 500,
                 }}
               >
                 Forgot password?
