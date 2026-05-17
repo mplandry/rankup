@@ -4,16 +4,15 @@ import Stripe from "stripe";
 
 export const dynamic = "force-dynamic";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2026-04-22.dahlia",
-});
-
 export async function POST(request: NextRequest) {
   // Dynamic import to avoid build-time evaluation
   const { createServiceRoleClient } =
     await import("@/lib/supabase/service-role");
   const supabase = createServiceRoleClient();
-
+export async function POST(request: NextRequest) {
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+    apiVersion: "2026-04-22.dahlia",
+  });
   try {
     const { priceId, userId } = await request.json();
 
