@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase/client";
+import { createClient } from "@/lib/supabase/client";
 
 interface SubscriptionStatus {
   status: string;
@@ -23,6 +23,7 @@ export default function SubscriptionBadge() {
   }, []);
 
   const loadStatus = async () => {
+    const supabase = createClient();
     try {
       const {
         data: { session },
@@ -50,10 +51,10 @@ export default function SubscriptionBadge() {
 
         setStatus({
           status: profile.subscription_status,
-          trialEndsAt: effectiveEndDate.toISOString(),
+          trialEndsAt: profile.trial_ends_at,
           trialExtendedDays: extendedDays,
           subscriptionPlan: profile.subscription_plan,
-          daysRemaining,
+          daysRemaining: Math.max(0, daysRemaining),
         });
       }
     } catch (error) {
@@ -67,118 +68,36 @@ export default function SubscriptionBadge() {
 
   if (status.status === "active") {
     return (
-      <div
-        style={{
-          display: "inline-flex",
-          alignItems: "center",
-          gap: 6,
-          padding: "6px 12px",
-          background: "#d1fae5",
-          border: "1px solid #6ee7b7",
-          borderRadius: 8,
-          fontSize: 12,
-          fontWeight: 600,
-          color: "#065f46",
-        }}
-      >
-        <span>✓</span>
-        <span>
-          {status.subscriptionPlan === "exam_prep"
-            ? "Exam Prep Bundle"
-            : status.subscriptionPlan === "monthly"
-              ? "Monthly Subscriber"
-              : "Full Access"}
+      <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg">
+        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+        <span className="text-sm font-semibold text-green-700">
+          Active Subscription
         </span>
+        {status.subscriptionPlan && (
+          <span className="text-xs text-green-600 bg-green-100 px-2 py-0.5 rounded">
+            {status.subscriptionPlan === "monthly"
+              ? "Monthly"
+              : status.subscriptionPlan === "exam_prep"
+                ? "Exam Prep"
+                : "Department"}
+          </span>
+        )}
       </div>
     );
   }
 
-  if (status.status === "trial" && status.daysRemaining > 0) {
-    const isUrgent = status.daysRemaining <= 7;
-    return (
-      <div
-        style={{
-          display: "inline-flex",
-          alignItems: "center",
-          gap: 8,
-          padding: "8px 14px",
-          background: isUrgent ? "#fef3c7" : "#f0f9ff",
-          border: `1px solid ${isUrgent ? "#fcd34d" : "#bae6fd"}`,
-          borderRadius: 8,
-          fontSize: 13,
-        }}
-      >
-        <div style={{ flex: 1 }}>
-          <div
-            style={{
-              fontWeight: 600,
-              color: isUrgent ? "#92400e" : "#0c4a6e",
-              marginBottom: 2,
-            }}
-          >
-            {status.daysRemaining} days left in trial
-          </div>
-          {status.trialExtendedDays > 0 && (
-            <div style={{ fontSize: 11, color: "#64748b" }}>
-              +{status.trialExtendedDays} days from referrals
-            </div>
-          )}
-        </div>
-        <button
-          onClick={() => router.push("/pricing")}
-          style={{
-            padding: "6px 12px",
-            background: isUrgent ? "#f59e0b" : "#0ea5e9",
-            color: "#fff",
-            border: "none",
-            borderRadius: 6,
-            fontSize: 12,
-            fontWeight: 600,
-            cursor: "pointer",
-            whiteSpace: "nowrap",
-          }}
-        >
-          Upgrade
-        </button>
-      </div>
-    );
-  }
+  const isExpired = status.daysRemaining <= 0;
 
-  if (status.status === "expired" || status.daysRemaining <= 0) {
+  if (isExpired) {
     return (
-      <div
-        style={{
-          display: "inline-flex",
-          alignItems: "center",
-          gap: 8,
-          padding: "8px 14px",
-          background: "#fee2e2",
-          border: "1px solid #fca5a5",
-          borderRadius: 8,
-          fontSize: 13,
-        }}
-      >
-        <div style={{ flex: 1 }}>
-          <div style={{ fontWeight: 600, color: "#991b1b", marginBottom: 2 }}>
-            Trial expired
-          </div>
-          <div style={{ fontSize: 11, color: "#64748b" }}>
-            Limited to 10 questions/day
-          </div>
-        </div>
+      <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-red-50 to-rose-50 border border-red-200 rounded-lg">
+        <div className="w-2 h-2 bg-red-500 rounded-full" />
+        <span className="text-sm font-semibold text-red-700">
+          Trial Expired
+        </span>
         <button
           onClick={() => router.push("/pricing")}
-          style={{
-            padding: "6px 12px",
-            background: "var(--red)",
-            color: "#fff",
-            border: "none",
-            borderRadius: 6,
-            fontSize: 12,
-            fontWeight: 600,
-            cursor: "pointer",
-            whiteSpace: "nowrap",
-          }}
+          className="ml-2 text-xs font-semibold text-red-600 hover:text-red-700 underline"
         >
           Subscribe
         </button>
@@ -186,5 +105,18 @@ export default function SubscriptionBadge() {
     );
   }
 
-  return null;
+  return (
+    <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg">
+      <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
+      <span className="text-sm font-semibold text-blue-700">
+        Trial: {status.daysRemaining} day
+        {status.daysRemaining !== 1 ? "s" : ""} left
+      </span>
+      {status.trialExtendedDays > 0 && (
+        <span className="text-xs text-blue-600 bg-blue-100 px-2 py-0.5 rounded">
+          +{status.trialExtendedDays} bonus
+        </span>
+      )}
+    </div>
+  );
 }

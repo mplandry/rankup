@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase/client";
+import { createClient } from "@/lib/supabase/client";
 interface ReferralStats {
   referralCode: string;
   shareUrl: string;
@@ -31,6 +31,7 @@ export default function ReferralCard() {
   }, []);
 
   const loadReferralStats = async () => {
+    const supabase = createClient();
     try {
       const {
         data: { session },
@@ -50,31 +51,20 @@ export default function ReferralCard() {
     }
   };
 
-  const copyLink = () => {
-    if (!stats) return;
-    navigator.clipboard.writeText(stats.shareUrl);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  const shareViaText = () => {
-    if (!stats) return;
-    const message = `Join me on RankUp to prep for the MA fire promotional exam! You'll get +2 weeks trial: ${stats.shareUrl}`;
-    window.open(`sms:?body=${encodeURIComponent(message)}`);
+  const copyToClipboard = () => {
+    if (stats?.shareUrl) {
+      navigator.clipboard.writeText(stats.shareUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
   };
 
   if (loading) {
     return (
-      <div
-        style={{
-          background: "#fff",
-          border: "1px solid #e0e6ed",
-          borderRadius: 12,
-          padding: 24,
-        }}
-      >
-        <div style={{ fontSize: 14, color: "#64748b" }}>
-          Loading referral stats...
+      <div className="bg-white border border-gray-200 rounded-xl p-7">
+        <div className="animate-pulse">
+          <div className="h-5 bg-gray-200 rounded w-1/3 mb-4" />
+          <div className="h-4 bg-gray-200 rounded w-2/3" />
         </div>
       </div>
     );
@@ -83,212 +73,88 @@ export default function ReferralCard() {
   if (!stats) return null;
 
   return (
-    <div
-      style={{
-        background: "#fff",
-        border: "1px solid #e0e6ed",
-        borderRadius: 12,
-        padding: 24,
-      }}
-    >
-      {/* Header */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 12,
-          marginBottom: 20,
-        }}
-      >
-        <div
-          style={{
-            width: 44,
-            height: 44,
-            background: "#fef3c7",
-            borderRadius: 10,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: 20,
-          }}
-        >
-          🤝
-        </div>
+    <div className="bg-white border border-gray-200 rounded-xl p-7">
+      <div className="flex items-center gap-3 mb-5">
+        <div className="text-2xl">🎁</div>
         <div>
-          <div style={{ fontWeight: 600, fontSize: 15, color: "#1B2A4A" }}>
-            Invite Firefighters
-          </div>
-          <div style={{ fontSize: 12, color: "#64748b" }}>
-            Give them +2 weeks, get +2 weeks
+          <div className="text-[15px] font-bold">Refer & Earn</div>
+          <div className="text-xs text-gray-500">
+            Give {stats.totalBonusWeeks} weeks, get {stats.totalBonusWeeks}{" "}
+            weeks
           </div>
         </div>
       </div>
 
-      {/* Share URL */}
-      <div style={{ marginBottom: 16 }}>
-        <div
-          style={{
-            fontSize: 11,
-            fontWeight: 600,
-            color: "#64748b",
-            textTransform: "uppercase",
-            letterSpacing: "0.05em",
-            marginBottom: 6,
-          }}
-        >
-          Your referral link
-        </div>
-        <div style={{ display: "flex", gap: 8 }}>
+      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4 mb-5">
+        <div className="text-xs text-gray-600 mb-2">Your referral link</div>
+        <div className="flex items-center gap-2">
           <input
-            type='text'
+            type="text"
             value={stats.shareUrl}
             readOnly
-            style={{
-              flex: 1,
-              padding: "10px 12px",
-              border: "1px solid #e0e6ed",
-              borderRadius: 8,
-              fontSize: 13,
-              background: "#f8fafc",
-              fontFamily: "monospace",
-              color: "#475569",
-            }}
+            className="flex-1 bg-white px-3 py-2 rounded-lg text-sm border border-gray-200 text-gray-700"
           />
           <button
-            onClick={copyLink}
-            style={{
-              padding: "10px 20px",
-              background: copied ? "#10b981" : "#1B2A4A",
-              color: "#fff",
-              border: "none",
-              borderRadius: 8,
-              fontSize: 13,
-              fontWeight: 600,
-              cursor: "pointer",
-              whiteSpace: "nowrap",
-            }}
+            onClick={copyToClipboard}
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-semibold transition-colors"
           >
-            {copied ? "✓ Copied" : "Copy Link"}
+            {copied ? "Copied!" : "Copy"}
           </button>
         </div>
+        <div className="text-xs text-gray-500 mt-2">
+          Code: <span className="font-mono font-bold">{stats.referralCode}</span>
+        </div>
       </div>
 
-      {/* Share via Text button */}
-      <button
-        onClick={shareViaText}
-        style={{
-          width: "100%",
-          padding: "10px",
-          background: "#fff",
-          border: "1px solid #e0e6ed",
-          borderRadius: 8,
-          fontSize: 13,
-          fontWeight: 600,
-          color: "#475569",
-          cursor: "pointer",
-          marginBottom: 20,
-        }}
-      >
-        📱 Share via Text Message
-      </button>
-
-      {/* Stats */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: 12,
-          marginBottom: 16,
-        }}
-      >
-        <div style={{ background: "#f8fafc", borderRadius: 8, padding: 12 }}>
-          <div style={{ fontSize: 24, fontWeight: 700, color: "#1B2A4A" }}>
+      <div className="grid grid-cols-3 gap-4 mb-5">
+        <div className="text-center">
+          <div className="text-2xl font-bold text-gray-900">
             {stats.totalReferrals}
           </div>
-          <div style={{ fontSize: 11, color: "#64748b" }}>
-            firefighters joined
-          </div>
+          <div className="text-xs text-gray-500">Total</div>
         </div>
-        <div style={{ background: "#fef3c7", borderRadius: 8, padding: 12 }}>
-          <div style={{ fontSize: 24, fontWeight: 700, color: "#d97706" }}>
-            +{stats.totalBonusWeeks}
+        <div className="text-center">
+          <div className="text-2xl font-bold text-green-600">
+            {stats.completedReferrals}
           </div>
-          <div style={{ fontSize: 11, color: "#92400e" }}>weeks earned</div>
+          <div className="text-xs text-gray-500">Completed</div>
+        </div>
+        <div className="text-center">
+          <div className="text-2xl font-bold text-blue-600">
+            {stats.totalBonusDays}
+          </div>
+          <div className="text-xs text-gray-500">Bonus Days</div>
         </div>
       </div>
 
-      {/* Pending vs Completed */}
-      {stats.totalReferrals > 0 && (
-        <div
-          style={{
-            fontSize: 12,
-            color: "#64748b",
-            background: "#f8fafc",
-            borderRadius: 8,
-            padding: 10,
-          }}
-        >
-          ✓ <strong>{stats.completedReferrals}</strong> completed first session
-          • ⏱️ <strong>{stats.pendingReferrals}</strong> pending
-        </div>
-      )}
-
-      {/* Referral list */}
       {stats.referrals && stats.referrals.length > 0 && (
-        <div
-          style={{
-            marginTop: 16,
-            borderTop: "1px solid #e0e6ed",
-            paddingTop: 16,
-          }}
-        >
-          <div
-            style={{
-              fontSize: 11,
-              fontWeight: 600,
-              color: "#64748b",
-              textTransform: "uppercase",
-              letterSpacing: "0.05em",
-              marginBottom: 10,
-            }}
-          >
-            Recent referrals
+        <div>
+          <div className="text-xs font-bold text-gray-500 uppercase mb-3">
+            Recent Referrals
           </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            {stats.referrals.slice(0, 5).map((ref) => (
+          <div className="space-y-2">
+            {stats.referrals.slice(0, 3).map((referral) => (
               <div
-                key={ref.id}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  padding: 8,
-                  background: "#f8fafc",
-                  borderRadius: 6,
-                  fontSize: 12,
-                }}
+                key={referral.id}
+                className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0"
               >
-                <div>
-                  <div style={{ fontWeight: 600, color: "#1B2A4A" }}>
-                    {ref.name}
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-semibold text-gray-900 truncate">
+                    {referral.name}
                   </div>
-                  <div style={{ fontSize: 11, color: "#64748b" }}>
-                    {new Date(ref.signedUpAt).toLocaleDateString()}
+                  <div className="text-xs text-gray-500 truncate">
+                    {new Date(referral.signedUpAt).toLocaleDateString()}
                   </div>
                 </div>
-                {ref.bonusGranted ? (
-                  <span
-                    style={{ fontSize: 11, color: "#10b981", fontWeight: 600 }}
-                  >
-                    ✓ Bonus granted
-                  </span>
-                ) : (
-                  <span
-                    style={{ fontSize: 11, color: "#f59e0b", fontWeight: 600 }}
-                  >
-                    ⏱️ Pending
-                  </span>
-                )}
+                <div>
+                  {referral.bonusGranted ? (
+                    <span className="inline-flex items-center gap-1 text-xs font-semibold text-green-600">
+                      <span>✓</span> Completed
+                    </span>
+                  ) : (
+                    <span className="text-xs text-gray-400">Pending</span>
+                  )}
+                </div>
               </div>
             ))}
           </div>
