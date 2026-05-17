@@ -1,4 +1,4 @@
-import { createClient as createSupabaseClient } from "@supabase/supabase-js";
+import { createBrowserClient } from '@supabase/ssr'
 
 // Safe env var access - handle undefined process in browser
 const getEnv = (key: string) => {
@@ -16,5 +16,5 @@ export function createClient() {
     throw new Error('Missing Supabase environment variables');
   }
   
-  return createSupabaseClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  return createBrowserClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 }
