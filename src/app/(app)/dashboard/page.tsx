@@ -16,11 +16,23 @@ export default function DashboardPage() {
   useEffect(() => {
     const init = async () => {
       try {
+        console.log('[Dashboard] Starting init...');
         const supabase = createClient();
+        console.log('[Dashboard] Supabase client created');
+        
+        // Add timeout to getSession
+        const sessionPromise = supabase.auth.getSession();
+        const timeoutPromise = new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('getSession timeout after 5s')), 5000)
+        );
+        
+        console.log('[Dashboard] Calling getSession...');
         const {
           data: { session },
           error: sessionError,
-        } = await supabase.auth.getSession();
+        } = await Promise.race([sessionPromise, timeoutPromise]) as any;
+        
+        console.log('[Dashboard] getSession returned:', { session, sessionError });
         
         if (sessionError) {
           setError(`Session error: ${sessionError.message}`);
@@ -28,6 +40,7 @@ export default function DashboardPage() {
         }
         
         if (!session) {
+          console.log('[Dashboard] No session, redirecting to login');
           router.push("/login");
           return;
         }
@@ -49,8 +62,8 @@ export default function DashboardPage() {
 
         setStats({ totalSessions, totalQuestions, avgScore });
       } catch (err: any) {
-        setError(`Error: ${err.message}`);
-        console.error('Dashboard init error:', err);
+        console.error('[Dashboard] Error:', err);
+        setError(`Error: ${err.message || String(err)}`);
       }
     };
     init();
