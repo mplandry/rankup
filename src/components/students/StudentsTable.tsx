@@ -37,6 +37,8 @@ function exportToCSV(students: StudentWithStats[]) {
     "Total Sessions",
     "Avg Score %",
     "Best Score %",
+    "Plan",
+    "Payment Status",
     "Last Active",
     "Created Date",
   ];
@@ -49,6 +51,8 @@ function exportToCSV(students: StudentWithStats[]) {
     s.user_stats_cache?.total_sessions || 0,
     s.user_stats_cache?.avg_score_percent || 0,
     s.user_stats_cache?.best_score_percent || 0,
+    (s as any).payment_transactions?.[0]?.plan_type || "Free",
+    (s as any).payment_transactions?.[0]?.status || "—",
     s.last_sign_in_at
       ? new Date(s.last_sign_in_at).toLocaleDateString()
       : "Never",
@@ -135,6 +139,39 @@ function StudentDetailModal({
                 <div className='text-xs text-gray-500'>Member Since</div>
                 <div className='font-semibold'>
                   {new Date(student.created_at).toLocaleDateString()}
+                </div>
+              </div>
+              <div>
+                <div className='text-xs text-gray-500'>Plan</div>
+                <div className='font-semibold'>
+                  {(student as any).payment_transactions?.[0]?.plan_type ? (
+                    <span className='text-xs font-semibold px-2 py-0.5 rounded-full bg-purple-100 text-purple-700'>
+                      {(student as any).payment_transactions[0].plan_type === 'monthly' ? 'Monthly' :
+                       (student as any).payment_transactions[0].plan_type === 'exam_prep' ? 'Exam Prep' :
+                       (student as any).payment_transactions[0].plan_type === 'department' ? 'Department Rate' : 
+                       (student as any).payment_transactions[0].plan_type}
+                    </span>
+                  ) : (
+                    <span className='text-xs text-gray-400'>Free</span>
+                  )}
+                </div>
+              </div>
+              <div>
+                <div className='text-xs text-gray-500'>Payment Status</div>
+                <div className='font-semibold'>
+                  {(student as any).payment_transactions?.[0]?.status ? (
+                    <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
+                      (student as any).payment_transactions[0].status === 'paid' || (student as any).payment_transactions[0].status === 'succeeded' 
+                        ? 'bg-green-100 text-green-700' :
+                      (student as any).payment_transactions[0].status === 'pending' 
+                        ? 'bg-yellow-100 text-yellow-700' :
+                      'bg-red-100 text-red-700'
+                    }`}>
+                      {(student as any).payment_transactions[0].status}
+                    </span>
+                  ) : (
+                    "—"
+                  )}
                 </div>
               </div>
             </div>
@@ -597,6 +634,8 @@ export default function StudentsTable({
               <th className='px-4 py-3'>Sessions</th>
               <th className='px-4 py-3'>Avg Score</th>
               <th className='px-4 py-3'>Best Score</th>
+              <th className='px-4 py-3'>Plan</th>
+              <th className='px-4 py-3'>Payment</th>
               <th className='px-4 py-3'>Last Active</th>
               <th className='px-4 py-3'>Actions</th>
             </tr>
@@ -604,7 +643,7 @@ export default function StudentsTable({
           <tbody className='divide-y divide-gray-100'>
             {filteredStudents.length === 0 && (
               <tr>
-                <td colSpan={9} className='px-4 py-8 text-center text-gray-400'>
+                <td colSpan={11} className='px-4 py-8 text-center text-gray-400'>
                   {students.length === 0
                     ? "No students registered yet"
                     : "No students match your filters"}
@@ -672,6 +711,33 @@ export default function StudentsTable({
                         className={`font-semibold ${stats.best_score_percent >= 70 ? "text-green-600" : "text-amber-600"}`}
                       >
                         {stats.best_score_percent}%
+                      </span>
+                    ) : (
+                      "—"
+                    )}
+                  </td>
+                  <td className='px-4 py-3'>
+                    {(s as any).payment_transactions?.[0]?.plan_type ? (
+                      <span className='text-xs font-semibold px-2 py-0.5 rounded-full bg-purple-100 text-purple-700'>
+                        {(s as any).payment_transactions[0].plan_type === 'monthly' ? 'Monthly' :
+                         (s as any).payment_transactions[0].plan_type === 'exam_prep' ? 'Exam Prep' :
+                         (s as any).payment_transactions[0].plan_type === 'department' ? 'Dept Rate' : 
+                         (s as any).payment_transactions[0].plan_type}
+                      </span>
+                    ) : (
+                      <span className='text-xs text-gray-400'>Free</span>
+                    )}
+                  </td>
+                  <td className='px-4 py-3'>
+                    {(s as any).payment_transactions?.[0]?.status ? (
+                      <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
+                        (s as any).payment_transactions[0].status === 'paid' || (s as any).payment_transactions[0].status === 'succeeded' 
+                          ? 'bg-green-100 text-green-700' :
+                        (s as any).payment_transactions[0].status === 'pending' 
+                          ? 'bg-yellow-100 text-yellow-700' :
+                        'bg-red-100 text-red-700'
+                      }`}>
+                        {(s as any).payment_transactions[0].status}
                       </span>
                     ) : (
                       "—"
