@@ -86,7 +86,7 @@ export default function FlashCard({ question, flipped, onFlip }: Props) {
         >
           <div className='mb-3'>
             <span className='text-xs font-semibold text-green-700 bg-green-100 px-2 py-0.5 rounded-full'>
-              Answer {question.correct_answer}
+              ✓ Correct Answer
             </span>
           </div>
           <p className='text-[#1B2A4A] font-semibold text-base mb-3'>
