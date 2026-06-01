@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from '@/lib/supabase/client';
-import Sidebar from "@/components/Sidebar";
+import Sidebar from "@/components/components/layout/Sidebar";
 import { shuffleArray } from "@/lib/utils/score";
 import type { Question } from "@/types";
 
@@ -91,8 +91,8 @@ export default function StudyPage() {
   useEffect(() => {
     let f = questions;
     if (book !== "all") f = f.filter((q) => q.book_title === book);
-    if (chapter !== "all") f = f.filter((q) => q.chapter === chapter);
-    if (topic !== "all") f = f.filter((q) => q.topic === topic);
+    if (chapter !== "all") f = f.filter((q) => String(q.chapter) === chapter);
+    if (topic !== "all") f = f.filter((q) => String(q.topic) === topic);
     if (difficulty !== "all") f = f.filter((q) => q.difficulty === difficulty);
     setFiltered(f);
   }, [book, chapter, topic, difficulty, questions]);
@@ -111,7 +111,7 @@ export default function StudyPage() {
         .filter(
           (q) =>
             (book === "all" || q.book_title === book) &&
-            (chapter === "all" || q.chapter === chapter),
+            (chapter === "all" || String(q.chapter) === chapter),
         )
         .map((q) => q.topic)
         .filter(Boolean),
@@ -347,7 +347,7 @@ export default function StudyPage() {
                     Difficulty
                   </label>
                   <select
-                    value={difficulty}
+                    value={difficulty ?? ""}
                     onChange={(e) => setDifficulty(e.target.value)}
                     style={{
                       width: "100%",
@@ -373,7 +373,7 @@ export default function StudyPage() {
                   type='range'
                   min={5}
                   max={Math.min(50, filtered.length || 50)}
-                  value={count}
+                  value={count ?? ""}
                   onChange={(e) => setCount(+e.target.value)}
                   style={{ width: "100%", accentColor: "var(--red)" }}
                 />
