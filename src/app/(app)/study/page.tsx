@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from '@/lib/supabase/client';
-import Sidebar from "@/components/components/layout/Sidebar";
+import Sidebar from "@/components/layout/Sidebar";
 import { shuffleArray } from "@/lib/utils/score";
 import type { Question } from "@/types";
 
@@ -347,7 +347,7 @@ export default function StudyPage() {
                     Difficulty
                   </label>
                   <select
-                    value={difficulty ?? ""}
+                    value={difficulty}
                     onChange={(e) => setDifficulty(e.target.value)}
                     style={{
                       width: "100%",
@@ -373,7 +373,7 @@ export default function StudyPage() {
                   type='range'
                   min={5}
                   max={Math.min(50, filtered.length || 50)}
-                  value={count ?? ""}
+                  value={count ?? 0}
                   onChange={(e) => setCount(+e.target.value)}
                   style={{ width: "100%", accentColor: "var(--red)" }}
                 />
