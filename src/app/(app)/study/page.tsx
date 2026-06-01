@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase";
+import { createClient } from '@/lib/supabase/client';
 import Sidebar from "@/components/Sidebar";
-import { shuffleArray } from "@/lib/utils";
-import type { Question } from "@/lib/supabase";
+import { shuffleArray } from "@/lib/utils/score";
+import type { Question } from "@/types";
 
 type StudyState = "configure" | "session" | "results";
 
@@ -50,6 +50,7 @@ function getDisplayOptions(question: Question) {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export default function StudyPage() {
+  const supabase = createClient()
   const [user, setUser] = useState<any>(null);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [filtered, setFiltered] = useState<Question[]>([]);
