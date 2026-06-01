@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from '@/lib/supabase/client';
-import Sidebar from "@/components/layout/Sidebar";
 import { shuffleArray } from "@/lib/utils/score";
 import type { Question } from "@/types";
 
@@ -168,7 +167,6 @@ export default function StudyPage() {
 
   return (
     <div style={{ display: "flex" }}>
-      <Sidebar userName={userName} userEmail={user?.email || ""} />
       <div
         style={{
           marginLeft: "var(--sidebar-w)",
@@ -317,7 +315,7 @@ export default function StudyPage() {
                     Topic
                   </label>
                   <select
-                    value={topic}
+                    value={topic ?? "all"}
                     onChange={(e) => setTopic(e.target.value)}
                     style={{
                       width: "100%",
@@ -373,7 +371,7 @@ export default function StudyPage() {
                   type='range'
                   min={5}
                   max={Math.min(50, filtered.length || 50)}
-                  value={count ?? 0}
+                  value={count}
                   onChange={(e) => setCount(+e.target.value)}
                   style={{ width: "100%", accentColor: "var(--red)" }}
                 />
