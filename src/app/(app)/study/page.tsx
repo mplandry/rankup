@@ -297,7 +297,7 @@ export default function StudyPage() {
                   >
                     <option value='all'>All chapters</option>
                     {chapters.map((c) => (
-                      <option key={c} value={c}>
+                      <option key={c ?? ""} value={c ?? ""}>
                         Chapter {c}
                       </option>
                     ))}
@@ -327,7 +327,7 @@ export default function StudyPage() {
                   >
                     <option value='all'>All topics</option>
                     {topics.map((t) => (
-                      <option key={t} value={t}>
+                      <option key={t ?? ""} value={t ?? ""}>
                         {t}
                       </option>
                     ))}
