@@ -70,6 +70,9 @@ const PRICING_TIERS: PricingTier[] = [
 export default function PricingPage() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState<string | null>(null);
+  const [showContactForm, setShowContactForm] = useState(false);
+  const [contactForm, setContactForm] = useState({ name: "", email: "", department: "", count: "", message: "" });
+  const [contactStatus, setContactStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const router = useRouter();
   const searchParams = useSearchParams();
   const paymentStatus = searchParams?.get("payment");
@@ -89,12 +92,29 @@ export default function PricingPage() {
     init();
   }, []);
 
+  const handleContactSubmit = async () => {
+    setContactStatus("sending");
+    try {
+      const res = await fetch("/api/contact-department", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(contactForm),
+      });
+      if (res.ok) {
+        setContactStatus("sent");
+      } else {
+        setContactStatus("error");
+      }
+    } catch {
+      setContactStatus("error");
+    }
+  };
+
   const handleSubscribe = async (planType: string) => {
     if (!user) return;
 
     if (planType === "department") {
-      window.location.href =
-        "mailto:mplandry77@gmail.com?subject=Department Group Rate - RankUp";
+      setShowContactForm(true);
       return;
     }
 
@@ -403,6 +423,68 @@ export default function PricingPage() {
           — Jeff S., MA Firefighter
         </div>
       </div>
+
+      {/* Contact Form Modal */}
+      {showContactForm && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
+          <div style={{ background: "#fff", borderRadius: 16, padding: 32, maxWidth: 480, width: "100%", position: "relative" }}>
+            <button onClick={() => { setShowContactForm(false); setContactStatus("idle"); }} style={{ position: "absolute", top: 16, right: 16, background: "none", border: "none", fontSize: 20, cursor: "pointer", color: "#64748b" }}>✕</button>
+
+            {contactStatus === "sent" ? (
+              <div style={{ textAlign: "center", padding: "20px 0" }}>
+                <div style={{ fontSize: 48, marginBottom: 16 }}>✅</div>
+                <div style={{ fontSize: 20, fontWeight: 700, color: "#1B2A4A", marginBottom: 8 }}>Message Sent!</div>
+                <div style={{ fontSize: 14, color: "#64748b" }}>We'll be in touch within 24 hours to set up your department rate.</div>
+                <button onClick={() => { setShowContactForm(false); setContactStatus("idle"); }} style={{ marginTop: 24, padding: "10px 24px", background: "#1B2A4A", color: "#fff", border: "none", borderRadius: 8, fontSize: 14, fontWeight: 600, cursor: "pointer" }}>Close</button>
+              </div>
+            ) : (
+              <>
+                <div style={{ fontSize: 22, fontWeight: 700, color: "#1B2A4A", marginBottom: 4 }}>Department Rate Inquiry</div>
+                <div style={{ fontSize: 14, color: "#64748b", marginBottom: 24 }}>5+ firefighters from the same department get $250/person. Fill this out and we'll reach out within 24 hours.</div>
+
+                {[
+                  { label: "Your Name", key: "name", placeholder: "John Smith", type: "text" },
+                  { label: "Your Email", key: "email", placeholder: "john@springfieldfd.com", type: "email" },
+                  { label: "Department", key: "department", placeholder: "Springfield Fire Department", type: "text" },
+                  { label: "Number of Firefighters", key: "count", placeholder: "e.g. 8", type: "number" },
+                ].map(({ label, key, placeholder, type }) => (
+                  <div key={key} style={{ marginBottom: 16 }}>
+                    <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#1B2A4A", marginBottom: 6 }}>{label}</label>
+                    <input
+                      type={type}
+                      placeholder={placeholder}
+                      value={contactForm[key as keyof typeof contactForm]}
+                      onChange={(e) => setContactForm(prev => ({ ...prev, [key]: e.target.value }))}
+                      style={{ width: "100%", padding: "10px 12px", border: "1px solid #e0e6ed", borderRadius: 8, fontSize: 14, boxSizing: "border-box" }}
+                    />
+                  </div>
+                ))}
+
+                <div style={{ marginBottom: 20 }}>
+                  <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#1B2A4A", marginBottom: 6 }}>Message (optional)</label>
+                  <textarea
+                    placeholder="Any questions or specific needs?"
+                    value={contactForm.message}
+                    onChange={(e) => setContactForm(prev => ({ ...prev, message: e.target.value }))}
+                    rows={3}
+                    style={{ width: "100%", padding: "10px 12px", border: "1px solid #e0e6ed", borderRadius: 8, fontSize: 14, boxSizing: "border-box", resize: "vertical" }}
+                  />
+                </div>
+
+                {contactStatus === "error" && <div style={{ color: "#991b1b", fontSize: 13, marginBottom: 12 }}>Something went wrong. Please try again.</div>}
+
+                <button
+                  onClick={handleContactSubmit}
+                  disabled={contactStatus === "sending" || !contactForm.name || !contactForm.email || !contactForm.department || !contactForm.count}
+                  style={{ width: "100%", padding: "13px 24px", background: "#C0392B", color: "#fff", border: "none", borderRadius: 10, fontSize: 15, fontWeight: 600, cursor: "pointer", opacity: (contactStatus === "sending" || !contactForm.name || !contactForm.email || !contactForm.department || !contactForm.count) ? 0.6 : 1 }}
+                >
+                  {contactStatus === "sending" ? "Sending..." : "Send Inquiry"}
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* FAQ */}
       <div style={{ marginTop: 40 }}>
