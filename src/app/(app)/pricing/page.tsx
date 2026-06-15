@@ -24,7 +24,7 @@ const PRICING_TIERS: PricingTier[] = [
     description: "Cancel anytime",
     features: [
       "Unlimited study mode",
-      "1,700 MA-specific questions",
+      "2,100+ MA-specific questions",
       "90-question exam simulations",
       "Weak area analysis",
       "Performance analytics",
@@ -148,7 +148,7 @@ export default function PricingPage() {
             color: "#1B2A4A",
           }}
         >
-          1,700 Questions. One Exam. Zero Wasted Time.
+          2,100+ Questions. One Exam. Zero Wasted Time.
         </div>
         <div style={{ fontSize: 15, color: "#64748b", marginBottom: 16 }}>
           100% MA reading list coverage • Built by MA firefighters for MA
@@ -201,7 +201,7 @@ export default function PricingPage() {
             flexWrap: "wrap",
           }}
         >
-          <div>✓ 1,700 MA-specific questions</div>
+          <div>✓ 2,100+ MA-specific questions</div>
           <div>✓ 33% less than FiredUp</div>
           <div>✓ Exam date: TBD</div>
         </div>
