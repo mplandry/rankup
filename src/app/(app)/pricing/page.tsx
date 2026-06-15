@@ -257,6 +257,8 @@ export default function PricingPage() {
               boxShadow: tier.recommended
                 ? "0 10px 30px rgba(220, 38, 38, 0.15)"
                 : "none",
+              display: "flex",
+              flexDirection: "column",
             }}
           >
             {/* Badge */}
@@ -320,6 +322,7 @@ export default function PricingPage() {
                 flexDirection: "column",
                 gap: 10,
                 marginBottom: 24,
+                flex: 1,
               }}
             >
               {tier.features.map((feature, i) => (
