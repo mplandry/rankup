@@ -112,7 +112,7 @@ const CAPT_READING_LIST = [
     expandBg: "bg-purple-50",
     labelColor: "text-purple-600",
     icon: "📘",
-    warning: "Not yet in app — questions need to be generated",
+    warning: null,
   },
   {
     book: "Fire Officer's Handbook of Tactics",
