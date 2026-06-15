@@ -356,7 +356,7 @@ export default function PricingPage() {
               style={{
                 width: "100%",
                 padding: "13px 24px",
-                background: tier.recommended ? "var(--red)" : "#1B2A4A",
+                background: tier.recommended ? "#C0392B" : "#1B2A4A",
                 color: "#fff",
                 border: "none",
                 borderRadius: 10,
@@ -364,6 +364,7 @@ export default function PricingPage() {
                 fontWeight: 600,
                 cursor: loading === tier.id ? "not-allowed" : "pointer",
                 opacity: loading === tier.id ? 0.6 : 1,
+                marginTop: "auto",
               }}
             >
               {loading === tier.id
