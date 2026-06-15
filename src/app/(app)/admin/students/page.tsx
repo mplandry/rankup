@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 export default async function StudentsPage() {
   const supabase = createServiceRoleClient();
 
-  const { data: students } = await supabase
+  const { data: students, error } = await supabase
     .from("profiles")
     .select(
       `
@@ -18,6 +18,8 @@ export default async function StudentsPage() {
     )
     .eq("role", "student")
     .order("created_at", { ascending: false });
+
+  if (error) console.error("Students query error:", error);
 
   return (
     <div className='p-8 max-w-6xl mx-auto'>
