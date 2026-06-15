@@ -399,7 +399,7 @@ export default function PricingPage() {
           time studying irrelevant material. Worth every dollar."
         </div>
         <div style={{ fontSize: 14, fontWeight: 600, color: "#1B2A4A" }}>
-          — MA Firefighter (Beta User)
+          — MA Firefighter, 15 Years on the Job
         </div>
       </div>
 
