@@ -126,6 +126,7 @@ export default function FlashcardSession({
             <button
               onClick={() => {
                 router.refresh();
+                router.refresh();
                 setIndex(0);
                 setFlipped(false);
                 setDone(false);

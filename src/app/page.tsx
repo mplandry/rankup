@@ -65,7 +65,7 @@ export default function LandingPage() {
             </div>
             <div className='hero-stats'>
               <div className='stat'>
-                <div className='stat-num'>1,500+</div>
+                <div className='stat-num'>2,500+</div>
                 <div className='stat-label'>Questions</div>
               </div>
               <div className='stat-divider'></div>
@@ -319,7 +319,7 @@ export default function LandingPage() {
             margin: '0 auto 32px',
             lineHeight: 1.6
           }}>
-            Get complete access to all 1,500+ questions, study modes, practice exams, and progress tracking. No credit card required. No time limits during the trial period.
+            Get complete access to all 2,500+ questions, study modes, practice exams, and progress tracking. No credit card required. No time limits during the trial period.
           </p>
           
           <div style={{
@@ -434,7 +434,7 @@ export default function LandingPage() {
               {
                 icon: "🎯",
                 cls: "fi-navy",
-                title: "1,500+ Questions",
+                title: "2,500+ Questions",
                 desc: "Covering Building Construction, Company Officers, Massachusetts General Laws, ERG 2024, and more.",
               },
               {
@@ -551,7 +551,7 @@ export default function LandingPage() {
         <div className='cta-inner'>
           <h2 className='cta-title'>READY TO RANK UP?</h2>
           <p className='cta-sub'>
-            Start your free account today and begin studying with 1,500+ exam
+            Start your free account today and begin studying with 2,500+ exam
             questions.
           </p>
           <Link href='/signup' className='btn-cta-white'>

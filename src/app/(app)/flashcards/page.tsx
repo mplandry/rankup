@@ -1,96 +1,122 @@
-import { createClient } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
-import FlashcardConfig from "@/components/flashcards/FlashcardConfig";
+"use client";
 
-export const dynamic = "force-dynamic";
+import { BookOpen, FileText } from "lucide-react";
 
-export default async function FlashcardsPage() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
+interface Question {
+  id: string;
+  question_text: string;
+  answer_a: string;
+  answer_b: string;
+  answer_c: string;
+  answer_d: string;
+  correct_answer: string;
+  explanation: string;
+  book_title: string;
+  chapter: string;
+  topic: string;
+  page_start: number;
+  page_end: number;
+  difficulty: string;
+}
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("subscription_tier")
-    .eq("id", user.id)
-    .single();
+interface Props {
+  question: Question;
+  flipped: boolean;
+  onFlip: () => void;
+}
 
-  if (profile?.subscription_tier === "multiple_choice") {
-    redirect("/dashboard?upgrade=flashcards");
-  }
+const ANSWER_MAP: Record<string, keyof Question> = {
+  A: "answer_a",
+  B: "answer_b",
+  C: "answer_c",
+  D: "answer_d",
+};
 
-  // Fetch books and chapters
-  let allRows: any[] = [];
-  let from = 0;
-  const batchSize = 1000;
-
-  while (true) {
-    const { data: batch } = await supabase
-      .from("questions")
-      .select("book_title, chapter")
-      .eq("is_active", true)
-      .eq("flashcard_eligible", true)
-      .range(from, from + batchSize - 1);
-
-    if (!batch || batch.length === 0) break;
-    allRows = allRows.concat(batch);
-    if (batch.length < batchSize) break;
-    from += batchSize;
-  }
-
-  const bookChapters: Record<string, string[]> = {};
-  for (const row of allRows) {
-    if (!row.book_title) continue;
-    if (!bookChapters[row.book_title]) bookChapters[row.book_title] = [];
-    if (
-      row.chapter &&
-      row.chapter.trim() !== "" &&
-      row.chapter.trim().toUpperCase() !== "N/A" &&
-      !bookChapters[row.book_title].includes(row.chapter)
-    ) {
-      bookChapters[row.book_title].push(row.chapter);
-    }
-  }
-
-  for (const book of Object.keys(bookChapters)) {
-    bookChapters[book].sort((a, b) => {
-      const numA = parseInt(a);
-      const numB = parseInt(b);
-      if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
-      return a.localeCompare(b);
-    });
-  }
-
-  const books = Object.keys(bookChapters).sort();
-
-  // Get due card counts per book
-  const { data: dueCards } = await supabase
-    .from("flashcard_progress")
-    .select("question_id")
-    .eq("user_id", user.id)
-    .lte("next_review_at", new Date().toISOString());
+export default function FlashCard({ question, flipped, onFlip }: Props) {
+  const correctText = question[ANSWER_MAP[question.correct_answer]] as string;
 
   return (
-    <div className='px-4 py-6 sm:p-8 max-w-2xl mx-auto'>
-      <div className='mb-8'>
-        <h1 className='text-2xl font-bold text-[#1B2A4A]'>Flashcards</h1>
-        <p className='text-gray-500 mt-1'>
-          Spaced repetition — cards you miss come back sooner
-        </p>
-        {dueCards && dueCards.length > 0 && (
-          <div className='mt-3 inline-flex items-center gap-2 bg-orange-50 border border-orange-200 text-orange-700 text-sm px-3 py-1.5 rounded-lg'>
-            <span className='font-semibold'>{dueCards.length}</span> cards due
-            for review
+    <div
+      className='relative w-full cursor-pointer'
+      style={{ perspective: "1000px" }}
+      onClick={!flipped ? onFlip : undefined}
+    >
+      <div
+        className='relative w-full transition-transform duration-500'
+        style={{
+          transformStyle: "preserve-3d",
+          transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)",
+          minHeight: "280px",
+        }}
+      >
+        {/* Front */}
+        <div
+          className='absolute inset-0 bg-white border-2 border-blue-200 rounded-2xl p-6 flex flex-col'
+          style={{ backfaceVisibility: "hidden" }}
+        >
+          <div className='flex items-center justify-between mb-4'>
+            <span
+              className={`text-xs font-medium px-2 py-0.5 rounded-full ${
+                question.difficulty === "easy"
+                  ? "bg-green-100 text-green-700"
+                  : question.difficulty === "medium"
+                    ? "bg-yellow-100 text-yellow-700"
+                    : "bg-red-100 text-red-700"
+              }`}
+            >
+              {question.difficulty}
+            </span>
+            <span className='text-xs text-gray-400'>Tap to reveal</span>
           </div>
-        )}
+          <p className='flex-1 flex items-center text-[#1B2A4A] font-medium text-base sm:text-lg leading-relaxed'>
+            {question.question_text}
+          </p>
+          <div className='mt-4 text-xs text-gray-400 text-center'>
+            {question.book_title} · Ch. {question.chapter}
+          </div>
+        </div>
+
+        {/* Back */}
+        <div
+          className='absolute inset-0 bg-white border-2 border-green-300 rounded-2xl p-6 flex flex-col'
+          style={{
+            backfaceVisibility: "hidden",
+            transform: "rotateY(180deg)",
+          }}
+        >
+          <div className='mb-3'>
+            <span className='text-xs font-semibold text-green-700 bg-green-100 px-2 py-0.5 rounded-full'>
+              ✓ Correct Answer
+            </span>
+          </div>
+          <p className='text-[#1B2A4A] font-semibold text-base mb-3'>
+            {correctText}
+          </p>
+          {question.explanation && (
+            <p className='text-sm text-gray-600 leading-relaxed flex-1'>
+              {question.explanation}
+            </p>
+          )}
+          <div className='mt-4 flex flex-col gap-1 text-xs text-gray-400'>
+            <div className='flex items-center gap-1.5'>
+              <BookOpen className='w-3.5 h-3.5' />
+              <span>{question.book_title}</span>
+            </div>
+            {question.page_start && (
+              <div className='flex items-center gap-1.5'>
+                <FileText className='w-3.5 h-3.5' />
+                <span>
+                  p.{question.page_start}
+                  {question.page_end &&
+                  question.page_end !== question.page_start
+                    ? `–${question.page_end}`
+                    : ""}
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
-      <FlashcardConfig
-        books={books}
-        bookChapters={bookChapters}
-        userId={user.id}
-      />
     </div>
   );
 }
