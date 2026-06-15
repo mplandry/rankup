@@ -1,9 +1,11 @@
-import { createClient } from "@/lib/supabase/server";
+import { createServiceRoleClient } from "@/lib/supabase/service-role";
 import type { Profile } from "@/types";
 import StudentsTable from "@/components/students/StudentsTable";
 
+export const dynamic = "force-dynamic";
+
 export default async function StudentsPage() {
-  const supabase = await createClient();
+  const supabase = createServiceRoleClient();
 
   const { data: students } = await supabase
     .from("profiles")
@@ -14,6 +16,7 @@ export default async function StudentsPage() {
       payment_transactions(plan_type, status, created_at, amount_cents)
     `,
     )
+    .eq("role", "student")
     .order("created_at", { ascending: false });
 
   return (
