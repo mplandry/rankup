@@ -25,23 +25,45 @@ export default async function FlashcardSessionPage({ params }: Props) {
       : decodeURIComponent(chapterEncoded);
   const isDueOnly = sessionId === "due";
 
-  let query = supabase
-    .from("questions")
-    .select(
-      `
-      id, question_text, answer_a, answer_b, answer_c, answer_d,
-      correct_answer, explanation, book_title, chapter, topic,
-      page_start, page_end, difficulty
-    `,
-    )
-    .eq("is_active", true)
-    .eq("flashcard_eligible", true);
+  // Only this student's track (plus "both"), matching the filtering used
+  // by /api/sessions and Study Mode.
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("exam_type")
+    .eq("id", user.id)
+    .single();
+  const examTypes = profile?.exam_type
+    ? [profile.exam_type, "both"]
+    : ["lieutenant", "captain", "both"];
 
-  if (book) query = query.eq("book_title", book);
-  if (chapter) query = query.eq("chapter", chapter);
-
-  const { data: questions } = await query;
-  if (!questions || questions.length === 0) redirect("/flashcards");
+  // Paginated with .range() — an unbounded select caps at 1000 rows by
+  // default, and the unfiltered "all books" / "due" pool can exceed that.
+  const PAGE_SIZE = 1000;
+  let questions: any[] = [];
+  let from = 0;
+  while (true) {
+    let query = supabase
+      .from("questions")
+      .select(
+        `
+        id, question_text, answer_a, answer_b, answer_c, answer_d,
+        correct_answer, explanation, book_title, chapter, topic,
+        page_start, page_end, difficulty
+      `,
+      )
+      .eq("is_active", true)
+      .eq("flashcard_eligible", true)
+      .in("exam_type", examTypes)
+      .range(from, from + PAGE_SIZE - 1);
+    if (book) query = query.eq("book_title", book);
+    if (chapter) query = query.eq("chapter", chapter);
+    const { data, error } = await query;
+    if (error || !data || data.length === 0) break;
+    questions = questions.concat(data);
+    if (data.length < PAGE_SIZE) break;
+    from += PAGE_SIZE;
+  }
+  if (questions.length === 0) redirect("/flashcards");
 
   // Get spaced repetition progress for these questions
   const questionIds = questions.map((q) => q.id);

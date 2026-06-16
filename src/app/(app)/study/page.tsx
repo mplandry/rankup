@@ -66,6 +66,11 @@ export default function StudyPage() {
   const [difficulty, setDifficulty] = useState("all");
   const [count, setCount] = useState(20);
   const [starting, setStarting] = useState(false);
+  const [examTypes, setExamTypes] = useState<string[]>([
+    "lieutenant",
+    "captain",
+    "both",
+  ]);
   const router = useRouter();
 
   useEffect(() => {
@@ -78,17 +83,54 @@ export default function StudyPage() {
         return;
       }
       setUser(session.user);
-      // Only fetch filter metadata — not full question content
-      const { data } = await supabase
-        .from("questions")
-        .select("book_title, chapter, topic, difficulty")
-        .eq("is_active", true)
-        .eq("study_eligible", true);
-      setMeta(data || []);
-      setFilteredCount(data?.length || 0);
+
+      // Only show this student's track (plus "both"), so e.g. a captain
+      // candidate never sees lieutenant-only books/chapters and vice versa.
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("exam_type")
+        .eq("id", session.user.id)
+        .single();
+      const types = profile?.exam_type
+        ? [profile.exam_type, "both"]
+        : ["lieutenant", "captain", "both"];
+      setExamTypes(types);
+
+      // Only fetch filter metadata — not full question content.
+      // Paginated with .range() because Supabase/PostgREST caps a single
+      // unbounded select at 1000 rows by default — without this, books and
+      // chapters past row 1000 silently never make it into the dropdowns.
+      const all = await fetchAllMeta(types);
+      setMeta(all);
+      setFilteredCount(all.length);
     };
     init();
   }, []);
+
+  async function fetchAllMeta(types: string[]) {
+    const PAGE_SIZE = 1000;
+    let all: {
+      book_title: string;
+      chapter: any;
+      topic: string | null;
+      difficulty: string | null;
+    }[] = [];
+    let from = 0;
+    while (true) {
+      const { data, error } = await supabase
+        .from("questions")
+        .select("book_title, chapter, topic, difficulty")
+        .eq("is_active", true)
+        .eq("study_eligible", true)
+        .in("exam_type", types)
+        .range(from, from + PAGE_SIZE - 1);
+      if (error || !data || data.length === 0) break;
+      all = all.concat(data);
+      if (data.length < PAGE_SIZE) break;
+      from += PAGE_SIZE;
+    }
+    return all;
+  }
 
   useEffect(() => {
     let f = meta;
@@ -99,14 +141,30 @@ export default function StudyPage() {
     setFilteredCount(f.length);
   }, [book, chapter, topic, difficulty, meta]);
 
-  const books = [...new Set(meta.map((q) => q.book_title))];
+  // Natural sort: numeric chapters ascend numerically (so "2" sorts before
+  // "10"), suffixed chapters like "26A" sort near their numeric neighbor,
+  // and non-numeric values like "N/A" sort last.
+  function chapterSort(a: any, b: any) {
+    const sa = String(a ?? "");
+    const sb = String(b ?? "");
+    const na = parseFloat(sa);
+    const nb = parseFloat(sb);
+    const aNum = !isNaN(na);
+    const bNum = !isNaN(nb);
+    if (aNum && bNum) return na !== nb ? na - nb : sa.localeCompare(sb);
+    if (aNum) return -1;
+    if (bNum) return 1;
+    return sa.localeCompare(sb);
+  }
+
+  const books = [...new Set(meta.map((q) => q.book_title))].sort();
   const chapters = [
     ...new Set(
       meta
         .filter((q) => book === "all" || q.book_title === book)
         .map((q) => q.chapter),
     ),
-  ];
+  ].sort(chapterSort);
   const topics = [
     ...new Set(
       meta
@@ -118,22 +176,35 @@ export default function StudyPage() {
         .map((q) => q.topic)
         .filter(Boolean),
     ),
-  ];
+  ].sort((a, b) => String(a).localeCompare(String(b)));
 
   const startSession = async () => {
     setStarting(true);
-    // Fetch only the questions matching current filters — server-side
-    let query = supabase
-      .from("questions")
-      .select("*")
-      .eq("is_active", true)
-      .eq("study_eligible", true);
-    if (book !== "all") query = query.eq("book_title", book);
-    if (chapter !== "all") query = query.eq("chapter", chapter);
-    if (topic !== "all") query = query.eq("topic", topic);
-    if (difficulty !== "all") query = query.eq("difficulty", difficulty);
-    const { data } = await query;
-    const qs = shuffleArray(data || []).slice(0, Math.min(count, (data || []).length));
+    // Fetch only the questions matching current filters — server-side.
+    // Paginated for the same reason as fetchAllMeta: an unbounded select
+    // can be truncated at 1000 rows when "All books" leaves a large pool.
+    const PAGE_SIZE = 1000;
+    let all: Question[] = [];
+    let from = 0;
+    while (true) {
+      let query = supabase
+        .from("questions")
+        .select("*")
+        .eq("is_active", true)
+        .eq("study_eligible", true)
+        .in("exam_type", examTypes)
+        .range(from, from + PAGE_SIZE - 1);
+      if (book !== "all") query = query.eq("book_title", book);
+      if (chapter !== "all") query = query.eq("chapter", chapter);
+      if (topic !== "all") query = query.eq("topic", topic);
+      if (difficulty !== "all") query = query.eq("difficulty", difficulty);
+      const { data, error } = await query;
+      if (error || !data || data.length === 0) break;
+      all = all.concat(data as Question[]);
+      if (data.length < PAGE_SIZE) break;
+      from += PAGE_SIZE;
+    }
+    const qs = shuffleArray(all).slice(0, Math.min(count, all.length));
     setStarting(false);
     setSessionQs(qs);
     setIdx(0);
