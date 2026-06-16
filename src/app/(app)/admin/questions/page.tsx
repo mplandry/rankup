@@ -721,30 +721,32 @@ export default function AdminQuestionsPage() {
     [filters],
   );
 
-  // Load answer distribution
+  // Load answer distribution — 4 count-only queries instead of fetching all rows
   const loadAnswerDistribution = useCallback(async () => {
     try {
-      const query = buildQuery(
-        supabase
-          .from("questions")
-          .select("correct_answer")
-          .eq("is_active", true),
+      const letters = ["A", "B", "C", "D"] as const;
+      const counts = await Promise.all(
+        letters.map((letter) => {
+          let q = supabase
+            .from("questions")
+            .select("id", { count: "exact", head: true })
+            .eq("is_active", true)
+            .eq("correct_answer", letter);
+          if (filters.bookTitle) q = q.eq("book_title", filters.bookTitle);
+          if (filters.chapter) q = q.eq("chapter", filters.chapter);
+          if (filters.difficulty) q = q.eq("difficulty", filters.difficulty);
+          if (filters.studyEligible) q = q.eq("study_eligible", filters.studyEligible === "true");
+          if (filters.examEligible) q = q.eq("exam_eligible", filters.examEligible === "true");
+          if (filters.searchText) q = q.ilike("question_text", `%${filters.searchText}%`);
+          return q;
+        }),
       );
-      const { data } = await query;
-
-      if (data) {
-        const dist = { A: 0, B: 0, C: 0, D: 0, total: data.length };
-        data.forEach((q: Question) => {
-          if (q.correct_answer in dist) {
-            dist[q.correct_answer as "A" | "B" | "C" | "D"]++;
-          }
-        });
-        setAnswerDist(dist);
-      }
+      const [a, b, c, d] = counts.map((r) => r.count ?? 0);
+      setAnswerDist({ A: a, B: b, C: c, D: d, total: a + b + c + d });
     } catch (error) {
       console.error("Error loading answer distribution:", error);
     }
-  }, [buildQuery]);
+  }, [filters]);
 
   // Load questions with pagination
   const loadQuestions = useCallback(async () => {

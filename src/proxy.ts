@@ -33,7 +33,9 @@ export async function proxy(request: NextRequest) {
     pathname.startsWith('/study') ||
     pathname.startsWith('/exam') ||
     pathname.startsWith('/progress') ||
-    pathname.startsWith('/admin')
+    pathname.startsWith('/admin') ||
+    pathname.startsWith('/flashcards') ||
+    pathname.startsWith('/pricing')
 
   if (isAppRoute && !user) {
     const loginUrl = request.nextUrl.clone()
