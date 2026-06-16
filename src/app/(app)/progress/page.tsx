@@ -44,55 +44,56 @@ export default async function ProgressPage() {
   const studySessions = sessions.filter((s) => s.mode === "study");
 
   return (
-    <div className='min-h-screen bg-[#1a1a1a] text-white p-8'>
-      <h1 className='text-3xl font-bold mb-8'>My Progress</h1>
+    <div className="min-h-screen bg-[#f8f9fb] p-8">
+      <h1 className="text-3xl font-bold mb-8 text-[#1B2A4A]">My Progress</h1>
 
       {/* Stats Overview */}
-      <div className='grid grid-cols-1 md:grid-cols-3 gap-6 mb-8'>
-        <div className='bg-[#2a2a2a] p-6 rounded-lg border border-[#3a3a3a]'>
-          <div className='text-sm text-gray-400 mb-2'>Total Sessions</div>
-          <div className='text-3xl font-bold'>{stats?.total_sessions || 0}</div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="bg-white p-6 rounded-xl border border-[#e2e8f0] shadow-sm">
+          <div className="text-sm text-gray-500 mb-2">Total Sessions</div>
+          <div className="text-3xl font-bold text-[#1B2A4A]">{stats?.total_sessions || 0}</div>
         </div>
-        <div className='bg-[#2a2a2a] p-6 rounded-lg border border-[#3a3a3a]'>
-          <div className='text-sm text-gray-400 mb-2'>Avg Exam Score</div>
-          <div className='text-3xl font-bold'>
+        <div className="bg-white p-6 rounded-xl border border-[#e2e8f0] shadow-sm">
+          <div className="text-sm text-gray-500 mb-2">Avg Exam Score</div>
+          <div className="text-3xl font-bold text-[#1B2A4A]">
             {stats?.avg_exam_score ? Math.round(stats.avg_exam_score) : 0}%
           </div>
         </div>
-        <div className='bg-[#2a2a2a] p-6 rounded-lg border border-[#3a3a3a]'>
-          <div className='text-sm text-gray-400 mb-2'>Questions Answered</div>
-          <div className='text-3xl font-bold'>
+        <div className="bg-white p-6 rounded-xl border border-[#e2e8f0] shadow-sm">
+          <div className="text-sm text-gray-500 mb-2">Questions Answered</div>
+          <div className="text-3xl font-bold text-[#1B2A4A]">
             {stats?.total_questions || 0}
           </div>
         </div>
       </div>
 
       {/* Exam Sessions */}
-      <div className='mb-8'>
-        <h2 className='text-2xl font-bold mb-4'>Exam History</h2>
+      <div className="mb-8">
+        <h2 className="text-xl font-bold mb-4 text-[#1B2A4A]">Exam History</h2>
         {examSessions.length === 0 ? (
-          <p className='text-gray-400'>No exam sessions yet.</p>
+          <p className="text-gray-400">No exam sessions yet.</p>
         ) : (
-          <div className='space-y-4'>
-            {examSessions.map((session) => (
+          <div className="space-y-3">
+            {examSessions.map((s) => (
               <div
-                key={session.id}
-                className='bg-[#2a2a2a] p-6 rounded-lg border border-[#3a3a3a]'
+                key={s.id}
+                className="bg-white p-5 rounded-xl border border-[#e2e8f0] shadow-sm flex justify-between items-center"
               >
-                <div className='flex justify-between items-center'>
-                  <div>
-                    <div className='text-lg font-semibold'>Exam Session</div>
-                    <div className='text-sm text-gray-400'>
-                      {new Date(session.started_at).toLocaleDateString()}
-                    </div>
+                <div>
+                  <div className="text-sm font-semibold text-[#1B2A4A]">Exam Session</div>
+                  <div className="text-xs text-gray-400 mt-0.5">
+                    {new Date(s.started_at).toLocaleDateString()}
                   </div>
-                  <div className='text-right'>
-                    <div className='text-2xl font-bold'>
-                      {session.score_percent || 0}%
-                    </div>
-                    <div className='text-sm text-gray-400'>
-                      {session.score || 0}/{session.total_questions || 0}
-                    </div>
+                </div>
+                <div className="text-right">
+                  <div
+                    className="text-2xl font-bold"
+                    style={{ color: (s.score_percent || 0) >= 70 ? "#27ae60" : "#C0392B" }}
+                  >
+                    {s.score_percent || 0}%
+                  </div>
+                  <div className="text-xs text-gray-400">
+                    {s.score || 0}/{s.total_questions || 0} correct
                   </div>
                 </div>
               </div>
@@ -103,30 +104,28 @@ export default async function ProgressPage() {
 
       {/* Study Sessions */}
       <div>
-        <h2 className='text-2xl font-bold mb-4'>Study History</h2>
+        <h2 className="text-xl font-bold mb-4 text-[#1B2A4A]">Study History</h2>
         {studySessions.length === 0 ? (
-          <p className='text-gray-400'>No study sessions yet.</p>
+          <p className="text-gray-400">No study sessions yet.</p>
         ) : (
-          <div className='space-y-4'>
-            {studySessions.map((session) => (
+          <div className="space-y-3">
+            {studySessions.map((s) => (
               <div
-                key={session.id}
-                className='bg-[#2a2a2a] p-6 rounded-lg border border-[#3a3a3a]'
+                key={s.id}
+                className="bg-white p-5 rounded-xl border border-[#e2e8f0] shadow-sm flex justify-between items-center"
               >
-                <div className='flex justify-between items-center'>
-                  <div>
-                    <div className='text-lg font-semibold'>Study Session</div>
-                    <div className='text-sm text-gray-400'>
-                      {new Date(session.started_at).toLocaleDateString()}
-                    </div>
+                <div>
+                  <div className="text-sm font-semibold text-[#1B2A4A]">Study Session</div>
+                  <div className="text-xs text-gray-400 mt-0.5">
+                    {new Date(s.started_at).toLocaleDateString()}
                   </div>
-                  <div className='text-right'>
-                    <div className='text-2xl font-bold'>
-                      {session.score_percent || 0}%
-                    </div>
-                    <div className='text-sm text-gray-400'>
-                      {session.score || 0}/{session.total_questions || 0}
-                    </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-2xl font-bold text-[#1B2A4A]">
+                    {s.score_percent || 0}%
+                  </div>
+                  <div className="text-xs text-gray-400">
+                    {s.score || 0}/{s.total_questions || 0} correct
                   </div>
                 </div>
               </div>
