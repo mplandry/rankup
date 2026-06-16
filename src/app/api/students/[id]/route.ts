@@ -34,7 +34,7 @@ export async function PATCH(
     const updates = await request.json();
 
     // Only allow updating specific fields
-    const allowedFields = ["full_name", "department", "exam_type"];
+    const allowedFields = ["full_name", "department", "exam_type", "subscription_status", "subscription_plan"];
     const filteredUpdates = Object.keys(updates)
       .filter((key) => allowedFields.includes(key))
       .reduce((obj: any, key) => {

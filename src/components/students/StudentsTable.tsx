@@ -278,6 +278,8 @@ function EditStudentModal({
   const [fullName, setFullName] = useState(student.full_name || "");
   const [department, setDepartment] = useState(student.department || "");
   const [examType, setExamType] = useState(student.exam_type || "lieutenant");
+  const [subscriptionStatus, setSubscriptionStatus] = useState(student.subscription_status || "trial");
+  const [subscriptionPlan, setSubscriptionPlan] = useState(student.subscription_plan || "");
   const [saving, setSaving] = useState(false);
 
   const handleSave = async () => {
@@ -287,7 +289,9 @@ function EditStudentModal({
         full_name: fullName,
         department: department,
         exam_type: examType,
-      });
+        subscription_status: subscriptionStatus,
+        subscription_plan: subscriptionPlan || null,
+      } as any);
       onClose();
     } finally {
       setSaving(false);
@@ -341,6 +345,39 @@ function EditStudentModal({
             >
               <option value='lieutenant'>Lieutenant</option>
               <option value='captain'>Captain</option>
+            </select>
+          </div>
+
+          <div>
+            <label className='block text-sm font-semibold text-gray-700 mb-1'>
+              Subscription Status
+            </label>
+            <select
+              value={subscriptionStatus}
+              className='w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-900'
+              onChange={(e) => setSubscriptionStatus(e.target.value)}
+            >
+              <option value='trial'>Trial</option>
+              <option value='active'>Active</option>
+              <option value='free'>Free</option>
+              <option value='expired'>Expired</option>
+              <option value='cancelled'>Cancelled</option>
+            </select>
+          </div>
+
+          <div>
+            <label className='block text-sm font-semibold text-gray-700 mb-1'>
+              Plan
+            </label>
+            <select
+              value={subscriptionPlan}
+              className='w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-900'
+              onChange={(e) => setSubscriptionPlan(e.target.value)}
+            >
+              <option value=''>None (Free)</option>
+              <option value='exam_prep'>Exam Prep</option>
+              <option value='monthly'>Monthly</option>
+              <option value='department'>Department Rate</option>
             </select>
           </div>
         </div>
