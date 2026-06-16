@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { createServiceRoleClient } from "@/lib/supabase/service-role";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function PATCH(
@@ -94,7 +95,8 @@ export async function DELETE(
     }
 
     // Delete from auth.users (cascade will handle profiles)
-    const { error } = await supabase.auth.admin.deleteUser(id);
+    const serviceClient = createServiceRoleClient();
+    const { error } = await serviceClient.auth.admin.deleteUser(id);
 
     if (error) throw error;
 
