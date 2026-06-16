@@ -141,14 +141,16 @@ export default function StudyPage() {
       setSelected(null);
       setRevealed(false);
     } else {
-      const score = Math.round(
-        (newResults.filter((r) => r.correct).length / newResults.length) * 100,
-      );
+      const correctCount = newResults.filter((r) => r.correct).length;
+      const score = Math.round((correctCount / newResults.length) * 100);
       supabase.from("exam_sessions").insert({
         user_id: user.id,
         mode: "study",
-        score,
+        status: "completed",
+        score: correctCount,
+        score_percent: score,
         total_questions: newResults.length,
+        started_at: new Date().toISOString(),
         completed_at: new Date().toISOString(),
       });
       setState("results");
