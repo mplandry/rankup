@@ -89,7 +89,7 @@ export async function POST(request: NextRequest) {
       ],
       mode: pricing.mode,
       success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/dashboard?payment=success`,
-      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/pricing?payment=cancelled`,
+      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/pricing?payment=canceled`,
       metadata: {
         user_id: userId,
         subscription_plan: pricing.plan,
