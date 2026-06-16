@@ -6,6 +6,11 @@ export interface Profile {
   department: string | null;
   exam_type: "lieutenant" | "captain";
   is_admin: boolean;
+  role: string;
+  subscription_status: string | null;
+  subscription_plan: string | null;
+  subscription_tier: string | null;
+  trial_ends_at: string | null;
   created_at: string;
   last_sign_in_at: string | null;
 }
