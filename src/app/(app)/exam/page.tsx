@@ -21,6 +21,10 @@ export default function ExamPage() {
   const timerRef = useRef<any>(null)
   const sessionQsRef = useRef<Question[]>([])
   const answersRef = useRef<Record<number, string>>({})
+  // Only this student's track (plus "both"), matching the filtering used by
+  // /api/sessions, Study Mode, and Flashcards. Defaults to all tracks until
+  // the profile loads.
+  const examTypesRef = useRef<string[]>(['lieutenant', 'captain', 'both'])
   const router = useRouter()
 
   useEffect(() => {
@@ -29,12 +33,22 @@ export default function ExamPage() {
       const { data: { session } } = await supabase.auth.getSession()
       if (!session) { router.push('/login'); return }
       setUser(session.user)
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('exam_type')
+        .eq('id', session.user.id)
+        .single()
+      const examTypes = profile?.exam_type
+        ? [profile.exam_type, 'both']
+        : ['lieutenant', 'captain', 'both']
+      examTypesRef.current = examTypes
       // Only fetch count for display — not full question data
       const { count } = await supabase
         .from('questions')
         .select('id', { count: 'exact', head: true })
         .eq('is_active', true)
         .eq('exam_eligible', true)
+        .in('exam_type', examTypes)
       setQuestionCount(count || 0)
     }
     init()
@@ -68,12 +82,28 @@ export default function ExamPage() {
   const startExam = async () => {
     setStarting(true)
     const supabase = createClient()
-    const { data } = await supabase
-      .from('questions')
-      .select('*')
-      .eq('is_active', true)
-      .eq('exam_eligible', true)
-    const qs = shuffleArray(data || []).slice(0, Math.min(90, (data || []).length))
+    const examTypes = examTypesRef.current
+    // Paginated with .range() — an unbounded select caps at 1000 rows by
+    // default, and the exam-eligible pool (e.g. captain + "both") can
+    // exceed that, which previously caused the question pool to silently
+    // include the wrong track's questions.
+    const PAGE_SIZE = 1000
+    let allQuestions: Question[] = []
+    let from = 0
+    while (true) {
+      const { data, error } = await supabase
+        .from('questions')
+        .select('*')
+        .eq('is_active', true)
+        .eq('exam_eligible', true)
+        .in('exam_type', examTypes)
+        .range(from, from + PAGE_SIZE - 1)
+      if (error || !data || data.length === 0) break
+      allQuestions = allQuestions.concat(data)
+      if (data.length < PAGE_SIZE) break
+      from += PAGE_SIZE
+    }
+    const qs = shuffleArray(allQuestions).slice(0, Math.min(90, allQuestions.length))
     setStarting(false)
     sessionQsRef.current = qs
     answersRef.current = {}
