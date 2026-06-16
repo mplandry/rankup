@@ -172,7 +172,7 @@ const CAPT_READING_LIST = [
     expandBg: "bg-orange-50",
     labelColor: "text-orange-600",
     icon: "⚖️",
-    warning: "Statute questions — not yet in app question bank",
+    warning: null,
   },
 ];
 
@@ -279,8 +279,8 @@ export default function AdminReadingList() {
           📚 <strong>{list.length} source materials</strong> for {activeTab === "lieutenant" ? "Lieutenant" : "Captain"} exam
         </span>
         {activeTab === "captain" && (
-          <span className="text-yellow-700 font-semibold">
-            ⚠️ 2 sources not yet in question bank
+          <span className="text-green-700 font-semibold">
+            ✅ All sources in question bank
           </span>
         )}
         <span className="ml-auto">Click any book to expand chapter list</span>
