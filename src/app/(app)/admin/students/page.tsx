@@ -12,8 +12,7 @@ export default async function StudentsPage() {
     .select(
       `
       *,
-      user_stats_cache(*),
-      payment_transactions(plan_type, status, created_at, amount_cents)
+      user_stats_cache(*)
     `,
     )
     .eq("role", "student")
