@@ -51,8 +51,9 @@ function getDisplayOptions(question: Question) {
 export default function StudyPage() {
   const supabase = createClient()
   const [user, setUser] = useState<any>(null);
-  const [questions, setQuestions] = useState<Question[]>([]);
-  const [filtered, setFiltered] = useState<Question[]>([]);
+  // Lightweight metadata for building filter UI
+  const [meta, setMeta] = useState<{ book_title: string; chapter: any; topic: string | null; difficulty: string | null }[]>([]);
+  const [filteredCount, setFilteredCount] = useState(0);
   const [sessionQs, setSessionQs] = useState<Question[]>([]);
   const [state, setState] = useState<StudyState>("configure");
   const [results, setResults] = useState<any[]>([]);
@@ -64,6 +65,7 @@ export default function StudyPage() {
   const [topic, setTopic] = useState("all");
   const [difficulty, setDifficulty] = useState("all");
   const [count, setCount] = useState(20);
+  const [starting, setStarting] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -76,37 +78,38 @@ export default function StudyPage() {
         return;
       }
       setUser(session.user);
+      // Only fetch filter metadata — not full question content
       const { data } = await supabase
         .from("questions")
-        .select("*")
+        .select("book_title, chapter, topic, difficulty")
         .eq("is_active", true)
         .eq("study_eligible", true);
-      setQuestions(data || []);
-      setFiltered(data || []);
+      setMeta(data || []);
+      setFilteredCount(data?.length || 0);
     };
     init();
   }, []);
 
   useEffect(() => {
-    let f = questions;
+    let f = meta;
     if (book !== "all") f = f.filter((q) => q.book_title === book);
     if (chapter !== "all") f = f.filter((q) => String(q.chapter) === chapter);
     if (topic !== "all") f = f.filter((q) => String(q.topic) === topic);
     if (difficulty !== "all") f = f.filter((q) => q.difficulty === difficulty);
-    setFiltered(f);
-  }, [book, chapter, topic, difficulty, questions]);
+    setFilteredCount(f.length);
+  }, [book, chapter, topic, difficulty, meta]);
 
-  const books = [...new Set(questions.map((q) => q.book_title))];
+  const books = [...new Set(meta.map((q) => q.book_title))];
   const chapters = [
     ...new Set(
-      questions
+      meta
         .filter((q) => book === "all" || q.book_title === book)
         .map((q) => q.chapter),
     ),
   ];
   const topics = [
     ...new Set(
-      questions
+      meta
         .filter(
           (q) =>
             (book === "all" || q.book_title === book) &&
@@ -117,11 +120,21 @@ export default function StudyPage() {
     ),
   ];
 
-  const startSession = () => {
-    const qs = shuffleArray(filtered).slice(
-      0,
-      Math.min(count, filtered.length),
-    );
+  const startSession = async () => {
+    setStarting(true);
+    // Fetch only the questions matching current filters — server-side
+    let query = supabase
+      .from("questions")
+      .select("*")
+      .eq("is_active", true)
+      .eq("study_eligible", true);
+    if (book !== "all") query = query.eq("book_title", book);
+    if (chapter !== "all") query = query.eq("chapter", chapter);
+    if (topic !== "all") query = query.eq("topic", topic);
+    if (difficulty !== "all") query = query.eq("difficulty", difficulty);
+    const { data } = await query;
+    const qs = shuffleArray(data || []).slice(0, Math.min(count, (data || []).length));
+    setStarting(false);
     setSessionQs(qs);
     setIdx(0);
     setSelected(null);
@@ -367,12 +380,12 @@ export default function StudyPage() {
               <div style={{ marginBottom: 16 }}>
                 <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 8 }}>
                   Number of Questions:{" "}
-                  <strong>{Math.min(count, filtered.length)}</strong>
+                  <strong>{Math.min(count, filteredCount)}</strong>
                 </div>
                 <input
                   type='range'
                   min={5}
-                  max={Math.min(50, filtered.length || 50)}
+                  max={Math.min(50, filteredCount || 50)}
                   value={count}
                   onChange={(e) => setCount(+e.target.value)}
                   style={{ width: "100%", accentColor: "var(--red)" }}
@@ -387,7 +400,7 @@ export default function StudyPage() {
                   }}
                 >
                   <span>5</span>
-                  <span>{Math.min(50, filtered.length || 50)}</span>
+                  <span>{Math.min(50, filteredCount || 50)}</span>
                 </div>
               </div>
               <div
@@ -397,11 +410,11 @@ export default function StudyPage() {
                   marginBottom: 16,
                 }}
               >
-                {filtered.length} questions match your filters
+                {filteredCount} questions match your filters
               </div>
               <button
                 onClick={startSession}
-                disabled={filtered.length === 0}
+                disabled={filteredCount === 0}
                 style={{
                   width: "100%",
                   padding: "13px 28px",
@@ -411,10 +424,11 @@ export default function StudyPage() {
                   borderRadius: 10,
                   fontSize: 15,
                   fontWeight: 600,
-                  cursor: "pointer",
+                  cursor: filteredCount === 0 || starting ? "not-allowed" : "pointer",
+                  opacity: filteredCount === 0 || starting ? 0.7 : 1,
                 }}
               >
-                Start Study Session
+                {starting ? "Loading questions…" : "Start Study Session"}
               </button>
             </div>
           </>

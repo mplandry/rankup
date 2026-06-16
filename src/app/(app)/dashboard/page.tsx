@@ -10,61 +10,40 @@ import TrialExpirationPrompt from "@/components/TrialExpirationPrompt";
 export default function DashboardPage() {
   const [user, setUser] = useState<any>(null);
   const [stats, setStats] = useState<any>(null);
-  const [error, setError] = useState<string>("");
   const router = useRouter();
 
   useEffect(() => {
     const init = async () => {
-      try {
-        console.log('[Dashboard] Starting init...');
-        const supabase = createClient();
-        console.log('[Dashboard] Supabase client created');
-        
-        // Add timeout to getSession
-        const sessionPromise = supabase.auth.getSession();
-        const timeoutPromise = new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('getSession timeout after 5s')), 5000)
-        );
-        
-        console.log('[Dashboard] Calling getSession...');
-        const {
-          data: { session },
-          error: sessionError,
-        } = await Promise.race([sessionPromise, timeoutPromise]) as any;
-        
-        console.log('[Dashboard] getSession returned:', { session, sessionError });
-        
-        if (sessionError) {
-          setError(`Session error: ${sessionError.message}`);
-          return;
-        }
-        
-        if (!session) {
-          console.log('[Dashboard] No session, redirecting to login');
-          router.push("/login");
-          return;
-        }
-        setUser(session.user);
+      const supabase = createClient();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
 
-        const { data } = await supabase
-          .from("study_sessions")
-          .select("*")
-          .eq("user_id", session.user.id);
+      if (!session) {
+        router.push("/login");
+        return;
+      }
+      setUser(session.user);
 
-        const totalSessions = data?.length || 0;
-        const totalQuestions =
-          data?.reduce((sum, s) => sum + (s.total_questions || 0), 0) || 0;
-        const avgScore = data?.length
+      const { data } = await supabase
+        .from("exam_sessions")
+        .select("mode, score, score_percent, total_questions")
+        .eq("user_id", session.user.id)
+        .eq("status", "completed");
+
+      const totalSessions = data?.length || 0;
+      const totalQuestions =
+        data?.reduce((sum, s) => sum + (s.total_questions || 0), 0) || 0;
+      const examSessions = data?.filter((s) => s.mode === "exam") || [];
+      const avgScore =
+        examSessions.length > 0
           ? Math.round(
-              data.reduce((sum, s) => sum + (s.score || 0), 0) / data.length,
+              examSessions.reduce((sum, s) => sum + (s.score_percent || 0), 0) /
+                examSessions.length,
             )
           : 0;
 
-        setStats({ totalSessions, totalQuestions, avgScore });
-      } catch (err: any) {
-        console.error('[Dashboard] Error:', err);
-        setError(`Error: ${err.message || String(err)}`);
-      }
+      setStats({ totalSessions, totalQuestions, avgScore });
     };
     init();
   }, [router]);
@@ -74,27 +53,10 @@ export default function DashboardPage() {
     user?.email?.split("@")[0] ||
     "Firefighter";
 
-  if (error) {
-    return (
-      <div style={{ padding: '20px', color: 'red' }}>
-        <h2>Error loading dashboard</h2>
-        <pre>{error}</pre>
-        <button onClick={() => router.push('/login')}>Back to Login</button>
-      </div>
-    );
-  }
-
   if (!user) {
     return (
-      <div style={{ 
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'center', 
-        minHeight: '100vh' 
-      }}>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '24px', marginBottom: '8px' }}>Loading...</div>
-        </div>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center text-gray-500">Loading...</div>
       </div>
     );
   }
@@ -136,7 +98,7 @@ export default function DashboardPage() {
 
           <div className="bg-white border border-gray-200 rounded-xl p-7">
             <div className="text-[13px] font-bold text-gray-500 uppercase mb-1.5">
-              Average Score
+              Average Exam Score
             </div>
             <div className="text-[32px] font-bold text-gray-900">
               {stats?.avgScore || 0}%

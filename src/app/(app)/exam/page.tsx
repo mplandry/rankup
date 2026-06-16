@@ -10,13 +10,14 @@ type ExamState = 'configure' | 'session' | 'results'
 
 export default function ExamPage() {
   const [user, setUser] = useState<any>(null)
-  const [questions, setQuestions] = useState<Question[]>([])
+  const [questionCount, setQuestionCount] = useState<number | null>(null)
   const [sessionQs, setSessionQs] = useState<Question[]>([])
   const [answers, setAnswers] = useState<Record<number, string>>({})
   const [state, setState] = useState<ExamState>('configure')
   const [idx, setIdx] = useState(0)
   const [timeLeft, setTimeLeft] = useState(90 * 60)
   const [score, setScore] = useState(0)
+  const [starting, setStarting] = useState(false)
   const timerRef = useRef<any>(null)
   const sessionQsRef = useRef<Question[]>([])
   const answersRef = useRef<Record<number, string>>({})
@@ -28,21 +29,13 @@ export default function ExamPage() {
       const { data: { session } } = await supabase.auth.getSession()
       if (!session) { router.push('/login'); return }
       setUser(session.user)
-      
-      // Fetch ALL exam-eligible questions (no limit)
-      const { data, error } = await supabase
+      // Only fetch count for display — not full question data
+      const { count } = await supabase
         .from('questions')
-        .select('*')
+        .select('id', { count: 'exact', head: true })
         .eq('is_active', true)
         .eq('exam_eligible', true)
-        .order('id')
-        .limit(100000)  // Set to very high number to get all questions
-      
-      if (error) {
-        console.error('Error fetching questions:', error)
-      }
-      
-      setQuestions(data || [])
+      setQuestionCount(count || 0)
     }
     init()
   }, [])
@@ -62,15 +55,26 @@ export default function ExamPage() {
       await supabase.from('exam_sessions').insert({
         user_id: session.user.id,
         mode: 'exam',
-        score: finalScore,
+        status: 'completed',
+        score: correct,
+        score_percent: finalScore,
         total_questions: qs.length,
+        started_at: new Date().toISOString(),
         completed_at: new Date().toISOString(),
       })
     }
   }, [])
 
-  const startExam = () => {
-    const qs = shuffleArray(questions).slice(0, Math.min(90, questions.length))
+  const startExam = async () => {
+    setStarting(true)
+    const supabase = createClient()
+    const { data } = await supabase
+      .from('questions')
+      .select('*')
+      .eq('is_active', true)
+      .eq('exam_eligible', true)
+    const qs = shuffleArray(data || []).slice(0, Math.min(90, (data || []).length))
+    setStarting(false)
     sessionQsRef.current = qs
     answersRef.current = {}
     setSessionQs(qs)
@@ -126,14 +130,14 @@ export default function ExamPage() {
               <div style={{ fontSize: 14, color: '#1e293b' }}>Passing score: <strong>70%</strong> or higher</div>
             </div>
             <div style={{ background: '#d1fae5', border: '1px solid #a9dfbf', borderRadius: 8, padding: '10px 14px', marginBottom: 20, fontSize: 13.5, color: '#059669', fontWeight: 600 }}>
-              {questions.length} exam-eligible questions available
+              {questionCount !== null ? `${questionCount} exam-eligible questions available` : 'Loading…'}
             </div>
             <button
               onClick={startExam}
-              disabled={questions.length < 10}
-              style={{ width: '100%', padding: '13px 28px', background: '#C41E3A', color: '#fff', border: 'none', borderRadius: 10, fontSize: 15, fontWeight: 600, cursor: 'pointer' }}
+              disabled={starting || (questionCount !== null && questionCount < 10)}
+              style={{ width: '100%', padding: '13px 28px', background: '#C41E3A', color: '#fff', border: 'none', borderRadius: 10, fontSize: 15, fontWeight: 600, cursor: starting ? 'not-allowed' : 'pointer', opacity: starting ? 0.7 : 1 }}
             >
-              Start Exam
+              {starting ? 'Loading questions…' : 'Start Exam'}
             </button>
           </div>
         </>
