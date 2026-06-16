@@ -157,6 +157,15 @@ export default async function AdminPage() {
             <ClipboardCheck className='w-5 h-5 text-amber-600' />
           </div>
           <div className='flex-1'>
+            <div className='font-semibold text-[#1B2A4A]'>Review Queue</div>
+            <div className='text-sm text-gray-500'>Approve questions for students</div>
+          </div>
+          {pendingReview > 0 && (
+            <span className='text-xs font-bold bg-amber-100 text-amber-700 px-2.5 py-1 rounded-full'>
+              {pendingReview}
+            </span>
+          )}
+        </Link>
         <Link
           href="/admin/distractor-improver"
           className="flex items-center gap-4 bg-white border border-gray-200 rounded-xl p-6 hover:border-red-300 hover:shadow-sm transition-all"
@@ -170,15 +179,6 @@ export default async function AdminPage() {
               Enhance question quality
             </div>
           </div>
-        </Link>
-            <div className='font-semibold text-[#1B2A4A]'>Review Queue</div>
-            <div className='text-sm text-gray-500'>Approve questions for students</div>
-          </div>
-          {pendingReview > 0 && (
-            <span className='text-xs font-bold bg-amber-100 text-amber-700 px-2.5 py-1 rounded-full'>
-              {pendingReview}
-            </span>
-          )}
         </Link>
       </div>
 
