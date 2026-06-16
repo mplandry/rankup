@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
-import { BookOpen, Users, Upload, Database, List, ClipboardCheck, Sparkles, Wand2 } from "lucide-react";
+import { BookOpen, Users, Upload, Database, List, ClipboardCheck, Sparkles, Wand2, Bell } from "lucide-react";
 import ExamTypeSwitcher from "@/components/admin/ExamTypeSwitcher";
 import AdminReadingList from "@/components/admin/AdminReadingList";
 
@@ -165,6 +165,18 @@ export default async function AdminPage() {
               {pendingReview}
             </span>
           )}
+        </Link>
+        <Link
+          href="/admin/waitlist"
+          className="flex items-center gap-4 bg-white border border-gray-200 rounded-xl p-6 hover:border-red-300 hover:shadow-sm transition-all"
+        >
+          <div className="w-11 h-11 bg-teal-100 rounded-xl flex items-center justify-center">
+            <Bell className="w-5 h-5 text-teal-600" />
+          </div>
+          <div>
+            <div className="font-semibold text-[#1B2A4A]">Waitlist</div>
+            <div className="text-sm text-gray-500">Future exam signups</div>
+          </div>
         </Link>
         <Link
           href="/admin/distractor-improver"

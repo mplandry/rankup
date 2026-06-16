@@ -42,8 +42,9 @@ export async function PATCH(
         return obj;
       }, {});
 
-    // Update student
-    const { data, error } = await supabase
+    // Update student using service role to bypass RLS
+    const serviceClient = createServiceRoleClient();
+    const { data, error } = await serviceClient
       .from("profiles")
       .update({
         ...filteredUpdates,

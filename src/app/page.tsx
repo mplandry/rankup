@@ -1,7 +1,29 @@
+"use client";
+import { useState } from "react";
 import Link from "next/link";
 import "./landing.css";
 
 export default function LandingPage() {
+  const [email, setEmail] = useState("");
+  const [examType, setExamType] = useState("");
+  const [status, setStatus] = useState<"idle" | "loading" | "done" | "error">("idle");
+
+  async function handleWaitlist(e: React.FormEvent) {
+    e.preventDefault();
+    setStatus("loading");
+    try {
+      const res = await fetch("/api/waitlist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, exam_type: examType }),
+      });
+      if (!res.ok) throw new Error();
+      setStatus("done");
+    } catch {
+      setStatus("error");
+    }
+  }
+
   return (
     <>
       <nav>
@@ -574,6 +596,103 @@ export default function LandingPage() {
           <p className='cta-note'>
             Built for the 2026 MA Fire Promotional Exam · Free to get started
           </p>
+        </div>
+      </section>
+
+      {/* FUTURE EXAMS WAITLIST */}
+      <section style={{ background: '#f8f9fb', padding: '72px 20px', borderTop: '1px solid #e2e8f0' }}>
+        <div style={{ maxWidth: '560px', margin: '0 auto', textAlign: 'center' }}>
+          <div style={{
+            display: 'inline-block',
+            background: 'rgba(27,42,74,0.08)',
+            borderRadius: '100px',
+            padding: '6px 16px',
+            fontSize: '12px',
+            fontWeight: 700,
+            color: '#1B2A4A',
+            letterSpacing: '0.5px',
+            textTransform: 'uppercase',
+            marginBottom: '20px'
+          }}>
+            Coming Soon
+          </div>
+          <h2 style={{ fontSize: '28px', fontWeight: 800, color: '#1B2A4A', marginBottom: '12px', lineHeight: 1.2 }}>
+            Preparing for a future exam?
+          </h2>
+          <p style={{ fontSize: '16px', color: '#5a6a7a', marginBottom: '32px', lineHeight: 1.6 }}>
+            We're expanding to cover additional Massachusetts fire promotional exams. Drop your email and we'll notify you when your exam goes live.
+          </p>
+          {status === "done" ? (
+            <div style={{
+              background: '#f0fdf4',
+              border: '1.5px solid #bbf7d0',
+              borderRadius: '12px',
+              padding: '20px',
+              color: '#166534',
+              fontWeight: 600,
+              fontSize: '15px'
+            }}>
+              ✓ You're on the list! We'll reach out when it's ready.
+            </div>
+          ) : (
+            <form onSubmit={handleWaitlist} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <input
+                type="email"
+                required
+                placeholder="your@email.com"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '14px 16px',
+                  borderRadius: '10px',
+                  border: '1.5px solid #d1d5db',
+                  fontSize: '15px',
+                  outline: 'none',
+                  boxSizing: 'border-box'
+                }}
+              />
+              <select
+                value={examType}
+                onChange={e => setExamType(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '14px 16px',
+                  borderRadius: '10px',
+                  border: '1.5px solid #d1d5db',
+                  fontSize: '15px',
+                  color: examType ? '#111' : '#9ca3af',
+                  background: '#fff',
+                  boxSizing: 'border-box'
+                }}
+              >
+                <option value="">Which exam? (optional)</option>
+                <option value="lieutenant_2027">Lieutenant 2027</option>
+                <option value="captain_2027">Captain 2027</option>
+                <option value="other">Other / Not Sure</option>
+              </select>
+              {status === "error" && (
+                <p style={{ color: '#dc2626', fontSize: '14px', margin: 0 }}>Something went wrong. Try again.</p>
+              )}
+              <button
+                type="submit"
+                disabled={status === "loading"}
+                style={{
+                  padding: '14px',
+                  background: 'linear-gradient(135deg, #C41E3A 0%, #96281B 100%)',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: '10px',
+                  fontSize: '15px',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  opacity: status === "loading" ? 0.7 : 1
+                }}
+              >
+                {status === "loading" ? "Saving..." : "Notify Me"}
+              </button>
+            </form>
+          )}
         </div>
       </section>
 
