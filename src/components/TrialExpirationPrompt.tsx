@@ -28,11 +28,14 @@ export default function TrialExpirationPrompt() {
 
       const { data: profile } = await supabase
         .from("profiles")
-        .select("subscription_status, trial_ends_at, trial_extended_days")
+        .select("subscription_status, trial_ends_at, trial_extended_days, role")
         .eq("id", session.user.id)
         .single();
 
       if (!profile) return;
+
+      // Admins always have full access
+      if (profile.role === "admin") return;
 
       if (profile.subscription_status === "active") {
         setStatus({

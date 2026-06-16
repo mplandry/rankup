@@ -5,6 +5,19 @@
 :root {
   --background: #f8f9fb;
   --foreground: #0f172a;
+
+  /* App-wide design tokens */
+  --white: #ffffff;
+  --bg: #f8f9fb;
+  --border: #e2e8f0;
+  --text-muted: #94a3b8;
+  --sidebar-w: 240px;
+
+  /* Brand colors */
+  --red: #c0392b;
+  --red-light: #fde8e6;
+  --green: #27ae60;
+  --green-light: #d1fae5;
 }
 
 html,

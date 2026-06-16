@@ -33,12 +33,18 @@ export default function SubscriptionBadge() {
       const { data: profile } = await supabase
         .from("profiles")
         .select(
-          "subscription_status, trial_ends_at, trial_extended_days, subscription_plan",
+          "subscription_status, trial_ends_at, trial_extended_days, subscription_plan, role",
         )
         .eq("id", session.user.id)
         .single();
 
       if (profile) {
+        // Admins always have full access — show nothing
+        if (profile.role === "admin") {
+          setLoading(false);
+          return;
+        }
+
         const trialEndsAt = profile.trial_ends_at;
         const extendedDays = profile.trial_extended_days || 0;
         const effectiveEndDate = new Date(trialEndsAt);
