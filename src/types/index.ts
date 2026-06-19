@@ -70,7 +70,7 @@ export interface CategoryBreakdown {
 }
 export interface WeakArea {
   book_title?: string | null;
-  chapter?: number | null;
+  chapter?: string | number | null;
   topic?: string | null;
   pct?: number | null;
   attempts?: number | null;

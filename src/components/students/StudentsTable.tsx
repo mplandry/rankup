@@ -145,10 +145,10 @@ function StudentDetailModal({
                 <div className='text-xs text-gray-500'>Plan</div>
                 <div className='font-semibold'>
                   {student.subscription_plan ? (
-                    <span className='text-xs font-semibold px-2 py-0.5 rounded-full bg-purple-100 text-purple-700'>
+                    <span className='text-xs font-semibold px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 whitespace-nowrap'>
                       {student.subscription_plan === 'monthly' ? 'Monthly' :
                        student.subscription_plan === 'exam_prep' ? 'Exam Prep' :
-                       student.subscription_plan === 'department' ? 'Department Rate' : 
+                       student.subscription_plan === 'department' ? 'Department Rate' :
                        student.subscription_plan}
                     </span>
                   ) : (
@@ -160,10 +160,10 @@ function StudentDetailModal({
                 <div className='text-xs text-gray-500'>Payment Status</div>
                 <div className='font-semibold'>
                   {student.subscription_status ? (
-                    <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
-                      student.subscription_status === 'paid' || student.subscription_status === 'succeeded' 
+                    <span className={`text-xs font-semibold px-2 py-0.5 rounded-full whitespace-nowrap ${
+                      student.subscription_status === 'paid' || student.subscription_status === 'succeeded'
                         ? 'bg-green-100 text-green-700' :
-                      student.subscription_status === 'pending' 
+                      student.subscription_status === 'pending'
                         ? 'bg-yellow-100 text-yellow-700' :
                       'bg-red-100 text-red-700'
                     }`}>
@@ -755,10 +755,10 @@ export default function StudentsTable({
                   </td>
                   <td className='px-4 py-3'>
                     {s.subscription_plan ? (
-                      <span className='text-xs font-semibold px-2 py-0.5 rounded-full bg-purple-100 text-purple-700'>
+                      <span className='text-xs font-semibold px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 whitespace-nowrap'>
                         {s.subscription_plan === 'monthly' ? 'Monthly' :
                          s.subscription_plan === 'exam_prep' ? 'Exam Prep' :
-                         s.subscription_plan === 'department' ? 'Dept Rate' : 
+                         s.subscription_plan === 'department' ? 'Dept Rate' :
                          s.subscription_plan}
                       </span>
                     ) : (
@@ -767,10 +767,10 @@ export default function StudentsTable({
                   </td>
                   <td className='px-4 py-3'>
                     {s.subscription_status ? (
-                      <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
-                        s.subscription_status === 'paid' || s.subscription_status === 'succeeded' 
+                      <span className={`text-xs font-semibold px-2 py-0.5 rounded-full whitespace-nowrap ${
+                        s.subscription_status === 'paid' || s.subscription_status === 'succeeded'
                           ? 'bg-green-100 text-green-700' :
-                        s.subscription_status === 'pending' 
+                        s.subscription_status === 'pending'
                           ? 'bg-yellow-100 text-yellow-700' :
                         'bg-red-100 text-red-700'
                       }`}>

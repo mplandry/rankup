@@ -3,6 +3,9 @@ export const EXAM_TIME_LIMIT_SECS = 90 * 60 // 90 minutes
 export const PASSING_SCORE_PCT = 70
 export const DEFAULT_STUDY_COUNT = 20
 
+// Questions/day allowed once a user's trial has expired and they haven't subscribed
+export const FREE_DAILY_QUESTION_LIMIT = 1
+
 export const DIFFICULTY_LABELS: Record<string, string> = {
   easy: 'Easy',
   medium: 'Medium',

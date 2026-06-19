@@ -511,7 +511,7 @@ export default function PricingPage() {
               What happens after my trial ends?
             </div>
             <div style={{ fontSize: 14, color: "#64748b" }}>
-              You'll get downgraded to limited access (10 questions/day).
+              You'll get downgraded to limited access (1 question/day).
               Subscribe anytime to unlock everything again.
             </div>
           </div>

@@ -11,6 +11,8 @@ interface Props {
   topics: string[];
   bookChapters: Record<string, string[]>;
   bookTopics: Record<string, string[]>;
+  initialBook?: string;
+  initialChapter?: string;
 }
 
 export default function StudyConfig({
@@ -19,10 +21,19 @@ export default function StudyConfig({
   topics,
   bookChapters,
   bookTopics,
+  initialBook = "",
+  initialChapter = "",
 }: Props) {
   const router = useRouter();
-  const [book, setBook] = useState("");
-  const [chapter, setChapter] = useState("");
+  // Only honor the deep-linked book/chapter if they actually exist in the
+  // current question bank — otherwise silently fall back to "All".
+  const validInitialBook = initialBook && books.includes(initialBook) ? initialBook : "";
+  const validInitialChapter =
+    validInitialBook && (bookChapters[validInitialBook] || []).includes(initialChapter)
+      ? initialChapter
+      : "";
+  const [book, setBook] = useState(validInitialBook);
+  const [chapter, setChapter] = useState(validInitialChapter);
   const [topic, setTopic] = useState("");
   const [difficulty, setDifficulty] = useState("");
   const [count, setCount] = useState(DEFAULT_STUDY_COUNT);

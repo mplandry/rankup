@@ -1,5 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import WeakAreasChart from "@/components/progress/WeakAreasChart";
+import type { WeakArea } from "@/types";
 
 export default async function ProgressPage() {
   const supabase = await createClient();
@@ -43,6 +45,9 @@ export default async function ProgressPage() {
   const examSessions = sessions.filter((s) => s.mode === "exam");
   const studySessions = sessions.filter((s) => s.mode === "study");
 
+  const weakChapters = (stats?.weak_chapters || []) as WeakArea[];
+  const weakTopics = (stats?.weak_topics || []) as WeakArea[];
+
   return (
     <div className="min-h-screen bg-[#f8f9fb] p-8">
       <h1 className="text-3xl font-bold mb-8 text-[#1B2A4A]">My Progress</h1>
@@ -56,7 +61,7 @@ export default async function ProgressPage() {
         <div className="bg-white p-6 rounded-xl border border-[#e2e8f0] shadow-sm">
           <div className="text-sm text-gray-500 mb-2">Avg Exam Score</div>
           <div className="text-3xl font-bold text-[#1B2A4A]">
-            {stats?.avg_exam_score ? Math.round(stats.avg_exam_score) : 0}%
+            {stats?.avg_score_percent ? Math.round(stats.avg_score_percent) : 0}%
           </div>
         </div>
         <div className="bg-white p-6 rounded-xl border border-[#e2e8f0] shadow-sm">
@@ -66,6 +71,21 @@ export default async function ProgressPage() {
           </div>
         </div>
       </div>
+
+      {/* Weak Areas */}
+      {weakChapters.length > 0 && (
+        <div className="mb-8">
+          <h2 className="text-xl font-bold mb-4 text-[#1B2A4A]">Weakest Chapters</h2>
+          <WeakAreasChart items={weakChapters} labelKey="chapter" />
+        </div>
+      )}
+
+      {weakTopics.length > 0 && (
+        <div className="mb-8">
+          <h2 className="text-xl font-bold mb-4 text-[#1B2A4A]">Weakest Topics</h2>
+          <WeakAreasChart items={weakTopics} labelKey="topic" />
+        </div>
+      )}
 
       {/* Exam Sessions */}
       <div className="mb-8">

@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { trackSessionCompletion } from "@/lib/referral-tracker";
+import { FREE_DAILY_QUESTION_LIMIT, EXAM_QUESTION_COUNT, DEFAULT_STUDY_COUNT } from "@/lib/constants";
 
 export async function POST(request: Request) {
   const supabase = await createClient();
@@ -12,23 +13,70 @@ export async function POST(request: Request) {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("role, exam_type")
+    .select("role, exam_type, subscription_status, trial_ends_at, trial_extended_days")
     .eq("id", user.id)
     .single();
 
   const { mode, filters } = await request.json();
+
+  // Admins and active subscribers always have full access. Otherwise, full
+  // access requires being within the trial window (including any bonus days).
+  let hasFullAccess =
+    profile?.role === "admin" || profile?.subscription_status === "active";
+
+  if (!hasFullAccess && profile?.trial_ends_at) {
+    const trialEndsAt = new Date(profile.trial_ends_at);
+    trialEndsAt.setDate(trialEndsAt.getDate() + (profile.trial_extended_days || 0));
+    hasFullAccess = new Date() < trialEndsAt;
+  } else if (!hasFullAccess && !profile?.trial_ends_at) {
+    // No trial data on record — don't lock the user out unexpectedly.
+    hasFullAccess = true;
+  }
+
+  let remainingToday = Infinity;
+  if (!hasFullAccess) {
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
+
+    const { data: todaySessions } = await supabase
+      .from("exam_sessions")
+      .select("total_questions")
+      .eq("user_id", user.id)
+      .gte("started_at", startOfDay.toISOString());
+
+    const usedToday = (todaySessions || []).reduce(
+      (sum, s) => sum + (s.total_questions || 0),
+      0,
+    );
+    remainingToday = Math.max(0, FREE_DAILY_QUESTION_LIMIT - usedToday);
+
+    if (remainingToday <= 0) {
+      return NextResponse.json(
+        {
+          error: `Daily limit reached. Your trial has ended — free access is limited to ${FREE_DAILY_QUESTION_LIMIT} question${FREE_DAILY_QUESTION_LIMIT === 1 ? "" : "s"} per day. Subscribe for full access.`,
+          code: "DAILY_LIMIT_REACHED",
+        },
+        { status: 403 },
+      );
+    }
+  }
 
   const userExamType = profile?.exam_type;
   const examTypes = userExamType
     ? [userExamType, "both"]
     : ["lieutenant", "captain", "both"];
 
+  // Exam Mode must draw from exam_eligible questions, Study Mode from
+  // study_eligible — these pools can differ, so the field has to track mode.
+  const eligibilityField = mode === "exam" ? "exam_eligible" : "study_eligible";
+  const defaultCount = mode === "exam" ? EXAM_QUESTION_COUNT : DEFAULT_STUDY_COUNT;
+
   let query = supabase
     .from("questions")
     .select("*")
     .eq("is_active", true)
     .eq("review_status", "approved")
-    .eq("study_eligible", true)
+    .eq(eligibilityField, true)
     .in("exam_type", examTypes);
 
   if (filters?.book_title) query = query.eq("book_title", filters.book_title);
@@ -48,7 +96,7 @@ export async function POST(request: Request) {
   const shuffled = questions.sort(() => Math.random() - 0.5);
   const selected = shuffled.slice(
     0,
-    Math.min(filters?.question_count || 20, shuffled.length),
+    Math.min(filters?.question_count || defaultCount, shuffled.length, remainingToday),
   );
 
   const { data: session, error: sessionError } = await supabase
