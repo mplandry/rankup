@@ -1,6 +1,17 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
+import {
+  BookOpen,
+  ClipboardCheck,
+  Layers,
+  BarChart3,
+  Target,
+  Smartphone,
+  Flame,
+  Bell,
+  Check,
+} from "lucide-react";
 import "./landing.css";
 
 export default function LandingPage() {
@@ -110,7 +121,7 @@ export default function LandingPage() {
                 <div className='phone-header'>
                   <div style={{ fontSize: "11px", color: "#aaa" }}>← Back</div>
                   <div className='phone-header-title'>RankUp</div>
-                  <div style={{ fontSize: "18px" }}>🔔</div>
+                  <Bell size={16} color="#aaa" />
                 </div>
                 <div className='ring-container'>
                   <svg width='100' height='100' viewBox='0 0 100 100'>
@@ -305,7 +316,9 @@ export default function LandingPage() {
         }}></div>
         <div style={{ maxWidth: '900px', margin: '0 auto', position: 'relative', zIndex: 1, textAlign: 'center' }}>
           <div style={{
-            display: 'inline-block',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px',
             background: 'rgba(196, 30, 58, 0.2)',
             border: '1px solid rgba(196, 30, 58, 0.4)',
             borderRadius: '100px',
@@ -317,7 +330,8 @@ export default function LandingPage() {
             letterSpacing: '0.5px',
             textTransform: 'uppercase'
           }}>
-            🔥 Limited Time Offer
+            <Flame size={14} fill="currentColor" />
+            Limited Time Offer
           </div>
           <h2 style={{
             fontSize: '42px',
@@ -352,11 +366,11 @@ export default function LandingPage() {
             marginBottom: '36px'
           }}>
             {[
-              { icon: '✓', text: 'Full Question Bank' },
-              { icon: '✓', text: 'All Study Modes' },
-              { icon: '✓', text: 'Practice Exams' },
-              { icon: '✓', text: 'Progress Analytics' }
-            ].map(({ icon, text }) => (
+              { text: 'Full Question Bank' },
+              { text: 'All Study Modes' },
+              { text: 'Practice Exams' },
+              { text: 'Progress Analytics' }
+            ].map(({ text }) => (
               <div key={text} style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -374,10 +388,8 @@ export default function LandingPage() {
                   borderRadius: '50%',
                   background: 'rgba(34, 197, 94, 0.2)',
                   border: '1.5px solid rgba(34, 197, 94, 0.6)',
-                  color: '#22c55e',
-                  fontSize: '13px',
-                  fontWeight: 800
-                }}>{icon}</span>
+                  color: '#22c55e'
+                }}><Check size={13} strokeWidth={3} /></span>
                 {text}
               </div>
             ))}
@@ -430,44 +442,44 @@ export default function LandingPage() {
           <div className='features-grid'>
             {[
               {
-                icon: "📚",
+                icon: BookOpen,
                 cls: "fi-red",
                 title: "Study Mode",
                 desc: "Practice with instant feedback after every question. Filter by book, chapter, difficulty, or topic.",
               },
               {
-                icon: "📝",
+                icon: ClipboardCheck,
                 cls: "fi-navy",
                 title: "Exam Simulation",
                 desc: "Timed, full-length practice exams that mirror the real promotional exam format.",
               },
               {
-                icon: "🃏",
+                icon: Layers,
                 cls: "fi-gold",
                 title: "Smart Flashcards",
                 desc: "Spaced repetition flashcards that adapt to your performance. Cards you miss come back sooner.",
               },
               {
-                icon: "📊",
+                icon: BarChart3,
                 cls: "fi-red",
                 title: "Progress Tracking",
                 desc: "See exactly where you stand. Identify your weakest chapters and get direct links to study them.",
               },
               {
-                icon: "🎯",
+                icon: Target,
                 cls: "fi-navy",
                 title: "2,500+ Questions",
                 desc: "Covering Building Construction, Company Officers, Massachusetts General Laws, ERG 2024, and more.",
               },
               {
-                icon: "📱",
+                icon: Smartphone,
                 cls: "fi-gold",
                 title: "Study Anywhere",
                 desc: "Fully mobile-responsive. Study on your phone between calls or on your laptop at home.",
               },
-            ].map(({ icon, cls, title, desc }) => (
+            ].map(({ icon: Icon, cls, title, desc }) => (
               <div key={title} className='feature-card'>
-                <div className={`feature-icon ${cls}`}>{icon}</div>
+                <div className={`feature-icon ${cls}`}><Icon size={24} /></div>
                 <div className='feature-title'>{title}</div>
                 <p className='feature-desc'>{desc}</p>
               </div>
@@ -624,6 +636,10 @@ export default function LandingPage() {
           </p>
           {status === "done" ? (
             <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px',
               background: '#f0fdf4',
               border: '1.5px solid #bbf7d0',
               borderRadius: '12px',
@@ -632,7 +648,8 @@ export default function LandingPage() {
               fontWeight: 600,
               fontSize: '15px'
             }}>
-              ✓ You're on the list! We'll reach out when it's ready.
+              <Check size={18} strokeWidth={3} />
+              You're on the list! We'll reach out when it's ready.
             </div>
           ) : (
             <form onSubmit={handleWaitlist} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
