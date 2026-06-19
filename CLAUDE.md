@@ -14,7 +14,7 @@ No test runner or lint scripts are configured.
 
 ## What This Is
 
-RankUp is an exam prep platform for the 2026 Massachusetts Firefighter Promotional Exam (Lieutenant & Captain tracks). It provides study sessions, timed practice exams, flashcards, and progress tracking built around the official MA reading list (~1,500 questions across 5 books).
+RankUp is an exam prep platform for the 2027 Massachusetts Firefighter Promotional Exam (Lieutenant & Captain tracks). It provides study sessions, timed practice exams, flashcards, and progress tracking built around the official MA reading list (~1,500 questions across 5 books).
 
 ## Tech Stack
 

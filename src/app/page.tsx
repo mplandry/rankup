@@ -47,7 +47,7 @@ export default function LandingPage() {
         <div className='hero-content'>
           <div className='hero-left'>
             <div className='badge'>
-              <div className='badge-dot'></div>2026 Massachusetts Fire
+              <div className='badge-dot'></div>2027 Massachusetts Fire
               Promotional Exam
             </div>
             <h1 className='hero-title'>
@@ -59,7 +59,7 @@ export default function LandingPage() {
             </h1>
             <p className='hero-subtitle'>
               The most comprehensive Massachusetts firefighter promotional exam
-              prep platform for 2026. Study smarter with adaptive flashcards,
+              prep platform for 2027. Study smarter with adaptive flashcards,
               practice exams, and detailed progress tracking built around the MA
               reading list.
             </p>
@@ -594,7 +594,7 @@ export default function LandingPage() {
             Get Started Free
           </Link>
           <p className='cta-note'>
-            Built for the 2026 MA Fire Promotional Exam · Free to get started
+            Built for the 2027 MA Fire Promotional Exam · Free to get started
           </p>
         </div>
       </section>
