@@ -42,16 +42,15 @@ export default function FlashCard({ question, flipped, onFlip }: Props) {
       onClick={!flipped ? onFlip : undefined}
     >
       <div
-        className='relative w-full transition-transform duration-500'
+        className='relative w-full grid transition-transform duration-500'
         style={{
           transformStyle: "preserve-3d",
           transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)",
-          minHeight: "280px",
         }}
       >
         {/* Front */}
         <div
-          className='absolute inset-0 bg-white dark:bg-[#111827] border-2 border-blue-200 dark:border-blue-800 rounded-2xl p-6 flex flex-col'
+          className='[grid-area:1/1] min-h-[280px] w-full bg-white dark:bg-[#111827] border-2 border-blue-200 dark:border-blue-800 rounded-2xl p-6 flex flex-col'
           style={{ backfaceVisibility: "hidden" }}
         >
           <div className='flex items-center justify-between mb-4'>
@@ -78,7 +77,7 @@ export default function FlashCard({ question, flipped, onFlip }: Props) {
 
         {/* Back */}
         <div
-          className='absolute inset-0 bg-white dark:bg-[#111827] border-2 border-green-300 dark:border-green-700 rounded-2xl p-6 flex flex-col'
+          className='[grid-area:1/1] min-h-[280px] w-full bg-white dark:bg-[#111827] border-2 border-green-300 dark:border-green-700 rounded-2xl p-6 flex flex-col'
           style={{
             backfaceVisibility: "hidden",
             transform: "rotateY(180deg)",
