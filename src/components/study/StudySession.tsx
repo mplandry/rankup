@@ -62,16 +62,16 @@ export default function StudySession({ sessionId, sessionQuestions, startIndex, 
   if (done) {
     return (
       <div className="p-8 max-w-2xl mx-auto">
-        <div className="bg-white border border-gray-200 rounded-xl p-8 text-center">
-          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <CheckCircle className="w-8 h-8 text-green-600" />
+        <div className="bg-white dark:bg-[#111827] border border-gray-200 dark:border-gray-700 rounded-xl p-8 text-center">
+          <div className="w-16 h-16 bg-green-100 dark:bg-green-950/40 rounded-full flex items-center justify-center mx-auto mb-4">
+            <CheckCircle className="w-8 h-8 text-green-600 dark:text-green-400" />
           </div>
-          <h2 className="text-2xl font-bold text-[#1B2A4A] mb-2">Study Session Complete!</h2>
-          <p className="text-gray-500 mb-6">You answered {total} questions</p>
+          <h2 className="text-2xl font-bold text-[#1B2A4A] dark:text-[#e2e8f0] mb-2">Study Session Complete!</h2>
+          <p className="text-gray-500 dark:text-gray-400 mb-6">You answered {total} questions</p>
           <div className="flex gap-4 justify-center">
             <button
               onClick={() => router.push('/study')}
-              className="px-6 py-2.5 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50"
+              className="px-6 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-900"
             >
               New Session
             </button>

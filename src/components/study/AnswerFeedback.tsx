@@ -36,19 +36,19 @@ export default function AnswerFeedback({ question, selectedAnswer }: Props) {
   return (
     <div
       className={`rounded-xl border-2 p-4 sm:p-5 ${
-        isCorrect ? "border-green-400 bg-green-50" : "border-red-300 bg-red-50"
+        isCorrect ? "border-green-400 dark:border-green-600 bg-green-50 dark:bg-green-950/30" : "border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-950/30"
       }`}
     >
       <div className='flex items-center gap-2 mb-3'>
         {isCorrect ? (
           <>
-            <CheckCircle2 className='w-5 h-5 text-green-600 shrink-0' />
-            <span className='font-semibold text-green-700'>Correct!</span>
+            <CheckCircle2 className='w-5 h-5 text-green-600 dark:text-green-400 shrink-0' />
+            <span className='font-semibold text-green-700 dark:text-green-400'>Correct!</span>
           </>
         ) : (
           <>
-            <XCircle className='w-5 h-5 text-red-500 shrink-0' />
-            <span className='font-semibold text-red-700'>
+            <XCircle className='w-5 h-5 text-red-500 dark:text-red-400 shrink-0' />
+            <span className='font-semibold text-red-700 dark:text-red-400'>
               Incorrect — correct answer: <strong>{correctDisplayLabel}</strong>
             </span>
           </>
@@ -56,32 +56,32 @@ export default function AnswerFeedback({ question, selectedAnswer }: Props) {
       </div>
 
       {question.explanation && (
-        <p className='text-sm text-gray-700 mb-4 leading-relaxed'>
+        <p className='text-sm text-gray-700 dark:text-gray-300 mb-4 leading-relaxed'>
           {question.explanation}
         </p>
       )}
 
-      <div className='flex flex-col sm:flex-row sm:flex-wrap gap-2 sm:gap-3 text-xs text-gray-600'>
+      <div className='flex flex-col sm:flex-row sm:flex-wrap gap-2 sm:gap-3 text-xs text-gray-600 dark:text-gray-400'>
         <div className='flex items-center gap-1.5'>
-          <BookOpen className='w-3.5 h-3.5 text-gray-400 shrink-0' />
+          <BookOpen className='w-3.5 h-3.5 text-gray-400 dark:text-gray-500 shrink-0' />
           <span className='font-medium'>{question.book_title}</span>
           {question.edition && (
-            <span className='text-gray-400'>({question.edition})</span>
+            <span className='text-gray-400 dark:text-gray-500'>({question.edition})</span>
           )}
         </div>
         <div className='flex items-center gap-1.5'>
-          <span className='text-gray-400'>Chapter:</span>
+          <span className='text-gray-400 dark:text-gray-500'>Chapter:</span>
           <span className='font-medium'>{question.chapter}</span>
         </div>
         {question.topic && (
           <div className='flex items-center gap-1.5'>
-            <span className='text-gray-400'>Topic:</span>
+            <span className='text-gray-400 dark:text-gray-500'>Topic:</span>
             <span className='font-medium'>{question.topic}</span>
           </div>
         )}
         {(question.page_start || question.page_end) && (
           <div className='flex items-center gap-1.5'>
-            <FileText className='w-3.5 h-3.5 text-gray-400 shrink-0' />
+            <FileText className='w-3.5 h-3.5 text-gray-400 dark:text-gray-500 shrink-0' />
             <span>
               p.{question.page_start}
               {question.page_end && question.page_end !== question.page_start

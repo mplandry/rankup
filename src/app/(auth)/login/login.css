@@ -257,3 +257,62 @@
     margin-bottom: 28px;
   }
 }
+
+.login-theme-toggle {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 20;
+}
+
+/* The page background is already a fixed brand-navy gradient in both
+   modes; dark mode mainly needs to darken the white content card. */
+html.dark .login-card {
+  background: #111c33;
+  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.55);
+}
+
+html.dark .login-label {
+  color: #7b8aa3;
+}
+
+html.dark .login-input {
+  background: #0d1626;
+  border-color: #1f2c45;
+  color: #e2e8f0;
+}
+
+html.dark .login-input:focus {
+  background: #0d1626;
+  border-color: #e35d4d;
+}
+
+html.dark .login-input::placeholder {
+  color: #566178;
+}
+
+html.dark .login-divider-line div {
+  background: #1f2c45;
+}
+
+html.dark .login-divider-text span {
+  background: #111c33;
+  color: #566178;
+}
+
+html.dark .login-signup-btn {
+  background: #111c33;
+  border-color: #1f2c45;
+  color: #c3cbd6;
+}
+
+html.dark .login-signup-btn:hover {
+  border-color: #e35d4d;
+  color: #e35d4d;
+}
+
+html.dark .login-error {
+  background: rgba(220, 38, 38, 0.12);
+  border-color: rgba(220, 38, 38, 0.35);
+  color: #fca5a5;
+}

@@ -23,8 +23,8 @@ export default async function StudentsPage() {
   return (
     <div className='p-8 max-w-6xl mx-auto'>
       <div className='mb-6'>
-        <h1 className='text-2xl font-bold text-[#1B2A4A]'>Students</h1>
-        <p className='text-gray-500 text-sm mt-0.5'>
+        <h1 className='text-2xl font-bold text-[#1B2A4A] dark:text-[#e2e8f0]'>Students</h1>
+        <p className='text-gray-500 dark:text-gray-400 text-sm mt-0.5'>
           {students?.length ?? 0} registered students
         </p>
       </div>

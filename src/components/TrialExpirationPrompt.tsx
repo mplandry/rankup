@@ -89,7 +89,7 @@ export default function TrialExpirationPrompt() {
           </div>
           <button
             onClick={() => router.push("/pricing")}
-            className="bg-white text-red-600 px-6 py-2.5 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
+            className="bg-white dark:bg-[#111827] text-red-600 dark:text-red-400 px-6 py-2.5 rounded-lg font-semibold hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
           >
             View Plans
           </button>
@@ -116,13 +116,13 @@ export default function TrialExpirationPrompt() {
         <div className="flex gap-3">
           <button
             onClick={() => setShow(false)}
-            className="text-white hover:text-gray-200 px-4 py-2"
+            className="text-white hover:text-gray-200 dark:hover:text-gray-700 px-4 py-2"
           >
             Dismiss
           </button>
           <button
             onClick={() => router.push("/pricing")}
-            className="bg-white text-orange-600 px-6 py-2.5 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
+            className="bg-white dark:bg-[#111827] text-orange-600 dark:text-orange-400 px-6 py-2.5 rounded-lg font-semibold hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
           >
             View Plans
           </button>

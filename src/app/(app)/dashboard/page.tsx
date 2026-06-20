@@ -56,7 +56,7 @@ export default function DashboardPage() {
   if (!user) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center text-gray-500">Loading...</div>
+        <div className="text-center text-gray-500 dark:text-gray-400">Loading...</div>
       </div>
     );
   }
@@ -70,7 +70,7 @@ export default function DashboardPage() {
             <div className="text-[26px] font-bold mb-1">
               Welcome back, {userName}
             </div>
-            <div className="text-[13.5px] text-gray-500">
+            <div className="text-[13.5px] text-gray-500 dark:text-gray-400">
               Ready to continue your training?
             </div>
           </div>
@@ -78,29 +78,29 @@ export default function DashboardPage() {
         </div>
 
         <div className="grid grid-cols-3 gap-5 mb-7">
-          <div className="bg-white border border-gray-200 rounded-xl p-7">
-            <div className="text-[13px] font-bold text-gray-500 uppercase mb-1.5">
+          <div className="bg-white dark:bg-[#111827] border border-gray-200 dark:border-gray-700 rounded-xl p-7">
+            <div className="text-[13px] font-bold text-gray-500 dark:text-gray-400 uppercase mb-1.5">
               Study Sessions
             </div>
-            <div className="text-[32px] font-bold text-gray-900">
+            <div className="text-[32px] font-bold text-gray-900 dark:text-gray-100">
               {stats?.totalSessions || 0}
             </div>
           </div>
 
-          <div className="bg-white border border-gray-200 rounded-xl p-7">
-            <div className="text-[13px] font-bold text-gray-500 uppercase mb-1.5">
+          <div className="bg-white dark:bg-[#111827] border border-gray-200 dark:border-gray-700 rounded-xl p-7">
+            <div className="text-[13px] font-bold text-gray-500 dark:text-gray-400 uppercase mb-1.5">
               Questions Answered
             </div>
-            <div className="text-[32px] font-bold text-gray-900">
+            <div className="text-[32px] font-bold text-gray-900 dark:text-gray-100">
               {stats?.totalQuestions || 0}
             </div>
           </div>
 
-          <div className="bg-white border border-gray-200 rounded-xl p-7">
-            <div className="text-[13px] font-bold text-gray-500 uppercase mb-1.5">
+          <div className="bg-white dark:bg-[#111827] border border-gray-200 dark:border-gray-700 rounded-xl p-7">
+            <div className="text-[13px] font-bold text-gray-500 dark:text-gray-400 uppercase mb-1.5">
               Average Exam Score
             </div>
-            <div className="text-[32px] font-bold text-gray-900">
+            <div className="text-[32px] font-bold text-gray-900 dark:text-gray-100">
               {stats?.avgScore || 0}%
             </div>
           </div>

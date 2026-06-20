@@ -5,7 +5,9 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import Image from "next/image";
+import ThemeToggle from "@/components/theme/ThemeToggle";
 import "../login/login.css";
+import "./signup.css";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -74,6 +76,9 @@ export default function SignupPage() {
 
   return (
     <div className='login-page'>
+      <div className='login-theme-toggle'>
+        <ThemeToggle variant='inverted' />
+      </div>
       <div className='login-inner'>
         <div className='login-logo'>
           <div className='login-logo-img'>
@@ -234,47 +239,16 @@ export default function SignupPage() {
                 <button
                   type='button'
                   onClick={() => set("exam_type", "lieutenant")}
-                  style={{
-                    padding: "14px",
-                    border:
-                      form.exam_type === "lieutenant"
-                        ? "2px solid #C0392B"
-                        : "2px solid #f3f4f6",
-                    borderRadius: "14px",
-                    fontSize: "14px",
-                    fontWeight: "700",
-                    color:
-                      form.exam_type === "lieutenant" ? "#C0392B" : "#6b7280",
-                    background:
-                      form.exam_type === "lieutenant" ? "#fff5f5" : "#f9fafb",
-                    cursor: "pointer",
-                    transition: "all 0.2s",
-                    fontFamily: "inherit",
-                  }}
+                  className={`exam-btn${form.exam_type === "lieutenant" ? " exam-btn-active" : ""}`}
                 >
-                  Lieutenant Exam
+                  <span className='exam-btn-title'>Lieutenant Exam</span>
                 </button>
                 <button
                   type='button'
                   onClick={() => set("exam_type", "captain")}
-                  style={{
-                    padding: "14px",
-                    border:
-                      form.exam_type === "captain"
-                        ? "2px solid #C0392B"
-                        : "2px solid #f3f4f6",
-                    borderRadius: "14px",
-                    fontSize: "14px",
-                    fontWeight: "700",
-                    color: form.exam_type === "captain" ? "#C0392B" : "#6b7280",
-                    background:
-                      form.exam_type === "captain" ? "#fff5f5" : "#f9fafb",
-                    cursor: "pointer",
-                    transition: "all 0.2s",
-                    fontFamily: "inherit",
-                  }}
+                  className={`exam-btn${form.exam_type === "captain" ? " exam-btn-active" : ""}`}
                 >
-                  Captain Exam
+                  <span className='exam-btn-title'>Captain Exam</span>
                 </button>
               </div>
             </div>

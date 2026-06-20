@@ -23,7 +23,7 @@ export default async function ReviewQueuePage() {
 
   if (error) {
     return (
-      <div className="p-8 text-red-600">
+      <div className="p-8 text-red-600 dark:text-red-400">
         Failed to load review queue: {error.message}
       </div>
     )
@@ -37,18 +37,18 @@ export default async function ReviewQueuePage() {
     <div className="p-6 max-w-6xl mx-auto h-[calc(100vh-80px)] flex flex-col">
       <div className="mb-5 flex items-center justify-between shrink-0">
         <div>
-          <h1 className="text-2xl font-bold text-[#1B2A4A]">Review Queue</h1>
-          <p className="text-gray-500 text-sm mt-0.5">
+          <h1 className="text-2xl font-bold text-[#1B2A4A] dark:text-[#e2e8f0]">Review Queue</h1>
+          <p className="text-gray-500 dark:text-gray-400 text-sm mt-0.5">
             {pending} pending · {flagged} needs revision — approve questions to make them available to students
           </p>
         </div>
       </div>
 
       {questions.length === 0 ? (
-        <div className="flex-1 flex items-center justify-center text-gray-400">
+        <div className="flex-1 flex items-center justify-center text-gray-400 dark:text-gray-500">
           <div className="text-center">
             <div className="text-5xl mb-3">✓</div>
-            <p className="font-medium text-gray-600">Queue is empty</p>
+            <p className="font-medium text-gray-600 dark:text-gray-400">Queue is empty</p>
             <p className="text-sm mt-1">All questions have been reviewed</p>
           </div>
         </div>

@@ -57,21 +57,21 @@ export default function QuestionCard({
   }));
 
   return (
-    <div className='bg-white border border-gray-200 rounded-xl p-6 mb-4'>
+    <div className='bg-white dark:bg-[#111827] border border-gray-200 dark:border-gray-700 rounded-xl p-6 mb-4'>
       <div className='flex items-center gap-2 mb-4'>
         <span
           className={cn(
             "text-xs font-medium px-2 py-0.5 rounded-full",
-            question.difficulty === "easy" && "bg-green-100 text-green-700",
-            question.difficulty === "medium" && "bg-yellow-100 text-yellow-700",
-            question.difficulty === "hard" && "bg-red-100 text-red-700",
+            question.difficulty === "easy" && "bg-green-100 dark:bg-green-950/40 text-green-700 dark:text-green-400",
+            question.difficulty === "medium" && "bg-yellow-100 dark:bg-yellow-950/40 text-yellow-700 dark:text-yellow-400",
+            question.difficulty === "hard" && "bg-red-100 dark:bg-red-950/40 text-red-700 dark:text-red-400",
           )}
         >
           {question.difficulty}
         </span>
       </div>
 
-      <p className='text-[#1B2A4A] font-medium text-lg leading-relaxed mb-6'>
+      <p className='text-[#1B2A4A] dark:text-[#e2e8f0] font-medium text-lg leading-relaxed mb-6'>
         {question.question_text}
       </p>
 
@@ -82,23 +82,23 @@ export default function QuestionCard({
           const showResult = submitted && mode === "study";
 
           let optClass =
-            "border-gray-200 bg-gray-50 hover:border-gray-400 hover:bg-gray-100 cursor-pointer";
+            "border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 hover:border-gray-400 dark:hover:border-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer";
           let icon = null;
 
           if (showResult) {
             if (isCorrect) {
-              optClass = "border-green-500 bg-green-50 cursor-default";
+              optClass = "border-green-500 bg-green-50 dark:bg-green-950/30 cursor-default";
               icon = (
-                <CheckCircle2 className='w-5 h-5 text-green-600 shrink-0' />
+                <CheckCircle2 className='w-5 h-5 text-green-600 dark:text-green-400 shrink-0' />
               );
             } else if (isSelected && !isCorrect) {
-              optClass = "border-red-400 bg-red-50 cursor-default";
-              icon = <XCircle className='w-5 h-5 text-red-500 shrink-0' />;
+              optClass = "border-red-400 dark:border-red-600 bg-red-50 dark:bg-red-950/30 cursor-default";
+              icon = <XCircle className='w-5 h-5 text-red-500 dark:text-red-400 shrink-0' />;
             } else {
-              optClass = "border-gray-200 bg-gray-50 opacity-60 cursor-default";
+              optClass = "border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 opacity-60 cursor-default";
             }
           } else if (isSelected) {
-            optClass = "border-[#1B2A4A] bg-[#1B2A4A]/5 cursor-pointer";
+            optClass = "border-[#1B2A4A] dark:border-gray-400 bg-[#1B2A4A]/5 dark:bg-gray-800 cursor-pointer";
           }
 
           return (
@@ -120,16 +120,16 @@ export default function QuestionCard({
                   showResult &&
                     isSelected &&
                     !isCorrect &&
-                    "border-red-400 bg-red-400 text-white",
+                    "border-red-400 dark:border-red-600 bg-red-400 text-white",
                   !showResult &&
                     isSelected &&
-                    "border-[#1B2A4A] bg-[#1B2A4A] text-white",
-                  !showResult && !isSelected && "border-gray-400 text-gray-600",
+                    "border-[#1B2A4A] dark:border-gray-300 bg-[#1B2A4A] dark:bg-gray-300 text-white dark:text-gray-900",
+                  !showResult && !isSelected && "border-gray-400 dark:border-gray-500 text-gray-600 dark:text-gray-400",
                 )}
               >
                 {displayLabel}
               </span>
-              <span className='flex-1 text-sm text-gray-800'>{text}</span>
+              <span className='flex-1 text-sm text-gray-800 dark:text-gray-200'>{text}</span>
               {icon}
             </button>
           );

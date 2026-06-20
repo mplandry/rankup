@@ -74,13 +74,13 @@ export default function SubscriptionBadge() {
 
   if (status.status === "active") {
     return (
-      <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg">
+      <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 dark:border-green-800 rounded-lg">
         <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-        <span className="text-sm font-semibold text-green-700">
+        <span className="text-sm font-semibold text-green-700 dark:text-green-400">
           Active Subscription
         </span>
         {status.subscriptionPlan && (
-          <span className="text-xs text-green-600 bg-green-100 px-2 py-0.5 rounded">
+          <span className="text-xs text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-950/40 px-2 py-0.5 rounded">
             {status.subscriptionPlan === "monthly"
               ? "Monthly"
               : status.subscriptionPlan === "exam_prep"
@@ -96,14 +96,14 @@ export default function SubscriptionBadge() {
 
   if (isExpired) {
     return (
-      <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-red-50 to-rose-50 border border-red-200 rounded-lg">
+      <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-red-50 to-rose-50 border border-red-200 dark:border-red-800 rounded-lg">
         <div className="w-2 h-2 bg-red-500 rounded-full" />
-        <span className="text-sm font-semibold text-red-700">
+        <span className="text-sm font-semibold text-red-700 dark:text-red-400">
           Trial Expired
         </span>
         <button
           onClick={() => router.push("/pricing")}
-          className="ml-2 text-xs font-semibold text-red-600 hover:text-red-700 underline"
+          className="ml-2 text-xs font-semibold text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-400 underline"
         >
           Subscribe
         </button>
@@ -112,14 +112,14 @@ export default function SubscriptionBadge() {
   }
 
   return (
-    <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg">
+    <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 dark:border-blue-800 rounded-lg">
       <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
-      <span className="text-sm font-semibold text-blue-700">
+      <span className="text-sm font-semibold text-blue-700 dark:text-blue-400">
         Trial: {status.daysRemaining} day
         {status.daysRemaining !== 1 ? "s" : ""} left
       </span>
       {status.trialExtendedDays > 0 && (
-        <span className="text-xs text-blue-600 bg-blue-100 px-2 py-0.5 rounded">
+        <span className="text-xs text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-950/40 px-2 py-0.5 rounded">
           +{status.trialExtendedDays} bonus
         </span>
       )}

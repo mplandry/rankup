@@ -88,10 +88,10 @@ export default function ReviewQueue({ initialQuestions }: Props) {
 
   if (!current) {
     return (
-      <div className="flex items-center justify-center h-64 text-gray-400">
+      <div className="flex items-center justify-center h-64 text-gray-400 dark:text-gray-500">
         <div className="text-center">
           <CheckCircle2 className="w-12 h-12 mx-auto mb-3 text-green-400" />
-          <p className="font-medium text-gray-600">Queue is empty</p>
+          <p className="font-medium text-gray-600 dark:text-gray-400">Queue is empty</p>
           <p className="text-sm mt-1">All questions have been reviewed</p>
         </div>
       </div>
@@ -105,10 +105,10 @@ export default function ReviewQueue({ initialQuestions }: Props) {
   return (
     <div className="flex gap-4 h-full min-h-0">
       {/* Left: Queue list */}
-      <div className="w-56 shrink-0 bg-gray-50 border border-gray-200 rounded-xl overflow-hidden flex flex-col">
-        <div className="px-3 py-3 border-b border-gray-200 bg-white">
-          <div className="text-xs font-bold uppercase tracking-wide text-gray-500">Review Queue</div>
-          <div className="text-xs text-gray-400 mt-0.5">
+      <div className="w-56 shrink-0 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden flex flex-col">
+        <div className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-[#111827]">
+          <div className="text-xs font-bold uppercase tracking-wide text-gray-500 dark:text-gray-400">Review Queue</div>
+          <div className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
             {pendingCount} pending · {flaggedCount} flagged
           </div>
         </div>
@@ -120,20 +120,20 @@ export default function ReviewQueue({ initialQuestions }: Props) {
               className={`w-full text-left rounded-lg px-3 py-2.5 transition-colors ${
                 i === index
                   ? 'bg-[#1B2A4A] text-white'
-                  : 'bg-white border border-gray-200 hover:border-gray-300'
+                  : 'bg-white dark:bg-[#111827] border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
               }`}
             >
               <div className={`text-xs font-semibold mb-1 ${
                 i === index
                   ? q.review_status === 'needs_revision' ? 'text-amber-300' : 'text-blue-300'
-                  : q.review_status === 'needs_revision' ? 'text-amber-500' : 'text-gray-400'
+                  : q.review_status === 'needs_revision' ? 'text-amber-500 dark:text-amber-400' : 'text-gray-400 dark:text-gray-500'
               }`}>
                 {q.review_status === 'needs_revision' ? 'NEEDS REVISION' : 'PENDING'}
                 {q.distractor_score !== null && q.distractor_score < 60 && (
                   <span className="ml-1">· Score: {q.distractor_score}</span>
                 )}
               </div>
-              <div className={`text-xs leading-tight line-clamp-2 ${i === index ? 'text-white/90' : 'text-gray-600'}`}>
+              <div className={`text-xs leading-tight line-clamp-2 ${i === index ? 'text-white/90' : 'text-gray-600 dark:text-gray-400'}`}>
                 {q.question_text}
               </div>
             </button>
@@ -152,12 +152,12 @@ export default function ReviewQueue({ initialQuestions }: Props) {
             </div>
             <div className="flex flex-wrap gap-x-5 gap-y-1 mt-1.5">
               <div>
-                <span className="text-xs text-gray-500 uppercase tracking-wide">Chapter </span>
+                <span className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Chapter </span>
                 <span className="text-xs font-semibold text-blue-300">{current.chapter}</span>
               </div>
               {(current.page_start || current.page_end) && (
                 <div>
-                  <span className="text-xs text-gray-500 uppercase tracking-wide">Pages </span>
+                  <span className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Pages </span>
                   <span className="text-xs font-semibold text-blue-300">
                     {current.page_start}
                     {current.page_end && current.page_end !== current.page_start
@@ -167,7 +167,7 @@ export default function ReviewQueue({ initialQuestions }: Props) {
               )}
               {current.topic && (
                 <div>
-                  <span className="text-xs text-gray-500 uppercase tracking-wide">Topic </span>
+                  <span className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Topic </span>
                   <span className="text-xs font-semibold text-blue-300">{current.topic}</span>
                 </div>
               )}
@@ -177,29 +177,29 @@ export default function ReviewQueue({ initialQuestions }: Props) {
 
         {/* Distractor warning */}
         {isLowScore && (
-          <div className="bg-amber-50 border border-amber-300 rounded-xl px-4 py-3 flex gap-3">
+          <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-300 dark:border-amber-700 rounded-xl px-4 py-3 flex gap-3">
             <span className="text-lg shrink-0">⚠️</span>
             <div>
-              <div className="text-xs font-bold text-amber-800">
+              <div className="text-xs font-bold text-amber-800 dark:text-amber-300">
                 Low Distractor Score: {current.distractor_score}/100
               </div>
               {current.distractor_notes && (
-                <div className="text-xs text-amber-700 mt-1">{current.distractor_notes}</div>
+                <div className="text-xs text-amber-700 dark:text-amber-400 mt-1">{current.distractor_notes}</div>
               )}
             </div>
           </div>
         )}
 
         {/* Question card */}
-        <div className="bg-white border border-gray-200 rounded-xl p-5">
+        <div className="bg-white dark:bg-[#111827] border border-gray-200 dark:border-gray-700 rounded-xl p-5">
           <div className="flex items-center gap-2 mb-3">
             <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
-              current.difficulty === 'easy' ? 'bg-green-100 text-green-700' :
-              current.difficulty === 'hard' ? 'bg-red-100 text-red-700' :
-              'bg-yellow-100 text-yellow-700'
+              current.difficulty === 'easy' ? 'bg-green-100 dark:bg-green-950/40 text-green-700 dark:text-green-400' :
+              current.difficulty === 'hard' ? 'bg-red-100 dark:bg-red-950/40 text-red-700 dark:text-red-400' :
+              'bg-yellow-100 dark:bg-yellow-950/40 text-yellow-700 dark:text-yellow-400'
             }`}>{current.difficulty}</span>
           </div>
-          <p className="text-[#1B2A4A] font-semibold text-sm leading-relaxed mb-4">
+          <p className="text-[#1B2A4A] dark:text-[#e2e8f0] font-semibold text-sm leading-relaxed mb-4">
             {current.question_text}
           </p>
           <div className="space-y-2">
@@ -214,18 +214,18 @@ export default function ReviewQueue({ initialQuestions }: Props) {
                   key={letter}
                   className={`flex items-center gap-3 px-4 py-3 rounded-lg border-2 ${
                     isCorrect
-                      ? 'border-green-400 bg-green-50'
+                      ? 'border-green-400 dark:border-green-600 bg-green-50 dark:bg-green-950/30'
                       : isFlagged
-                        ? 'border-red-300 bg-red-50'
-                        : 'border-gray-200 bg-gray-50'
+                        ? 'border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-950/30'
+                        : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900'
                   }`}
                 >
                   <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
-                    isCorrect ? 'bg-green-500 text-white' : 'border-2 border-gray-400 text-gray-600'
+                    isCorrect ? 'bg-green-500 text-white' : 'border-2 border-gray-400 dark:border-gray-500 text-gray-600 dark:text-gray-400'
                   }`}>{key}</span>
-                  <span className="text-sm text-gray-800 flex-1">{text}</span>
+                  <span className="text-sm text-gray-800 dark:text-gray-200 flex-1">{text}</span>
                   {isCorrect && <span className="text-xs bg-green-500 text-white px-2 py-0.5 rounded font-bold">CORRECT</span>}
-                  {isFlagged && <span className="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded font-semibold">⚠ FLAGGED</span>}
+                  {isFlagged && <span className="text-xs bg-red-100 dark:bg-red-950/40 text-red-600 dark:text-red-400 px-2 py-0.5 rounded font-semibold">⚠ FLAGGED</span>}
                 </div>
               )
             })}
@@ -233,10 +233,10 @@ export default function ReviewQueue({ initialQuestions }: Props) {
         </div>
 
         {/* Originality toggle */}
-        <div className="bg-white border border-gray-200 rounded-xl px-5 py-3 flex items-center justify-between">
+        <div className="bg-white dark:bg-[#111827] border border-gray-200 dark:border-gray-700 rounded-xl px-5 py-3 flex items-center justify-between">
           <div>
-            <div className="text-sm font-semibold text-[#1B2A4A]">Originality Verified</div>
-            <div className="text-xs text-gray-400 mt-0.5">
+            <div className="text-sm font-semibold text-[#1B2A4A] dark:text-[#e2e8f0]">Originality Verified</div>
+            <div className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
               Confirm not verbatim from
               {current.page_start ? ` pp. ${current.page_start}${current.page_end && current.page_end !== current.page_start ? `–${current.page_end}` : ''}` : ' source'}
             </div>
@@ -246,31 +246,31 @@ export default function ReviewQueue({ initialQuestions }: Props) {
             className="flex items-center gap-2"
           >
             {originality
-              ? <ToggleRight className="w-8 h-8 text-green-500" />
-              : <ToggleLeft className="w-8 h-8 text-gray-400" />
+              ? <ToggleRight className="w-8 h-8 text-green-500 dark:text-green-400" />
+              : <ToggleLeft className="w-8 h-8 text-gray-400 dark:text-gray-500" />
             }
-            <span className={`text-xs font-medium ${originality ? 'text-green-600' : 'text-gray-400'}`}>
+            <span className={`text-xs font-medium ${originality ? 'text-green-600 dark:text-green-400' : 'text-gray-400 dark:text-gray-500'}`}>
               {originality ? 'Verified' : 'Not verified'}
             </span>
           </button>
         </div>
 
         {/* Notes */}
-        <div className="bg-white border border-gray-200 rounded-xl p-4">
-          <label className="text-xs font-semibold text-gray-500 block mb-2">
+        <div className="bg-white dark:bg-[#111827] border border-gray-200 dark:border-gray-700 rounded-xl p-4">
+          <label className="text-xs font-semibold text-gray-500 dark:text-gray-400 block mb-2">
             Review Notes (required if marking Needs Revision)
           </label>
           <textarea
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             placeholder="Add a note about why this needs revision..."
-            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 resize-none min-h-[60px] focus:outline-none focus:border-[#1B2A4A]"
+            className="w-full border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-700 dark:text-gray-300 resize-none min-h-[60px] focus:outline-none focus:border-[#1B2A4A]"
           />
         </div>
 
         {/* Actions */}
         {actionError && (
-          <div className="bg-red-50 border border-red-200 rounded-lg px-3 py-2 text-xs text-red-700">
+          <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg px-3 py-2 text-xs text-red-700 dark:text-red-400">
             {actionError}
           </div>
         )}
@@ -278,14 +278,14 @@ export default function ReviewQueue({ initialQuestions }: Props) {
           <button
             onClick={() => handleAction('needs_revision')}
             disabled={saving}
-            className="flex-1 py-3 rounded-lg border-2 border-red-200 bg-red-50 text-red-700 font-bold text-sm hover:bg-red-100 disabled:opacity-60 flex items-center justify-center gap-2"
+            className="flex-1 py-3 rounded-lg border-2 border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/30 text-red-700 dark:text-red-400 font-bold text-sm hover:bg-red-100 dark:hover:bg-red-950/40 disabled:opacity-60 flex items-center justify-center gap-2"
           >
             <XCircle className="w-4 h-4" /> Needs Revision
           </button>
           <button
             onClick={() => handleAction('approved', true)}
             disabled={saving}
-            className="flex-1 py-3 rounded-lg border border-gray-200 bg-gray-50 text-gray-600 font-semibold text-sm hover:bg-gray-100 disabled:opacity-60 flex items-center justify-center gap-2"
+            className="flex-1 py-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-600 dark:text-gray-400 font-semibold text-sm hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-60 flex items-center justify-center gap-2"
           >
             <SkipForward className="w-4 h-4" /> Skip
           </button>
@@ -299,7 +299,7 @@ export default function ReviewQueue({ initialQuestions }: Props) {
         </div>
 
         {/* Progress */}
-        <div className="text-xs text-gray-400 text-center">
+        <div className="text-xs text-gray-400 dark:text-gray-500 text-center">
           Question {index + 1} of {total}
         </div>
       </div>

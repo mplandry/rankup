@@ -32,10 +32,10 @@ export default function WeakAreasChart({ items, labelKey }: Props) {
               : "bg-red-500";
         const textColor =
           pct >= 70
-            ? "text-green-600"
+            ? "text-green-600 dark:text-green-400"
             : pct >= 50
-              ? "text-yellow-600"
-              : "text-red-600";
+              ? "text-yellow-600 dark:text-yellow-400"
+              : "text-red-600 dark:text-red-400";
 
         const studyHref =
           labelKey === "chapter" && item.book_title && item.chapter
@@ -45,15 +45,15 @@ export default function WeakAreasChart({ items, labelKey }: Props) {
         return (
           <div
             key={i}
-            className='border border-gray-100 rounded-xl p-4 hover:border-gray-200 transition-all'
+            className='border border-gray-100 dark:border-gray-800 rounded-xl p-4 hover:border-gray-200 dark:hover:border-gray-700 transition-all'
           >
             <div className='flex items-start justify-between gap-3 mb-2'>
               <div className='min-w-0'>
-                <div className='font-semibold text-[#1B2A4A] text-sm'>
+                <div className='font-semibold text-[#1B2A4A] dark:text-[#e2e8f0] text-sm'>
                   {label}
                 </div>
                 {bookLabel && (
-                  <div className='text-xs text-gray-400 truncate mt-0.5'>
+                  <div className='text-xs text-gray-400 dark:text-gray-500 truncate mt-0.5'>
                     {bookLabel}
                   </div>
                 )}
@@ -64,7 +64,7 @@ export default function WeakAreasChart({ items, labelKey }: Props) {
             </div>
 
             {/* Progress bar */}
-            <div className='h-2 bg-gray-100 rounded-full overflow-hidden mb-2'>
+            <div className='h-2 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden mb-2'>
               <div
                 className={`h-full rounded-full transition-all ${barColor}`}
                 style={{ width: `${pct}%` }}
@@ -73,10 +73,10 @@ export default function WeakAreasChart({ items, labelKey }: Props) {
 
             {/* Stats row */}
             <div className='flex items-center justify-between'>
-              <div className='flex gap-3 text-xs text-gray-500'>
+              <div className='flex gap-3 text-xs text-gray-500 dark:text-gray-400'>
                 <span>{attempts} answered</span>
-                <span className='text-green-600'>{correct} correct</span>
-                <span className='text-red-500'>{incorrect} incorrect</span>
+                <span className='text-green-600 dark:text-green-400'>{correct} correct</span>
+                <span className='text-red-500 dark:text-red-400'>{incorrect} incorrect</span>
               </div>
               {labelKey === "chapter" && (
                 <Link
@@ -90,7 +90,7 @@ export default function WeakAreasChart({ items, labelKey }: Props) {
 
             {/* Warning if below 70% */}
             {pct < 70 && (
-              <div className='mt-2 text-xs text-amber-600 bg-amber-50 rounded-lg px-2.5 py-1.5'>
+              <div className='mt-2 text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 rounded-lg px-2.5 py-1.5'>
                 Below passing threshold — needs improvement
               </div>
             )}

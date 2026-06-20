@@ -7,7 +7,7 @@ function AppLayoutContent({ children }: { children: React.ReactNode }) {
   const { userRole, fullName, email } = useAuth();
 
   return (
-    <div className="min-h-screen bg-[#f8f9fb]">
+    <div className="min-h-screen bg-[#f8f9fb] dark:bg-[#0b1220]">
       <TopNav role={userRole} fullName={fullName} email={email} />
       <main className="min-h-screen">{children}</main>
     </div>

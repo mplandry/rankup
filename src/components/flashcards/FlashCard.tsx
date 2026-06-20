@@ -51,53 +51,53 @@ export default function FlashCard({ question, flipped, onFlip }: Props) {
       >
         {/* Front */}
         <div
-          className='absolute inset-0 bg-white border-2 border-blue-200 rounded-2xl p-6 flex flex-col'
+          className='absolute inset-0 bg-white dark:bg-[#111827] border-2 border-blue-200 dark:border-blue-800 rounded-2xl p-6 flex flex-col'
           style={{ backfaceVisibility: "hidden" }}
         >
           <div className='flex items-center justify-between mb-4'>
             <span
               className={`text-xs font-medium px-2 py-0.5 rounded-full ${
                 question.difficulty === "easy"
-                  ? "bg-green-100 text-green-700"
+                  ? "bg-green-100 dark:bg-green-950/40 text-green-700 dark:text-green-400"
                   : question.difficulty === "medium"
-                    ? "bg-yellow-100 text-yellow-700"
-                    : "bg-red-100 text-red-700"
+                    ? "bg-yellow-100 dark:bg-yellow-950/40 text-yellow-700 dark:text-yellow-400"
+                    : "bg-red-100 dark:bg-red-950/40 text-red-700 dark:text-red-400"
               }`}
             >
               {question.difficulty}
             </span>
-            <span className='text-xs text-gray-400'>Tap to reveal</span>
+            <span className='text-xs text-gray-400 dark:text-gray-500'>Tap to reveal</span>
           </div>
-          <p className='flex-1 flex items-center text-[#1B2A4A] font-medium text-base sm:text-lg leading-relaxed'>
+          <p className='flex-1 flex items-center text-[#1B2A4A] dark:text-[#e2e8f0] font-medium text-base sm:text-lg leading-relaxed'>
             {question.question_text}
           </p>
-          <div className='mt-4 text-xs text-gray-400 text-center'>
+          <div className='mt-4 text-xs text-gray-400 dark:text-gray-500 text-center'>
             {question.book_title} · Ch. {question.chapter}
           </div>
         </div>
 
         {/* Back */}
         <div
-          className='absolute inset-0 bg-white border-2 border-green-300 rounded-2xl p-6 flex flex-col'
+          className='absolute inset-0 bg-white dark:bg-[#111827] border-2 border-green-300 dark:border-green-700 rounded-2xl p-6 flex flex-col'
           style={{
             backfaceVisibility: "hidden",
             transform: "rotateY(180deg)",
           }}
         >
           <div className='mb-3'>
-            <span className='text-xs font-semibold text-green-700 bg-green-100 px-2 py-0.5 rounded-full'>
+            <span className='text-xs font-semibold text-green-700 dark:text-green-400 bg-green-100 dark:bg-green-950/40 px-2 py-0.5 rounded-full'>
               ✓ Correct Answer
             </span>
           </div>
-          <p className='text-[#1B2A4A] font-semibold text-base mb-3'>
+          <p className='text-[#1B2A4A] dark:text-[#e2e8f0] font-semibold text-base mb-3'>
             {correctText}
           </p>
           {question.explanation && (
-            <p className='text-sm text-gray-600 leading-relaxed flex-1'>
+            <p className='text-sm text-gray-600 dark:text-gray-400 leading-relaxed flex-1'>
               {question.explanation}
             </p>
           )}
-          <div className='mt-4 flex flex-col gap-1 text-xs text-gray-400'>
+          <div className='mt-4 flex flex-col gap-1 text-xs text-gray-400 dark:text-gray-500'>
             <div className='flex items-center gap-1.5'>
               <BookOpen className='w-3.5 h-3.5' />
               <span>{question.book_title}</span>

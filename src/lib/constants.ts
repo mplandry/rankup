@@ -13,9 +13,9 @@ export const DIFFICULTY_LABELS: Record<string, string> = {
 }
 
 export const DIFFICULTY_COLORS: Record<string, string> = {
-  easy: 'bg-green-100 text-green-800',
-  medium: 'bg-yellow-100 text-yellow-800',
-  hard: 'bg-red-100 text-red-800',
+  easy: 'bg-green-100 text-green-800 dark:bg-green-950/40 dark:text-green-400',
+  medium: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-950/40 dark:text-yellow-400',
+  hard: 'bg-red-100 text-red-800 dark:bg-red-950/40 dark:text-red-400',
 }
 
 export const ANSWER_LABELS: Record<string, string> = {

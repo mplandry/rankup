@@ -318,3 +318,25 @@
 .exam-btn-active .exam-btn-sub {
   color: #e88070;
 }
+
+html.dark .signup-exam-hint {
+  color: #7b8aa3;
+}
+html.dark .exam-btn {
+  border-color: #1f2c45;
+  background: #0d1626;
+}
+html.dark .exam-btn:hover {
+  border-color: #3a4a68;
+  background: #111c33;
+}
+html.dark .exam-btn-active {
+  border-color: #e35d4d !important;
+  background: rgba(227, 93, 77, 0.14) !important;
+}
+html.dark .exam-btn-title {
+  color: #e2e8f0;
+}
+html.dark .exam-btn-active .exam-btn-title {
+  color: #e35d4d;
+}

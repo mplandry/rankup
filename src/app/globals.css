@@ -5,6 +5,7 @@
 :root {
   --background: #f8f9fb;
   --foreground: #0f172a;
+  --text: #0f172a;
 
   /* App-wide design tokens */
   --white: #ffffff;
@@ -18,6 +19,26 @@
   --red-light: #fde8e6;
   --green: #27ae60;
   --green-light: #d1fae5;
+
+  color-scheme: light;
+}
+
+.dark {
+  --background: #0b1220;
+  --foreground: #e2e8f0;
+  --text: #e2e8f0;
+
+  --white: #111827;
+  --bg: #0b1220;
+  --border: #1f2937;
+  --text-muted: #64748b;
+
+  --red: #e35d4d;
+  --red-light: #2a1416;
+  --green: #34d399;
+  --green-light: #0f2a20;
+
+  color-scheme: dark;
 }
 
 html,
@@ -30,4 +51,5 @@ body {
 body {
   background: var(--background);
   color: var(--foreground);
+  transition: background-color 0.15s ease, color 0.15s ease;
 }

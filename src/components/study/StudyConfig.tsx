@@ -82,16 +82,16 @@ export default function StudyConfig({
   }
 
   return (
-    <div className='bg-white border border-gray-200 rounded-xl p-8 space-y-6'>
-      <div className='flex items-center gap-3 pb-4 border-b border-gray-100'>
-        <div className='w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center'>
-          <BookOpen className='w-5 h-5 text-orange-600' />
+    <div className='bg-white dark:bg-[#111827] border border-gray-200 dark:border-gray-700 rounded-xl p-8 space-y-6'>
+      <div className='flex items-center gap-3 pb-4 border-b border-gray-100 dark:border-gray-800'>
+        <div className='w-10 h-10 bg-orange-100 dark:bg-orange-950/40 rounded-lg flex items-center justify-center'>
+          <BookOpen className='w-5 h-5 text-orange-600 dark:text-orange-400' />
         </div>
         <div>
-          <div className='font-semibold text-[#1B2A4A]'>
+          <div className='font-semibold text-[#1B2A4A] dark:text-[#e2e8f0]'>
             Configure Study Session
           </div>
-          <div className='text-sm text-gray-500'>
+          <div className='text-sm text-gray-500 dark:text-gray-400'>
             Filter questions or study the full bank
           </div>
         </div>
@@ -99,14 +99,14 @@ export default function StudyConfig({
 
       {/* Book Selection */}
       <div>
-        <label className='block text-sm font-medium text-gray-700 mb-2'>
+        <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
           Book / Reference
         </label>
         <div className='flex flex-col gap-2'>
           <button
             type='button'
             onClick={() => handleBookChange("")}
-            className={`w-full px-3 py-2.5 rounded-lg text-sm text-left border transition-all ${!book ? "border-red-500 bg-red-50 text-red-700 font-medium" : "border-gray-200 text-gray-600 hover:border-gray-300"}`}
+            className={`w-full px-3 py-2.5 rounded-lg text-sm text-left border transition-all ${!book ? "border-red-500 bg-red-50 dark:bg-red-950/30 text-red-700 dark:text-red-400 font-medium" : "border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600"}`}
           >
             All books
           </button>
@@ -115,7 +115,7 @@ export default function StudyConfig({
               key={b}
               type='button'
               onClick={() => handleBookChange(b)}
-              className={`w-full px-3 py-2.5 rounded-lg text-sm text-left border transition-all ${book === b ? "border-red-500 bg-red-50 text-red-700 font-medium" : "border-gray-200 text-gray-600 hover:border-gray-300"}`}
+              className={`w-full px-3 py-2.5 rounded-lg text-sm text-left border transition-all ${book === b ? "border-red-500 bg-red-50 dark:bg-red-950/30 text-red-700 dark:text-red-400 font-medium" : "border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600"}`}
             >
               {b}
             </button>
@@ -126,7 +126,7 @@ export default function StudyConfig({
       {/* Chapter/Section Selection - only show when a book is selected */}
       {filteredChapters.length > 0 && (
         <div>
-          <label className='block text-sm font-medium text-gray-700 mb-2'>
+          <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
             {book === "Massachusetts General Laws Chapter 148"
               ? "Section"
               : "Chapter"}
@@ -135,7 +135,7 @@ export default function StudyConfig({
             <button
               type='button'
               onClick={() => setChapter("")}
-              className={`px-3 py-1.5 rounded-lg text-xs border transition-all ${!chapter ? "border-red-500 bg-red-50 text-red-700 font-medium" : "border-gray-200 text-gray-600 hover:border-gray-300"}`}
+              className={`px-3 py-1.5 rounded-lg text-xs border transition-all ${!chapter ? "border-red-500 bg-red-50 dark:bg-red-950/30 text-red-700 dark:text-red-400 font-medium" : "border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600"}`}
             >
               All
             </button>
@@ -144,7 +144,7 @@ export default function StudyConfig({
                 key={c}
                 type='button'
                 onClick={() => setChapter(c)}
-                className={`px-3 py-1.5 rounded-lg text-xs border transition-all ${chapter === c ? "border-red-500 bg-red-50 text-red-700 font-medium" : "border-gray-200 text-gray-600 hover:border-gray-300"}`}
+                className={`px-3 py-1.5 rounded-lg text-xs border transition-all ${chapter === c ? "border-red-500 bg-red-50 dark:bg-red-950/30 text-red-700 dark:text-red-400 font-medium" : "border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600"}`}
               >
                 {book === "Massachusetts General Laws Chapter 148"
                   ? `Sec. ${c}`
@@ -157,7 +157,7 @@ export default function StudyConfig({
 
       {/* Difficulty */}
       <div>
-        <label className='block text-sm font-medium text-gray-700 mb-2'>
+        <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
           Difficulty
         </label>
         <div className='flex gap-2'>
@@ -166,7 +166,7 @@ export default function StudyConfig({
               key={d}
               type='button'
               onClick={() => setDifficulty(d)}
-              className={`px-3 py-1.5 rounded-lg text-xs border transition-all capitalize ${difficulty === d ? "border-red-500 bg-red-50 text-red-700 font-medium" : "border-gray-200 text-gray-600 hover:border-gray-300"}`}
+              className={`px-3 py-1.5 rounded-lg text-xs border transition-all capitalize ${difficulty === d ? "border-red-500 bg-red-50 dark:bg-red-950/30 text-red-700 dark:text-red-400 font-medium" : "border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600"}`}
             >
               {d || "All"}
             </button>
@@ -176,9 +176,9 @@ export default function StudyConfig({
 
       {/* Number of Questions */}
       <div>
-        <label className='block text-sm font-medium text-gray-700 mb-1'>
+        <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'>
           Number of Questions:{" "}
-          <span className='font-bold text-[#1B2A4A]'>{count}</span>
+          <span className='font-bold text-[#1B2A4A] dark:text-[#e2e8f0]'>{count}</span>
         </label>
         <input
           type='range'
@@ -188,14 +188,14 @@ export default function StudyConfig({
           onChange={(e) => setCount(Number(e.target.value))}
           className='w-full accent-red-600'
         />
-        <div className='flex justify-between text-xs text-gray-400 mt-1'>
+        <div className='flex justify-between text-xs text-gray-400 dark:text-gray-500 mt-1'>
           <span>5</span>
           <span>50</span>
         </div>
       </div>
 
       {error && (
-        <div className='bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-3'>
+        <div className='bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm rounded-lg px-4 py-3'>
           {error}
         </div>
       )}

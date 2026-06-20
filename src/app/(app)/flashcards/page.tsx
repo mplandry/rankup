@@ -73,8 +73,8 @@ export default async function FlashcardsPage() {
   return (
     <div className="p-6 sm:p-8 max-w-2xl mx-auto">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-[#1B2A4A]">Flashcards</h1>
-        <p className="text-gray-500 text-sm mt-1">
+        <h1 className="text-2xl font-bold text-[#1B2A4A] dark:text-[#e2e8f0]">Flashcards</h1>
+        <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
           Spaced repetition — cards you miss come back sooner
         </p>
       </div>

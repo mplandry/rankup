@@ -51,25 +51,25 @@ export default async function ExamResultsPage({ params }: Props) {
   const totalQuestions = sessionQuestions?.length || 0;
 
   return (
-    <div className='min-h-screen bg-gray-50 py-8'>
+    <div className='min-h-screen bg-gray-50 dark:bg-gray-900 py-8'>
       <div className='max-w-4xl mx-auto px-4'>
-        <div className='bg-white rounded-lg shadow-lg p-8 mb-6'>
+        <div className='bg-white dark:bg-[#111827] rounded-lg shadow-lg p-8 mb-6'>
           <div className='text-center mb-8'>
             <div
               className={`inline-flex items-center justify-center w-20 h-20 rounded-full mb-4 ${
-                passed ? "bg-green-100" : "bg-red-100"
+                passed ? "bg-green-100 dark:bg-green-950/40" : "bg-red-100 dark:bg-red-950/40"
               }`}
             >
               {passed ? (
-                <Trophy className='w-10 h-10 text-green-600' />
+                <Trophy className='w-10 h-10 text-green-600 dark:text-green-400' />
               ) : (
-                <RotateCcw className='w-10 h-10 text-red-600' />
+                <RotateCcw className='w-10 h-10 text-red-600 dark:text-red-400' />
               )}
             </div>
             <h1 className='text-3xl font-bold mb-2'>
               {passed ? "Congratulations!" : "Keep Practicing"}
             </h1>
-            <p className='text-gray-600'>
+            <p className='text-gray-600 dark:text-gray-400'>
               You scored {sessionData.score}% ({correctCount} out of{" "}
               {totalQuestions} correct)
             </p>
@@ -83,15 +83,15 @@ export default async function ExamResultsPage({ params }: Props) {
                   key={sq.id}
                   className={`p-4 rounded-lg border ${
                     sq.is_correct
-                      ? "border-green-200 bg-green-50"
-                      : "border-red-200 bg-red-50"
+                      ? "border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950/30"
+                      : "border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/30"
                   }`}
                 >
                   <div className='flex items-start gap-3'>
                     {sq.is_correct ? (
-                      <CheckCircle2 className='w-5 h-5 text-green-600 mt-1 flex-shrink-0' />
+                      <CheckCircle2 className='w-5 h-5 text-green-600 dark:text-green-400 mt-1 flex-shrink-0' />
                     ) : (
-                      <XCircle className='w-5 h-5 text-red-600 mt-1 flex-shrink-0' />
+                      <XCircle className='w-5 h-5 text-red-600 dark:text-red-400 mt-1 flex-shrink-0' />
                     )}
                     <div className='flex-1'>
                       <p className='font-medium mb-2'>
@@ -102,7 +102,7 @@ export default async function ExamResultsPage({ params }: Props) {
                           <span className='font-medium'>Your answer:</span>{" "}
                           <span
                             className={
-                              sq.is_correct ? "text-green-700" : "text-red-700"
+                              sq.is_correct ? "text-green-700 dark:text-green-400" : "text-red-700 dark:text-red-400"
                             }
                           >
                             {sq.user_answer || "Not answered"}
@@ -111,7 +111,7 @@ export default async function ExamResultsPage({ params }: Props) {
                         {!sq.is_correct && (
                           <p>
                             <span className='font-medium'>Correct answer:</span>{" "}
-                            <span className='text-green-700'>
+                            <span className='text-green-700 dark:text-green-400'>
                               {sq.question?.correct_answer}
                             </span>
                           </p>

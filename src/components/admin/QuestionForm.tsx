@@ -69,16 +69,16 @@ export default function QuestionForm({ question, mode }: Props) {
         <button
           type='button'
           onClick={() => router.back()}
-          className='p-2 rounded-lg hover:bg-gray-100'
+          className='p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800'
         >
-          <ArrowLeft className='w-4 h-4 text-gray-500' />
+          <ArrowLeft className='w-4 h-4 text-gray-500 dark:text-gray-400' />
         </button>
-        <h1 className='text-2xl font-bold text-[#1B2A4A]'>
+        <h1 className='text-2xl font-bold text-[#1B2A4A] dark:text-[#e2e8f0]'>
           {mode === "create" ? "Add Question" : "Edit Question"}
         </h1>
       </div>
 
-      <div className='bg-white border border-gray-200 rounded-xl p-6 space-y-5'>
+      <div className='bg-white dark:bg-[#111827] border border-gray-200 dark:border-gray-700 rounded-xl p-6 space-y-5'>
         {/* Source metadata */}
         <div className='grid grid-cols-2 gap-4'>
           <Field label='Book Title' required>
@@ -147,7 +147,7 @@ export default function QuestionForm({ question, mode }: Props) {
 
         {/* Answer options */}
         <div className='space-y-3'>
-          <label className='block text-sm font-medium text-gray-700'>
+          <label className='block text-sm font-medium text-gray-700 dark:text-gray-300'>
             Answer Options
           </label>
           {(["A", "B", "C", "D"] as const).map((opt) => {
@@ -167,7 +167,7 @@ export default function QuestionForm({ question, mode }: Props) {
                     className={`w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold ${
                       form.correct_answer === opt
                         ? "bg-green-500 text-white"
-                        : "bg-gray-100 text-gray-600"
+                        : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400"
                     }`}
                   >
                     {opt}
@@ -183,7 +183,7 @@ export default function QuestionForm({ question, mode }: Props) {
               </div>
             );
           })}
-          <p className='text-xs text-gray-400'>
+          <p className='text-xs text-gray-400 dark:text-gray-500'>
             Select the radio button next to the correct answer
           </p>
         </div>
@@ -219,7 +219,7 @@ export default function QuestionForm({ question, mode }: Props) {
                 onChange={(e) => set("study_eligible", e.target.checked)}
                 className='accent-red-600 w-4 h-4'
               />
-              <span className='text-sm text-gray-700'>Study eligible</span>
+              <span className='text-sm text-gray-700 dark:text-gray-300'>Study eligible</span>
             </label>
             <label className='flex items-center gap-2 cursor-pointer'>
               <input
@@ -228,13 +228,13 @@ export default function QuestionForm({ question, mode }: Props) {
                 onChange={(e) => set("exam_eligible", e.target.checked)}
                 className='accent-red-600 w-4 h-4'
               />
-              <span className='text-sm text-gray-700'>Exam eligible</span>
+              <span className='text-sm text-gray-700 dark:text-gray-300'>Exam eligible</span>
             </label>
           </div>
         </div>
 
         {error && (
-          <div className='bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-3'>
+          <div className='bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm rounded-lg px-4 py-3'>
             {error}
           </div>
         )}
@@ -257,7 +257,7 @@ export default function QuestionForm({ question, mode }: Props) {
 }
 
 const inputCls =
-  "w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 bg-white";
+  "w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 bg-white dark:bg-[#111827]";
 
 function Field({
   label,
@@ -270,9 +270,9 @@ function Field({
 }) {
   return (
     <div>
-      <label className='block text-sm font-medium text-gray-700 mb-1'>
+      <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'>
         {label}
-        {required && <span className='text-red-500 ml-0.5'>*</span>}
+        {required && <span className='text-red-500 dark:text-red-400 ml-0.5'>*</span>}
       </label>
       {children}
     </div>

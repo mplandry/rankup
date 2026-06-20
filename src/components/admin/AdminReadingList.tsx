@@ -23,8 +23,8 @@ const LT_READING_LIST = [
       "Ch. 10 – Health and Safety",
     ],
     borderColor: "border-l-red-500",
-    expandBg: "bg-red-50",
-    labelColor: "text-red-600",
+    expandBg: "bg-red-50 dark:bg-red-950/30",
+    labelColor: "text-red-600 dark:text-red-400",
     icon: "🔥",
     warning: null,
   },
@@ -48,8 +48,8 @@ const LT_READING_LIST = [
       "Ch. 12 – Industrial Occupancies",
     ],
     borderColor: "border-l-blue-500",
-    expandBg: "bg-blue-50",
-    labelColor: "text-blue-600",
+    expandBg: "bg-blue-50 dark:bg-blue-950/30",
+    labelColor: "text-blue-600 dark:text-blue-400",
     icon: "🏗️",
     warning: null,
   },
@@ -71,8 +71,8 @@ const LT_READING_LIST = [
       "Ch. 11 – High-Rise Buildings",
     ],
     borderColor: "border-l-green-500",
-    expandBg: "bg-green-50",
-    labelColor: "text-green-600",
+    expandBg: "bg-green-50 dark:bg-green-950/30",
+    labelColor: "text-green-600 dark:text-green-400",
     icon: "🧱",
     warning: null,
   },
@@ -97,8 +97,8 @@ const CAPT_READING_LIST = [
       "Ch. 11 – High-Rise Buildings",
     ],
     borderColor: "border-l-green-500",
-    expandBg: "bg-green-50",
-    labelColor: "text-green-600",
+    expandBg: "bg-green-50 dark:bg-green-950/30",
+    labelColor: "text-green-600 dark:text-green-400",
     icon: "🧱",
     warning: null,
   },
@@ -109,8 +109,8 @@ const CAPT_READING_LIST = [
     chapters: "All Chapters",
     chapterList: ["Full book — all chapters included"],
     borderColor: "border-l-purple-500",
-    expandBg: "bg-purple-50",
-    labelColor: "text-purple-600",
+    expandBg: "bg-purple-50 dark:bg-purple-950/30",
+    labelColor: "text-purple-600 dark:text-purple-400",
     icon: "📘",
     warning: null,
   },
@@ -144,8 +144,8 @@ const CAPT_READING_LIST = [
       "Ch. 23 – Special Problems",
     ],
     borderColor: "border-l-blue-500",
-    expandBg: "bg-blue-50",
-    labelColor: "text-blue-600",
+    expandBg: "bg-blue-50 dark:bg-blue-950/30",
+    labelColor: "text-blue-600 dark:text-blue-400",
     icon: "🏗️",
     warning: null,
   },
@@ -169,8 +169,8 @@ const CAPT_READING_LIST = [
       "§ 27A – Carbon Monoxide Detectors",
     ],
     borderColor: "border-l-orange-500",
-    expandBg: "bg-orange-50",
-    labelColor: "text-orange-600",
+    expandBg: "bg-orange-50 dark:bg-orange-950/30",
+    labelColor: "text-orange-600 dark:text-orange-400",
     icon: "⚖️",
     warning: null,
   },
@@ -186,12 +186,12 @@ export default function AdminReadingList() {
     <div className="mt-8">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h2 className="text-lg font-bold text-[#1B2A4A]">
+          <h2 className="text-lg font-bold text-[#1B2A4A] dark:text-[#e2e8f0]">
             📋 MA Promotional Exam Reading Lists
           </h2>
-          <p className="text-sm text-gray-500">Admin reference — official reading lists by rank</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Admin reference — official reading lists by rank</p>
         </div>
-        <span className="text-xs font-bold bg-yellow-100 text-yellow-800 border border-yellow-300 rounded-md px-3 py-1">
+        <span className="text-xs font-bold bg-yellow-100 dark:bg-yellow-950/40 text-yellow-800 dark:text-yellow-300 border border-yellow-300 dark:border-yellow-700 rounded-md px-3 py-1">
           🔒 Admin Only
         </span>
       </div>
@@ -204,7 +204,7 @@ export default function AdminReadingList() {
             className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all ${
               activeTab === tier
                 ? "bg-[#1B2A4A] text-white"
-                : "bg-white border border-gray-200 text-gray-600 hover:border-gray-300"
+                : "bg-white dark:bg-[#111827] border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600"
             }`}
           >
             {tier === "lieutenant" ? "🪖 Lieutenant" : "⭐ Captain"}
@@ -213,7 +213,7 @@ export default function AdminReadingList() {
       </div>
 
       {activeTab === "captain" && (
-        <div className="mb-4 bg-yellow-50 border border-yellow-300 rounded-lg px-4 py-2.5 text-sm text-yellow-800 font-semibold">
+        <div className="mb-4 bg-yellow-50 dark:bg-yellow-950/30 border border-yellow-300 dark:border-yellow-700 rounded-lg px-4 py-2.5 text-sm text-yellow-800 dark:text-yellow-300 font-semibold">
           📅 MA Statewide Captain Exam: TBD · 4 source materials (including 1 statute)
         </div>
       )}
@@ -222,19 +222,19 @@ export default function AdminReadingList() {
         {list.map((item, i) => (
           <div
             key={i}
-            className={`bg-white border border-gray-200 border-l-4 ${item.borderColor} rounded-xl overflow-hidden`}
+            className={`bg-white dark:bg-[#111827] border border-gray-200 dark:border-gray-700 border-l-4 ${item.borderColor} rounded-xl overflow-hidden`}
           >
             <div
               onClick={() => setExpandedBook(expandedBook === i ? null : i)}
               className={`flex items-center justify-between px-5 py-4 cursor-pointer transition-colors ${
-                expandedBook === i ? item.expandBg : "hover:bg-gray-50"
+                expandedBook === i ? item.expandBg : "hover:bg-gray-50 dark:hover:bg-gray-900"
               }`}
             >
               <div className="flex items-center gap-3">
                 <span className="text-xl">{item.icon}</span>
                 <div>
-                  <div className="font-semibold text-[#1B2A4A] text-sm">{item.book}</div>
-                  <div className="text-xs text-gray-500 mt-0.5">
+                  <div className="font-semibold text-[#1B2A4A] dark:text-[#e2e8f0] text-sm">{item.book}</div>
+                  <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                     {item.edition} · {item.publisher} ·{" "}
                     <span className={`font-semibold ${item.labelColor}`}>{item.chapters}</span>
                   </div>
@@ -242,29 +242,29 @@ export default function AdminReadingList() {
               </div>
               <div className="flex items-center gap-2">
                 {item.warning && (
-                  <span className="text-xs bg-yellow-100 text-yellow-800 border border-yellow-300 rounded px-2 py-0.5 font-semibold hidden sm:inline">
+                  <span className="text-xs bg-yellow-100 dark:bg-yellow-950/40 text-yellow-800 dark:text-yellow-300 border border-yellow-300 dark:border-yellow-700 rounded px-2 py-0.5 font-semibold hidden sm:inline">
                     ⚠️ Needs questions
                   </span>
                 )}
-                <span className="text-gray-400 text-sm">{expandedBook === i ? "▾" : "▸"}</span>
+                <span className="text-gray-400 dark:text-gray-500 text-sm">{expandedBook === i ? "▾" : "▸"}</span>
               </div>
             </div>
 
             {expandedBook === i && (
-              <div className={`px-5 pb-4 ${item.expandBg} border-t border-gray-100`}>
+              <div className={`px-5 pb-4 ${item.expandBg} border-t border-gray-100 dark:border-gray-800`}>
                 <div className={`text-xs font-bold uppercase tracking-wide ${item.labelColor} mt-3 mb-2`}>
                   Chapters / Sections Included
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1">
                   {item.chapterList.map((ch, j) => (
-                    <div key={j} className="text-xs text-gray-700 flex items-start gap-1.5">
+                    <div key={j} className="text-xs text-gray-700 dark:text-gray-300 flex items-start gap-1.5">
                       <span className={`${item.labelColor} mt-0.5 flex-shrink-0`}>›</span>
                       {ch}
                     </div>
                   ))}
                 </div>
                 {item.warning && (
-                  <div className="mt-3 bg-yellow-50 border border-yellow-300 rounded-lg px-3 py-2 text-xs text-yellow-800 font-semibold">
+                  <div className="mt-3 bg-yellow-50 dark:bg-yellow-950/30 border border-yellow-300 dark:border-yellow-700 rounded-lg px-3 py-2 text-xs text-yellow-800 dark:text-yellow-300 font-semibold">
                     ⚠️ {item.warning}
                   </div>
                 )}
@@ -274,12 +274,12 @@ export default function AdminReadingList() {
         ))}
       </div>
 
-      <div className="mt-3 bg-gray-50 border border-gray-200 rounded-lg px-4 py-2.5 flex flex-wrap gap-4 text-xs text-gray-500">
+      <div className="mt-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2.5 flex flex-wrap gap-4 text-xs text-gray-500 dark:text-gray-400">
         <span>
           📚 <strong>{list.length} source materials</strong> for {activeTab === "lieutenant" ? "Lieutenant" : "Captain"} exam
         </span>
         {activeTab === "captain" && (
-          <span className="text-green-700 font-semibold">
+          <span className="text-green-700 dark:text-green-400 font-semibold">
             ✅ All sources in question bank
           </span>
         )}

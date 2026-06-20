@@ -38,16 +38,16 @@ export default function FlashcardConfig({ books, bookChapters }: Props) {
         <Layers className='w-5 h-5' />
         Start Review Session
       </button>
-      <div className='bg-white border border-gray-200 rounded-xl p-6 sm:p-8 space-y-6'>
-        <div className='flex items-center gap-3 pb-4 border-b border-gray-100'>
-          <div className='w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center'>
-            <BookOpen className='w-5 h-5 text-blue-600' />
+      <div className='bg-white dark:bg-[#111827] border border-gray-200 dark:border-gray-700 rounded-xl p-6 sm:p-8 space-y-6'>
+        <div className='flex items-center gap-3 pb-4 border-b border-gray-100 dark:border-gray-800'>
+          <div className='w-10 h-10 bg-blue-100 dark:bg-blue-950/40 rounded-lg flex items-center justify-center'>
+            <BookOpen className='w-5 h-5 text-blue-600 dark:text-blue-400' />
           </div>
           <div>
-            <div className='font-semibold text-[#1B2A4A]'>
+            <div className='font-semibold text-[#1B2A4A] dark:text-[#e2e8f0]'>
               Browse Flashcards
             </div>
-            <div className='text-sm text-gray-500'>
+            <div className='text-sm text-gray-500 dark:text-gray-400'>
               Filter by book or chapter
             </div>
           </div>
@@ -55,7 +55,7 @@ export default function FlashcardConfig({ books, bookChapters }: Props) {
 
         {/* Book Selection */}
         <div>
-          <label className='block text-sm font-medium text-gray-700 mb-2'>
+          <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
             Book / Reference
           </label>
           <div className='flex flex-col gap-2'>
@@ -64,7 +64,7 @@ export default function FlashcardConfig({ books, bookChapters }: Props) {
                 setBook("");
                 setChapter("");
               }}
-              className={`w-full px-3 py-2.5 rounded-lg text-sm text-left border transition-all ${!book ? "border-blue-500 bg-blue-50 text-blue-700 font-medium" : "border-gray-200 text-gray-600 hover:border-gray-300"}`}
+              className={`w-full px-3 py-2.5 rounded-lg text-sm text-left border transition-all ${!book ? "border-blue-500 bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400 font-medium" : "border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600"}`}
             >
               All books
             </button>
@@ -75,7 +75,7 @@ export default function FlashcardConfig({ books, bookChapters }: Props) {
                   setBook(b);
                   setChapter("");
                 }}
-                className={`w-full px-3 py-2.5 rounded-lg text-sm text-left border transition-all ${book === b ? "border-blue-500 bg-blue-50 text-blue-700 font-medium" : "border-gray-200 text-gray-600 hover:border-gray-300"}`}
+                className={`w-full px-3 py-2.5 rounded-lg text-sm text-left border transition-all ${book === b ? "border-blue-500 bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400 font-medium" : "border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600"}`}
               >
                 {b}
               </button>
@@ -86,13 +86,13 @@ export default function FlashcardConfig({ books, bookChapters }: Props) {
         {/* Chapter/Section Selection */}
         {filteredChapters.length > 0 && (
           <div>
-            <label className='block text-sm font-medium text-gray-700 mb-2'>
+            <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
               {isMassLaw ? "Section" : "Chapter"}
             </label>
             <div className='flex flex-wrap gap-2'>
               <button
                 onClick={() => setChapter("")}
-                className={`px-3 py-1.5 rounded-lg text-xs border transition-all ${!chapter ? "border-blue-500 bg-blue-50 text-blue-700 font-medium" : "border-gray-200 text-gray-600 hover:border-gray-300"}`}
+                className={`px-3 py-1.5 rounded-lg text-xs border transition-all ${!chapter ? "border-blue-500 bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400 font-medium" : "border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600"}`}
               >
                 All
               </button>
@@ -100,7 +100,7 @@ export default function FlashcardConfig({ books, bookChapters }: Props) {
                 <button
                   key={c}
                   onClick={() => setChapter(c)}
-                  className={`px-3 py-1.5 rounded-lg text-xs border transition-all ${chapter === c ? "border-blue-500 bg-blue-50 text-blue-700 font-medium" : "border-gray-200 text-gray-600 hover:border-gray-300"}`}
+                  className={`px-3 py-1.5 rounded-lg text-xs border transition-all ${chapter === c ? "border-blue-500 bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400 font-medium" : "border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600"}`}
                 >
                   {isMassLaw ? `Sec. ${c}` : `Ch. ${c}`}
                 </button>

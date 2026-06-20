@@ -49,24 +49,24 @@ export default async function ProgressPage() {
   const weakTopics = (stats?.weak_topics || []) as WeakArea[];
 
   return (
-    <div className="min-h-screen bg-[#f8f9fb] p-8">
-      <h1 className="text-3xl font-bold mb-8 text-[#1B2A4A]">My Progress</h1>
+    <div className="min-h-screen bg-[#f8f9fb] dark:bg-[#0b1220] p-8">
+      <h1 className="text-3xl font-bold mb-8 text-[#1B2A4A] dark:text-[#e2e8f0]">My Progress</h1>
 
       {/* Stats Overview */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white p-6 rounded-xl border border-[#e2e8f0] shadow-sm">
-          <div className="text-sm text-gray-500 mb-2">Total Sessions</div>
-          <div className="text-3xl font-bold text-[#1B2A4A]">{stats?.total_sessions || 0}</div>
+        <div className="bg-white dark:bg-[#111827] p-6 rounded-xl border border-[#e2e8f0] shadow-sm">
+          <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">Total Sessions</div>
+          <div className="text-3xl font-bold text-[#1B2A4A] dark:text-[#e2e8f0]">{stats?.total_sessions || 0}</div>
         </div>
-        <div className="bg-white p-6 rounded-xl border border-[#e2e8f0] shadow-sm">
-          <div className="text-sm text-gray-500 mb-2">Avg Exam Score</div>
-          <div className="text-3xl font-bold text-[#1B2A4A]">
+        <div className="bg-white dark:bg-[#111827] p-6 rounded-xl border border-[#e2e8f0] shadow-sm">
+          <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">Avg Exam Score</div>
+          <div className="text-3xl font-bold text-[#1B2A4A] dark:text-[#e2e8f0]">
             {stats?.avg_score_percent ? Math.round(stats.avg_score_percent) : 0}%
           </div>
         </div>
-        <div className="bg-white p-6 rounded-xl border border-[#e2e8f0] shadow-sm">
-          <div className="text-sm text-gray-500 mb-2">Questions Answered</div>
-          <div className="text-3xl font-bold text-[#1B2A4A]">
+        <div className="bg-white dark:bg-[#111827] p-6 rounded-xl border border-[#e2e8f0] shadow-sm">
+          <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">Questions Answered</div>
+          <div className="text-3xl font-bold text-[#1B2A4A] dark:text-[#e2e8f0]">
             {stats?.total_questions || 0}
           </div>
         </div>
@@ -75,33 +75,33 @@ export default async function ProgressPage() {
       {/* Weak Areas */}
       {weakChapters.length > 0 && (
         <div className="mb-8">
-          <h2 className="text-xl font-bold mb-4 text-[#1B2A4A]">Weakest Chapters</h2>
+          <h2 className="text-xl font-bold mb-4 text-[#1B2A4A] dark:text-[#e2e8f0]">Weakest Chapters</h2>
           <WeakAreasChart items={weakChapters} labelKey="chapter" />
         </div>
       )}
 
       {weakTopics.length > 0 && (
         <div className="mb-8">
-          <h2 className="text-xl font-bold mb-4 text-[#1B2A4A]">Weakest Topics</h2>
+          <h2 className="text-xl font-bold mb-4 text-[#1B2A4A] dark:text-[#e2e8f0]">Weakest Topics</h2>
           <WeakAreasChart items={weakTopics} labelKey="topic" />
         </div>
       )}
 
       {/* Exam Sessions */}
       <div className="mb-8">
-        <h2 className="text-xl font-bold mb-4 text-[#1B2A4A]">Exam History</h2>
+        <h2 className="text-xl font-bold mb-4 text-[#1B2A4A] dark:text-[#e2e8f0]">Exam History</h2>
         {examSessions.length === 0 ? (
-          <p className="text-gray-400">No exam sessions yet.</p>
+          <p className="text-gray-400 dark:text-gray-500">No exam sessions yet.</p>
         ) : (
           <div className="space-y-3">
             {examSessions.map((s) => (
               <div
                 key={s.id}
-                className="bg-white p-5 rounded-xl border border-[#e2e8f0] shadow-sm flex justify-between items-center"
+                className="bg-white dark:bg-[#111827] p-5 rounded-xl border border-[#e2e8f0] shadow-sm flex justify-between items-center"
               >
                 <div>
-                  <div className="text-sm font-semibold text-[#1B2A4A]">Exam Session</div>
-                  <div className="text-xs text-gray-400 mt-0.5">
+                  <div className="text-sm font-semibold text-[#1B2A4A] dark:text-[#e2e8f0]">Exam Session</div>
+                  <div className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
                     {new Date(s.started_at).toLocaleDateString()}
                   </div>
                 </div>
@@ -112,7 +112,7 @@ export default async function ProgressPage() {
                   >
                     {s.score_percent || 0}%
                   </div>
-                  <div className="text-xs text-gray-400">
+                  <div className="text-xs text-gray-400 dark:text-gray-500">
                     {s.score || 0}/{s.total_questions || 0} correct
                   </div>
                 </div>
@@ -124,27 +124,27 @@ export default async function ProgressPage() {
 
       {/* Study Sessions */}
       <div>
-        <h2 className="text-xl font-bold mb-4 text-[#1B2A4A]">Study History</h2>
+        <h2 className="text-xl font-bold mb-4 text-[#1B2A4A] dark:text-[#e2e8f0]">Study History</h2>
         {studySessions.length === 0 ? (
-          <p className="text-gray-400">No study sessions yet.</p>
+          <p className="text-gray-400 dark:text-gray-500">No study sessions yet.</p>
         ) : (
           <div className="space-y-3">
             {studySessions.map((s) => (
               <div
                 key={s.id}
-                className="bg-white p-5 rounded-xl border border-[#e2e8f0] shadow-sm flex justify-between items-center"
+                className="bg-white dark:bg-[#111827] p-5 rounded-xl border border-[#e2e8f0] shadow-sm flex justify-between items-center"
               >
                 <div>
-                  <div className="text-sm font-semibold text-[#1B2A4A]">Study Session</div>
-                  <div className="text-xs text-gray-400 mt-0.5">
+                  <div className="text-sm font-semibold text-[#1B2A4A] dark:text-[#e2e8f0]">Study Session</div>
+                  <div className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
                     {new Date(s.started_at).toLocaleDateString()}
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-2xl font-bold text-[#1B2A4A]">
+                  <div className="text-2xl font-bold text-[#1B2A4A] dark:text-[#e2e8f0]">
                     {s.score_percent || 0}%
                   </div>
-                  <div className="text-xs text-gray-400">
+                  <div className="text-xs text-gray-400 dark:text-gray-500">
                     {s.score || 0}/{s.total_questions || 0} correct
                   </div>
                 </div>

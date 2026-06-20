@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import Image from "next/image";
+import ThemeToggle from "@/components/theme/ThemeToggle";
 import "./login.css";
 
 export default function LoginForm() {
@@ -45,6 +46,9 @@ export default function LoginForm() {
 
   return (
     <div className='login-page'>
+      <div className='login-theme-toggle'>
+        <ThemeToggle variant='inverted' />
+      </div>
       <div className='login-inner'>
         <div className='login-logo'>
           <div className='login-logo-img'>

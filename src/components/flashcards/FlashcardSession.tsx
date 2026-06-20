@@ -98,28 +98,28 @@ export default function FlashcardSession({
   if (done) {
     return (
       <div className='px-4 py-6 sm:p-8 max-w-2xl mx-auto'>
-        <div className='bg-white border border-gray-200 rounded-xl p-6 sm:p-8 text-center'>
-          <div className='w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4'>
-            <CheckCircle className='w-8 h-8 text-blue-600' />
+        <div className='bg-white dark:bg-[#111827] border border-gray-200 dark:border-gray-700 rounded-xl p-6 sm:p-8 text-center'>
+          <div className='w-16 h-16 bg-blue-100 dark:bg-blue-950/40 rounded-full flex items-center justify-center mx-auto mb-4'>
+            <CheckCircle className='w-8 h-8 text-blue-600 dark:text-blue-400' />
           </div>
-          <h2 className='text-xl sm:text-2xl font-bold text-[#1B2A4A] mb-2'>
+          <h2 className='text-xl sm:text-2xl font-bold text-[#1B2A4A] dark:text-[#e2e8f0] mb-2'>
             Session Complete!
           </h2>
-          <p className='text-gray-500 mb-6'>You reviewed {total} flashcards</p>
+          <p className='text-gray-500 dark:text-gray-400 mb-6'>You reviewed {total} flashcards</p>
           <div className='flex justify-center gap-6 mb-6'>
             <div className='text-center'>
-              <div className='text-2xl font-bold text-green-600'>{correct}</div>
-              <div className='text-xs text-gray-500'>Knew it</div>
+              <div className='text-2xl font-bold text-green-600 dark:text-green-400'>{correct}</div>
+              <div className='text-xs text-gray-500 dark:text-gray-400'>Knew it</div>
             </div>
             <div className='text-center'>
-              <div className='text-2xl font-bold text-red-500'>{incorrect}</div>
-              <div className='text-xs text-gray-500'>Missed</div>
+              <div className='text-2xl font-bold text-red-500 dark:text-red-400'>{incorrect}</div>
+              <div className='text-xs text-gray-500 dark:text-gray-400'>Missed</div>
             </div>
           </div>
           <div className='flex flex-col sm:flex-row gap-3 justify-center'>
             <button
               onClick={() => router.push("/flashcards")}
-              className='w-full sm:w-auto px-6 py-3 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50'
+              className='w-full sm:w-auto px-6 py-3 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-900'
             >
               Back to Flashcards
             </button>
@@ -146,16 +146,16 @@ export default function FlashcardSession({
     <div className='px-4 py-6 sm:p-8 max-w-2xl mx-auto'>
       {/* Progress */}
       <div className='mb-6'>
-        <div className='flex items-center justify-between text-sm text-gray-500 mb-2'>
+        <div className='flex items-center justify-between text-sm text-gray-500 dark:text-gray-400 mb-2'>
           <span>
             Card {index + 1} of {total}
           </span>
           <div className='flex gap-3'>
-            <span className='text-green-600 font-medium'>{correct} ✓</span>
-            <span className='text-red-500 font-medium'>{incorrect} ✗</span>
+            <span className='text-green-600 dark:text-green-400 font-medium'>{correct} ✓</span>
+            <span className='text-red-500 dark:text-red-400 font-medium'>{incorrect} ✗</span>
           </div>
         </div>
-        <div className='h-2 bg-gray-200 rounded-full overflow-hidden'>
+        <div className='h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden'>
           <div
             className='h-full bg-blue-500 rounded-full transition-all duration-300'
             style={{ width: `${Math.round((index / total) * 100)}%` }}
@@ -175,13 +175,13 @@ export default function FlashcardSession({
         <div className='mt-4 grid grid-cols-2 gap-3'>
           <button
             onClick={() => handleRate(false)}
-            className='flex items-center justify-center gap-2 py-3.5 rounded-xl border-2 border-red-200 bg-red-50 text-red-700 font-semibold text-sm hover:bg-red-100 transition-colors'
+            className='flex items-center justify-center gap-2 py-3.5 rounded-xl border-2 border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/30 text-red-700 dark:text-red-400 font-semibold text-sm hover:bg-red-100 dark:hover:bg-red-950/40 transition-colors'
           >
             <XCircle className='w-5 h-5' /> Missed It
           </button>
           <button
             onClick={() => handleRate(true)}
-            className='flex items-center justify-center gap-2 py-3.5 rounded-xl border-2 border-green-200 bg-green-50 text-green-700 font-semibold text-sm hover:bg-green-100 transition-colors'
+            className='flex items-center justify-center gap-2 py-3.5 rounded-xl border-2 border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950/30 text-green-700 dark:text-green-400 font-semibold text-sm hover:bg-green-100 dark:hover:bg-green-950/40 transition-colors'
           >
             <CheckCircle className='w-5 h-5' /> Knew It
           </button>

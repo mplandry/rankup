@@ -61,10 +61,10 @@ export default function ReferralCard() {
 
   if (loading) {
     return (
-      <div className="bg-white border border-gray-200 rounded-xl p-7">
+      <div className="bg-white dark:bg-[#111827] border border-gray-200 dark:border-gray-700 rounded-xl p-7">
         <div className="animate-pulse">
-          <div className="h-5 bg-gray-200 rounded w-1/3 mb-4" />
-          <div className="h-4 bg-gray-200 rounded w-2/3" />
+          <div className="h-5 bg-gray-200 dark:bg-gray-700 rounded w-1/3 mb-4" />
+          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-2/3" />
         </div>
       </div>
     );
@@ -73,12 +73,12 @@ export default function ReferralCard() {
   if (!stats) return null;
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl p-7">
+    <div className="bg-white dark:bg-[#111827] border border-gray-200 dark:border-gray-700 rounded-xl p-7">
       <div className="flex items-center gap-3 mb-5">
         <div className="text-2xl">🎁</div>
         <div>
           <div className="text-[15px] font-bold">Refer & Earn</div>
-          <div className="text-xs text-gray-500">
+          <div className="text-xs text-gray-500 dark:text-gray-400">
             Give {stats.totalBonusWeeks} weeks, get {stats.totalBonusWeeks}{" "}
             weeks
           </div>
@@ -86,13 +86,13 @@ export default function ReferralCard() {
       </div>
 
       <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4 mb-5">
-        <div className="text-xs text-gray-600 mb-2">Your referral link</div>
+        <div className="text-xs text-gray-600 dark:text-gray-400 mb-2">Your referral link</div>
         <div className="flex items-center gap-2">
           <input
             type="text"
             value={stats.shareUrl}
             readOnly
-            className="flex-1 bg-white px-3 py-2 rounded-lg text-sm border border-gray-200 text-gray-700"
+            className="flex-1 bg-white dark:bg-[#111827] px-3 py-2 rounded-lg text-sm border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300"
           />
           <button
             onClick={copyToClipboard}
@@ -101,58 +101,58 @@ export default function ReferralCard() {
             {copied ? "Copied!" : "Copy"}
           </button>
         </div>
-        <div className="text-xs text-gray-500 mt-2">
+        <div className="text-xs text-gray-500 dark:text-gray-400 mt-2">
           Code: <span className="font-mono font-bold">{stats.referralCode}</span>
         </div>
       </div>
 
       <div className="grid grid-cols-3 gap-4 mb-5">
         <div className="text-center">
-          <div className="text-2xl font-bold text-gray-900">
+          <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
             {stats.totalReferrals}
           </div>
-          <div className="text-xs text-gray-500">Total</div>
+          <div className="text-xs text-gray-500 dark:text-gray-400">Total</div>
         </div>
         <div className="text-center">
-          <div className="text-2xl font-bold text-green-600">
+          <div className="text-2xl font-bold text-green-600 dark:text-green-400">
             {stats.completedReferrals}
           </div>
-          <div className="text-xs text-gray-500">Completed</div>
+          <div className="text-xs text-gray-500 dark:text-gray-400">Completed</div>
         </div>
         <div className="text-center">
-          <div className="text-2xl font-bold text-blue-600">
+          <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
             {stats.totalBonusDays}
           </div>
-          <div className="text-xs text-gray-500">Bonus Days</div>
+          <div className="text-xs text-gray-500 dark:text-gray-400">Bonus Days</div>
         </div>
       </div>
 
       {stats.referrals && stats.referrals.length > 0 && (
         <div>
-          <div className="text-xs font-bold text-gray-500 uppercase mb-3">
+          <div className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase mb-3">
             Recent Referrals
           </div>
           <div className="space-y-2">
             {stats.referrals.slice(0, 3).map((referral) => (
               <div
                 key={referral.id}
-                className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0"
+                className="flex items-center justify-between py-2 border-b border-gray-100 dark:border-gray-800 last:border-0"
               >
                 <div className="flex-1 min-w-0">
-                  <div className="text-sm font-semibold text-gray-900 truncate">
+                  <div className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">
                     {referral.name}
                   </div>
-                  <div className="text-xs text-gray-500 truncate">
+                  <div className="text-xs text-gray-500 dark:text-gray-400 truncate">
                     {new Date(referral.signedUpAt).toLocaleDateString()}
                   </div>
                 </div>
                 <div>
                   {referral.bonusGranted ? (
-                    <span className="inline-flex items-center gap-1 text-xs font-semibold text-green-600">
+                    <span className="inline-flex items-center gap-1 text-xs font-semibold text-green-600 dark:text-green-400">
                       <span>✓</span> Completed
                     </span>
                   ) : (
-                    <span className="text-xs text-gray-400">Pending</span>
+                    <span className="text-xs text-gray-400 dark:text-gray-500">Pending</span>
                   )}
                 </div>
               </div>

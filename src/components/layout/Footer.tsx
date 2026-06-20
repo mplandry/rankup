@@ -9,7 +9,7 @@ export default function Footer() {
         <div className='flex flex-col md:flex-row justify-between items-center gap-4'>
           <div className='text-center md:text-left'>
             <div className='text-xl font-bold'>RankUp</div>
-            <p className='text-gray-400 text-sm mt-1'>
+            <p className='text-gray-400 dark:text-gray-500 text-sm mt-1'>
               Firefighter promotional exam prep
             </p>
           </div>
@@ -17,25 +17,25 @@ export default function Footer() {
           <div className='flex gap-6 text-sm'>
             <Link
               href='/privacy'
-              className='text-gray-300 hover:text-white transition-colors'
+              className='text-gray-300 dark:text-gray-600 hover:text-white transition-colors'
             >
               Privacy Policy
             </Link>
             <Link
               href='/terms'
-              className='text-gray-300 hover:text-white transition-colors'
+              className='text-gray-300 dark:text-gray-600 hover:text-white transition-colors'
             >
               Terms of Service
             </Link>
             <a
               href='mailto:support@rankupfire.com'
-              className='text-gray-300 hover:text-white transition-colors'
+              className='text-gray-300 dark:text-gray-600 hover:text-white transition-colors'
             >
               Contact
             </a>
           </div>
 
-          <div className='text-gray-400 text-sm text-center md:text-right'>
+          <div className='text-gray-400 dark:text-gray-500 text-sm text-center md:text-right'>
             © {currentYear} RankUp. All rights reserved.
           </div>
         </div>

@@ -45,9 +45,9 @@ function AnswerDistributionChart({
   const { total } = distribution;
 
   return (
-    <div className='bg-white border border-gray-200 rounded-xl p-7 mb-5'>
+    <div className='bg-white dark:bg-[#111827] border border-gray-200 dark:border-gray-700 rounded-xl p-7 mb-5'>
       <div className='text-[15px] font-bold mb-1.5'>Answer Distribution</div>
-      <div className='text-xs text-gray-500 mb-5'>
+      <div className='text-xs text-gray-500 dark:text-gray-400 mb-5'>
         {total} approved questions · target 20–30% each
       </div>
       <div className='grid grid-cols-4 gap-5'>
@@ -57,14 +57,14 @@ function AnswerDistributionChart({
           return (
             <div key={letter}>
               <div className='text-xl font-bold mb-1.5'>{percentage}%</div>
-              <div className='h-2 bg-gray-200 rounded-full overflow-hidden mb-2'>
+              <div className='h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden mb-2'>
                 <div
                   className='h-full bg-blue-500 rounded-full transition-all'
                   style={{ width: `${percentage}%` }}
                 />
               </div>
               <div className='text-[13px] font-bold'>{letter}</div>
-              <div className='text-xs text-gray-500'>{count}</div>
+              <div className='text-xs text-gray-500 dark:text-gray-400'>{count}</div>
             </div>
           );
         })}
@@ -151,18 +151,18 @@ function BookAutocomplete({
         onChange={(e) => handleInputChange(e.target.value)}
         onFocus={() => setShowDropdown(true)}
         onKeyDown={handleKeyDown}
-        className='w-full px-3 py-2 border border-gray-200 rounded-lg text-[13px] bg-white text-gray-900 placeholder-gray-400'
+        className='w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-[13px] bg-white dark:bg-[#111827] text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500'
       />
       {showDropdown && filteredBooks.length > 0 && (
-        <div className='absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-64 overflow-y-auto'>
+        <div className='absolute z-50 w-full mt-1 bg-white dark:bg-[#111827] border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-64 overflow-y-auto'>
           {filteredBooks.map((book, index) => (
             <div
               key={book}
               onClick={() => selectBook(book)}
               className={`px-3 py-2 text-[13px] cursor-pointer ${
                 index === highlightedIndex
-                  ? "bg-blue-50 text-blue-700"
-                  : "text-gray-900 hover:bg-gray-50"
+                  ? "bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400"
+                  : "text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-900"
               }`}
             >
               {book}
@@ -197,7 +197,7 @@ function FilterBar({
           placeholder='Search question text...'
           value={filters.searchText}
           onChange={(e) => onFilterChange("searchText", e.target.value)}
-          className='w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-400'
+          className='w-full px-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500'
         />
       </div>
 
@@ -211,7 +211,7 @@ function FilterBar({
         <select
           value={filters.chapter}
           onChange={(e) => onFilterChange("chapter", e.target.value)}
-          className='flex-1 min-w-[150px] px-3 py-2 border border-gray-200 rounded-lg text-[13px] bg-white'
+          className='flex-1 min-w-[150px] px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-[13px] bg-white dark:bg-[#111827]'
         >
           <option value=''>All Chapters</option>
           {chapters.map((ch) => (
@@ -224,7 +224,7 @@ function FilterBar({
         <select
           value={filters.difficulty}
           onChange={(e) => onFilterChange("difficulty", e.target.value)}
-          className='flex-1 min-w-[150px] px-3 py-2 border border-gray-200 rounded-lg text-[13px] bg-white'
+          className='flex-1 min-w-[150px] px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-[13px] bg-white dark:bg-[#111827]'
         >
           <option value=''>All Difficulties</option>
           <option value='easy'>Easy</option>
@@ -235,7 +235,7 @@ function FilterBar({
         <select
           value={filters.studyEligible}
           onChange={(e) => onFilterChange("studyEligible", e.target.value)}
-          className='flex-1 min-w-[120px] px-3 py-2 border border-gray-200 rounded-lg text-[13px] bg-white'
+          className='flex-1 min-w-[120px] px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-[13px] bg-white dark:bg-[#111827]'
         >
           <option value=''>Study: All</option>
           <option value='true'>Study: Yes</option>
@@ -245,7 +245,7 @@ function FilterBar({
         <select
           value={filters.examEligible}
           onChange={(e) => onFilterChange("examEligible", e.target.value)}
-          className='flex-1 min-w-[120px] px-3 py-2 border border-gray-200 rounded-lg text-[13px] bg-white'
+          className='flex-1 min-w-[120px] px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-[13px] bg-white dark:bg-[#111827]'
         >
           <option value=''>Exam: All</option>
           <option value='true'>Exam: Yes</option>
@@ -255,7 +255,7 @@ function FilterBar({
         {hasFilters && (
           <button
             onClick={onClearFilters}
-            className='px-4 py-2 bg-transparent border border-gray-200 rounded-lg text-[13px] font-semibold text-gray-600 hover:bg-gray-50'
+            className='px-4 py-2 bg-transparent border border-gray-200 dark:border-gray-700 rounded-lg text-[13px] font-semibold text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-900'
           >
             Clear Filters
           </button>
@@ -267,9 +267,9 @@ function FilterBar({
 
 function DifficultyBadge({ difficulty }: { difficulty: string }) {
   const colors = {
-    easy: "bg-green-100 text-green-700",
-    medium: "bg-yellow-100 text-yellow-700",
-    hard: "bg-red-100 text-red-700",
+    easy: "bg-green-100 dark:bg-green-950/40 text-green-700 dark:text-green-400",
+    medium: "bg-yellow-100 dark:bg-yellow-950/40 text-yellow-700 dark:text-yellow-400",
+    hard: "bg-red-100 dark:bg-red-950/40 text-red-700 dark:text-red-400",
   };
 
   return (
@@ -325,7 +325,7 @@ function Pagination({
 
   return (
     <div className='flex justify-between items-center flex-wrap gap-4'>
-      <div className='text-[13px] text-gray-500'>
+      <div className='text-[13px] text-gray-500 dark:text-gray-400'>
         Showing {startItem}–{endItem} of {totalCount.toLocaleString()} questions
       </div>
 
@@ -333,7 +333,7 @@ function Pagination({
         <button
           onClick={() => onPageChange(1)}
           disabled={currentPage === 1}
-          className='px-3 py-2 bg-white border border-gray-200 rounded-lg text-[13px] font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50'
+          className='px-3 py-2 bg-white dark:bg-[#111827] border border-gray-200 dark:border-gray-700 rounded-lg text-[13px] font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-900'
         >
           First
         </button>
@@ -341,7 +341,7 @@ function Pagination({
         <button
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className='px-3 py-2 bg-white border border-gray-200 rounded-lg text-[13px] font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50'
+          className='px-3 py-2 bg-white dark:bg-[#111827] border border-gray-200 dark:border-gray-700 rounded-lg text-[13px] font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-900'
         >
           ← Prev
         </button>
@@ -350,7 +350,7 @@ function Pagination({
           page === "..." ? (
             <span
               key={`ellipsis-${idx}`}
-              className='px-3 py-2 text-gray-400 flex items-center'
+              className='px-3 py-2 text-gray-400 dark:text-gray-500 flex items-center'
             >
               ...
             </span>
@@ -361,7 +361,7 @@ function Pagination({
               className={`px-3.5 py-2 border rounded-lg text-[13px] font-semibold ${
                 currentPage === page
                   ? "bg-red-600 text-white border-red-600"
-                  : "bg-white border-gray-200 hover:bg-gray-50"
+                  : "bg-white dark:bg-[#111827] border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-900"
               }`}
             >
               {page}
@@ -372,7 +372,7 @@ function Pagination({
         <button
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className='px-3 py-2 bg-white border border-gray-200 rounded-lg text-[13px] font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50'
+          className='px-3 py-2 bg-white dark:bg-[#111827] border border-gray-200 dark:border-gray-700 rounded-lg text-[13px] font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-900'
         >
           Next →
         </button>
@@ -380,7 +380,7 @@ function Pagination({
         <button
           onClick={() => onPageChange(totalPages)}
           disabled={currentPage === totalPages}
-          className='px-3 py-2 bg-white border border-gray-200 rounded-lg text-[13px] font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50'
+          className='px-3 py-2 bg-white dark:bg-[#111827] border border-gray-200 dark:border-gray-700 rounded-lg text-[13px] font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-900'
         >
           Last
         </button>
@@ -411,20 +411,20 @@ function EditModal({
 
   return (
     <div className='fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-5'>
-      <div className='bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-auto p-8'>
+      <div className='bg-white dark:bg-[#111827] rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-auto p-8'>
         {/* Header */}
         <div className='flex justify-between items-center mb-6'>
           <div>
             <div className='text-xl font-bold'>
               Edit Question #{question.id}
             </div>
-            <div className='text-[13px] text-gray-500 mt-1'>
+            <div className='text-[13px] text-gray-500 dark:text-gray-400 mt-1'>
               {question.book_title} · Ch. {question.chapter}
             </div>
           </div>
           <button
             onClick={onClose}
-            className='text-gray-400 hover:text-gray-600 text-2xl leading-none p-2'
+            className='text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-400 text-2xl leading-none p-2'
           >
             ×
           </button>
@@ -438,7 +438,7 @@ function EditModal({
           <textarea
             value={editedQuestion.question_text}
             onChange={(e) => updateField("question_text", e.target.value)}
-            className='w-full px-3 py-3 border border-gray-200 rounded-lg text-sm resize-y min-h-[100px]'
+            className='w-full px-3 py-3 border border-gray-200 dark:border-gray-700 rounded-lg text-sm resize-y min-h-[100px]'
           />
         </div>
 
@@ -462,13 +462,13 @@ function EditModal({
                   <input
                     value={editedQuestion[key] as string}
                     onChange={(e) => updateField(key, e.target.value)}
-                    className='flex-1 px-2.5 py-2.5 border border-gray-200 rounded-lg text-sm'
+                    className='flex-1 px-2.5 py-2.5 border border-gray-200 dark:border-gray-700 rounded-lg text-sm'
                   />
                 </div>
               );
             })}
           </div>
-          <div className='text-xs text-gray-500 mt-2'>
+          <div className='text-xs text-gray-500 dark:text-gray-400 mt-2'>
             Select the radio button for the correct answer
           </div>
         </div>
@@ -481,7 +481,7 @@ function EditModal({
           <textarea
             value={editedQuestion.explanation || ""}
             onChange={(e) => updateField("explanation", e.target.value)}
-            className='w-full px-3 py-3 border border-gray-200 rounded-lg text-sm resize-y min-h-[80px]'
+            className='w-full px-3 py-3 border border-gray-200 dark:border-gray-700 rounded-lg text-sm resize-y min-h-[80px]'
           />
         </div>
 
@@ -494,7 +494,7 @@ function EditModal({
             <input
               value={editedQuestion.book_title}
               onChange={(e) => updateField("book_title", e.target.value)}
-              className='w-full px-2.5 py-2.5 border border-gray-200 rounded-lg text-sm'
+              className='w-full px-2.5 py-2.5 border border-gray-200 dark:border-gray-700 rounded-lg text-sm'
             />
           </div>
 
@@ -505,7 +505,7 @@ function EditModal({
             <input
               value={editedQuestion.edition || ""}
               onChange={(e) => updateField("edition", e.target.value)}
-              className='w-full px-2.5 py-2.5 border border-gray-200 rounded-lg text-sm'
+              className='w-full px-2.5 py-2.5 border border-gray-200 dark:border-gray-700 rounded-lg text-sm'
             />
           </div>
 
@@ -518,7 +518,7 @@ function EditModal({
               onChange={(e) =>
                 updateField("chapter", parseInt(e.target.value) || 0)
               }
-              className='w-full px-2.5 py-2.5 border border-gray-200 rounded-lg text-sm'
+              className='w-full px-2.5 py-2.5 border border-gray-200 dark:border-gray-700 rounded-lg text-sm'
             />
           </div>
 
@@ -529,7 +529,7 @@ function EditModal({
             <input
               value={editedQuestion.topic || ""}
               onChange={(e) => updateField("topic", e.target.value)}
-              className='w-full px-2.5 py-2.5 border border-gray-200 rounded-lg text-sm'
+              className='w-full px-2.5 py-2.5 border border-gray-200 dark:border-gray-700 rounded-lg text-sm'
             />
           </div>
 
@@ -543,7 +543,7 @@ function EditModal({
               onChange={(e) =>
                 updateField("page_start", parseInt(e.target.value) || 0)
               }
-              className='w-full px-2.5 py-2.5 border border-gray-200 rounded-lg text-sm'
+              className='w-full px-2.5 py-2.5 border border-gray-200 dark:border-gray-700 rounded-lg text-sm'
             />
           </div>
 
@@ -557,7 +557,7 @@ function EditModal({
               onChange={(e) =>
                 updateField("page_end", parseInt(e.target.value) || 0)
               }
-              className='w-full px-2.5 py-2.5 border border-gray-200 rounded-lg text-sm'
+              className='w-full px-2.5 py-2.5 border border-gray-200 dark:border-gray-700 rounded-lg text-sm'
             />
           </div>
         </div>
@@ -576,7 +576,7 @@ function EditModal({
                   e.target.value as "easy" | "medium" | "hard",
                 )
               }
-              className='w-full px-2.5 py-2.5 border border-gray-200 rounded-lg text-sm bg-white'
+              className='w-full px-2.5 py-2.5 border border-gray-200 dark:border-gray-700 rounded-lg text-sm bg-white dark:bg-[#111827]'
             >
               <option value='easy'>Easy</option>
               <option value='medium'>Medium</option>
@@ -593,7 +593,7 @@ function EditModal({
               onChange={(e) =>
                 updateField("study_eligible", e.target.value === "true")
               }
-              className='w-full px-2.5 py-2.5 border border-gray-200 rounded-lg text-sm bg-white'
+              className='w-full px-2.5 py-2.5 border border-gray-200 dark:border-gray-700 rounded-lg text-sm bg-white dark:bg-[#111827]'
             >
               <option value='true'>Yes</option>
               <option value='false'>No</option>
@@ -609,7 +609,7 @@ function EditModal({
               onChange={(e) =>
                 updateField("exam_eligible", e.target.value === "true")
               }
-              className='w-full px-2.5 py-2.5 border border-gray-200 rounded-lg text-sm bg-white'
+              className='w-full px-2.5 py-2.5 border border-gray-200 dark:border-gray-700 rounded-lg text-sm bg-white dark:bg-[#111827]'
             >
               <option value='true'>Yes</option>
               <option value='false'>No</option>
@@ -622,7 +622,7 @@ function EditModal({
           <button
             onClick={onClose}
             disabled={saving}
-            className='px-5 py-2.5 bg-transparent border border-gray-200 rounded-lg text-sm font-semibold disabled:opacity-50 hover:bg-gray-50'
+            className='px-5 py-2.5 bg-transparent border border-gray-200 dark:border-gray-700 rounded-lg text-sm font-semibold disabled:opacity-50 hover:bg-gray-50 dark:hover:bg-gray-900'
           >
             Cancel
           </button>
@@ -888,7 +888,7 @@ export default function AdminQuestionsPage() {
       {/* Header */}
       <div className='mb-7'>
         <div className='text-[26px] font-bold mb-1'>Questions</div>
-        <div className='text-[13.5px] text-gray-500'>
+        <div className='text-[13.5px] text-gray-500 dark:text-gray-400'>
           {totalCount.toLocaleString()} of {totalCount.toLocaleString()} active
           questions
           {hasFilters && " (filtered)"}
@@ -910,7 +910,7 @@ export default function AdminQuestionsPage() {
 
       {/* Loading State */}
       {loading && (
-        <div className='text-center py-16 text-gray-500 bg-white border border-gray-200 rounded-xl'>
+        <div className='text-center py-16 text-gray-500 dark:text-gray-400 bg-white dark:bg-[#111827] border border-gray-200 dark:border-gray-700 rounded-xl'>
           <div className='text-3xl mb-3'>⏳</div>
           <div>Loading questions...</div>
         </div>
@@ -919,48 +919,48 @@ export default function AdminQuestionsPage() {
       {/* Questions Table */}
       {!loading && questions.length > 0 && (
         <>
-          <div className='bg-white border border-gray-200 rounded-xl overflow-hidden mb-5'>
+          <div className='bg-white dark:bg-[#111827] border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden mb-5'>
             <table className='w-full'>
               <thead>
-                <tr className='bg-gray-50'>
-                  <th className='px-4 py-3 text-left text-[11px] font-bold text-gray-500 uppercase tracking-wider border-b border-gray-200'>
+                <tr className='bg-gray-50 dark:bg-gray-900'>
+                  <th className='px-4 py-3 text-left text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider border-b border-gray-200 dark:border-gray-700'>
                     #
                   </th>
-                  <th className='px-4 py-3 text-left text-[11px] font-bold text-gray-500 uppercase tracking-wider border-b border-gray-200'>
+                  <th className='px-4 py-3 text-left text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider border-b border-gray-200 dark:border-gray-700'>
                     Question
                   </th>
-                  <th className='px-4 py-3 text-left text-[11px] font-bold text-gray-500 uppercase tracking-wider border-b border-gray-200'>
+                  <th className='px-4 py-3 text-left text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider border-b border-gray-200 dark:border-gray-700'>
                     Book / Chapter
                   </th>
-                  <th className='px-4 py-3 text-center text-[11px] font-bold text-gray-500 uppercase tracking-wider border-b border-gray-200'>
+                  <th className='px-4 py-3 text-center text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider border-b border-gray-200 dark:border-gray-700'>
                     Difficulty
                   </th>
-                  <th className='px-4 py-3 text-center text-[11px] font-bold text-gray-500 uppercase tracking-wider border-b border-gray-200'>
+                  <th className='px-4 py-3 text-center text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider border-b border-gray-200 dark:border-gray-700'>
                     Study
                   </th>
-                  <th className='px-4 py-3 text-center text-[11px] font-bold text-gray-500 uppercase tracking-wider border-b border-gray-200'>
+                  <th className='px-4 py-3 text-center text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider border-b border-gray-200 dark:border-gray-700'>
                     Exam
                   </th>
-                  <th className='px-4 py-3 text-center text-[11px] font-bold text-gray-500 uppercase tracking-wider border-b border-gray-200'>
+                  <th className='px-4 py-3 text-center text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider border-b border-gray-200 dark:border-gray-700'>
                     Actions
                   </th>
                 </tr>
               </thead>
               <tbody>
                 {questions.map((q) => (
-                  <tr key={q.id} className='border-b border-gray-200'>
-                    <td className='px-4 py-3.5 text-[13px] text-gray-500'>
+                  <tr key={q.id} className='border-b border-gray-200 dark:border-gray-700'>
+                    <td className='px-4 py-3.5 text-[13px] text-gray-500 dark:text-gray-400'>
                       {q.id}
                     </td>
-                    <td className='px-4 py-3.5 text-[13px] text-gray-900 max-w-[400px]'>
+                    <td className='px-4 py-3.5 text-[13px] text-gray-900 dark:text-gray-100 max-w-[400px]'>
                       {q.question_text.substring(0, 100)}
                       {q.question_text.length > 100 && "..."}
                     </td>
                     <td className='px-4 py-3.5 text-xs'>
-                      <div className='font-semibold mb-0.5 text-gray-900'>
+                      <div className='font-semibold mb-0.5 text-gray-900 dark:text-gray-100'>
                         {q.book_title}
                       </div>
-                      <div className='text-gray-500'>Ch. {q.chapter}</div>
+                      <div className='text-gray-500 dark:text-gray-400'>Ch. {q.chapter}</div>
                     </td>
                     <td className='px-4 py-3.5 text-center'>
                       <DifficultyBadge difficulty={q.difficulty} />
@@ -974,7 +974,7 @@ export default function AdminQuestionsPage() {
                             q.study_eligible,
                           )
                         }
-                        className={`px-2.5 py-1 text-[11px] font-bold ${q.study_eligible ? "text-green-700" : "text-gray-400"}`}
+                        className={`px-2.5 py-1 text-[11px] font-bold ${q.study_eligible ? "text-green-700 dark:text-green-400" : "text-gray-400 dark:text-gray-500"}`}
                         title={`Click to ${q.study_eligible ? "disable" : "enable"} for study mode`}
                       >
                         {q.study_eligible ? "Yes" : "No"}
@@ -989,7 +989,7 @@ export default function AdminQuestionsPage() {
                             q.exam_eligible,
                           )
                         }
-                        className={`px-2.5 py-1 text-[11px] font-bold ${q.exam_eligible ? "text-green-700" : "text-gray-400"}`}
+                        className={`px-2.5 py-1 text-[11px] font-bold ${q.exam_eligible ? "text-green-700 dark:text-green-400" : "text-gray-400 dark:text-gray-500"}`}
                         title={`Click to ${q.exam_eligible ? "disable" : "enable"} for exam mode`}
                       >
                         {q.exam_eligible ? "Yes" : "No"}
@@ -999,14 +999,14 @@ export default function AdminQuestionsPage() {
                       <div className='flex gap-2 justify-center'>
                         <button
                           onClick={() => setEditingQuestion(q)}
-                          className='px-2.5 py-1.5 bg-transparent border border-gray-200 rounded-md text-lg leading-none hover:bg-gray-50'
+                          className='px-2.5 py-1.5 bg-transparent border border-gray-200 dark:border-gray-700 rounded-md text-lg leading-none hover:bg-gray-50 dark:hover:bg-gray-900'
                           title='Edit question'
                         >
                           ✏️
                         </button>
                         <button
                           onClick={() => handleDelete(q.id)}
-                          className='px-2.5 py-1.5 bg-transparent border border-gray-200 rounded-md text-lg leading-none text-red-600 hover:bg-red-50'
+                          className='px-2.5 py-1.5 bg-transparent border border-gray-200 dark:border-gray-700 rounded-md text-lg leading-none text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30'
                           title='Delete question'
                         >
                           🗑️
@@ -1032,12 +1032,12 @@ export default function AdminQuestionsPage() {
 
       {/* Empty State */}
       {!loading && questions.length === 0 && (
-        <div className='bg-white border border-gray-200 rounded-xl p-16 text-center'>
+        <div className='bg-white dark:bg-[#111827] border border-gray-200 dark:border-gray-700 rounded-xl p-16 text-center'>
           <div className='text-5xl mb-3'>📋</div>
           <div className='text-base font-semibold mb-1.5'>
             No questions found
           </div>
-          <div className='text-[13px] text-gray-500'>
+          <div className='text-[13px] text-gray-500 dark:text-gray-400'>
             {hasFilters
               ? "Try adjusting your filters"
               : "Start by importing questions from CSV"}

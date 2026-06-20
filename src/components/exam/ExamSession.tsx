@@ -122,8 +122,8 @@ export default function ExamSession({ sessionId, timeLimitSecs, startedAt, sessi
             onClick={toggleFlag}
             className={`flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-lg border transition-colors ${
               flagged.has(currentSQ?.id)
-                ? 'border-amber-400 bg-amber-50 text-amber-700'
-                : 'border-gray-300 text-gray-600 hover:border-amber-300 hover:text-amber-600'
+                ? 'border-amber-400 dark:border-amber-600 bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400'
+                : 'border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:border-amber-300 dark:hover:border-amber-700 hover:text-amber-600 dark:hover:text-amber-400'
             }`}
           >
             <Flag className="w-4 h-4" />
@@ -135,7 +135,7 @@ export default function ExamSession({ sessionId, timeLimitSecs, startedAt, sessi
             <button
               onClick={() => setIndex(Math.max(0, index - 1))}
               disabled={index === 0}
-              className="flex-1 py-2.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 disabled:opacity-40"
+              className="flex-1 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-900 disabled:opacity-40"
             >
               ← Previous
             </button>
@@ -151,12 +151,12 @@ export default function ExamSession({ sessionId, timeLimitSecs, startedAt, sessi
       </div>
 
       {/* Right: Nav grid */}
-      <div className="w-56 bg-white border-l border-gray-200 flex flex-col">
-        <div className="p-4 border-b border-gray-100">
-          <div className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Progress</div>
-          <div className="text-sm text-gray-700">
-            <span className="font-semibold text-green-600">{answeredCount}</span> answered ·{' '}
-            <span className="font-semibold text-gray-400">{unansweredCount}</span> left
+      <div className="w-56 bg-white dark:bg-[#111827] border-l border-gray-200 dark:border-gray-700 flex flex-col">
+        <div className="p-4 border-b border-gray-100 dark:border-gray-800">
+          <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Progress</div>
+          <div className="text-sm text-gray-700 dark:text-gray-300">
+            <span className="font-semibold text-green-600 dark:text-green-400">{answeredCount}</span> answered ·{' '}
+            <span className="font-semibold text-gray-400 dark:text-gray-500">{unansweredCount}</span> left
           </div>
         </div>
         <div className="flex-1 overflow-auto p-3">
@@ -179,21 +179,21 @@ export default function ExamSession({ sessionId, timeLimitSecs, startedAt, sessi
       {/* Submit Confirm Modal */}
       {showConfirm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-6 max-w-sm w-full mx-4 shadow-xl">
-            <h3 className="font-bold text-[#1B2A4A] text-lg mb-2">Submit Exam?</h3>
-            <p className="text-gray-600 text-sm mb-1">
+          <div className="bg-white dark:bg-[#111827] rounded-xl p-6 max-w-sm w-full mx-4 shadow-xl">
+            <h3 className="font-bold text-[#1B2A4A] dark:text-[#e2e8f0] text-lg mb-2">Submit Exam?</h3>
+            <p className="text-gray-600 dark:text-gray-400 text-sm mb-1">
               You have answered <strong>{answeredCount}</strong> of{' '}
               <strong>{sessionQuestions.length}</strong> questions.
             </p>
             {unansweredCount > 0 && (
-              <p className="text-amber-600 text-sm mb-4">
+              <p className="text-amber-600 dark:text-amber-400 text-sm mb-4">
                 {unansweredCount} question{unansweredCount > 1 ? 's' : ''} unanswered.
               </p>
             )}
             <div className="flex gap-3 mt-4">
               <button
                 onClick={() => setShowConfirm(false)}
-                className="flex-1 py-2.5 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50"
+                className="flex-1 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-900"
               >
                 Continue
               </button>

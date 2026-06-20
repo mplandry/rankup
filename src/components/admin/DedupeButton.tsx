@@ -27,12 +27,12 @@ export default function DedupeButton() {
   return (
     <div className="flex items-center gap-3">
       {result && (
-        <span className="text-sm text-gray-500">{result}</span>
+        <span className="text-sm text-gray-500 dark:text-gray-400">{result}</span>
       )}
       <button
         onClick={handleDedupe}
         disabled={loading}
-        className="flex items-center gap-2 border border-gray-300 text-gray-600 px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-50 hover:border-red-300 hover:text-red-600 disabled:opacity-50 transition-colors"
+        className="flex items-center gap-2 border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-900 hover:border-red-300 dark:hover:border-red-700 hover:text-red-600 dark:hover:text-red-400 disabled:opacity-50 transition-colors"
       >
         {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
         Remove Duplicates

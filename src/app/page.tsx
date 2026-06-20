@@ -13,6 +13,7 @@ import {
   Check,
 } from "lucide-react";
 import "./landing.css";
+import ThemeToggle from "@/components/theme/ThemeToggle";
 
 export default function LandingPage() {
   const [email, setEmail] = useState("");
@@ -45,6 +46,7 @@ export default function LandingPage() {
           </span>
         </Link>
         <div className='nav-actions'>
+          <ThemeToggle variant='inverted' />
           <Link href='/login' className='btn-ghost'>
             Log In
           </Link>
@@ -612,42 +614,19 @@ export default function LandingPage() {
       </section>
 
       {/* FUTURE EXAMS WAITLIST */}
-      <section style={{ background: '#f8f9fb', padding: '72px 20px', borderTop: '1px solid #e2e8f0' }}>
+      <section className='waitlist-section'>
         <div style={{ maxWidth: '560px', margin: '0 auto', textAlign: 'center' }}>
-          <div style={{
-            display: 'inline-block',
-            background: 'rgba(27,42,74,0.08)',
-            borderRadius: '100px',
-            padding: '6px 16px',
-            fontSize: '12px',
-            fontWeight: 700,
-            color: '#1B2A4A',
-            letterSpacing: '0.5px',
-            textTransform: 'uppercase',
-            marginBottom: '20px'
-          }}>
+          <div className='waitlist-badge'>
             Coming Soon
           </div>
-          <h2 style={{ fontSize: '28px', fontWeight: 800, color: '#1B2A4A', marginBottom: '12px', lineHeight: 1.2 }}>
+          <h2 className='waitlist-title'>
             Preparing for a future exam?
           </h2>
-          <p style={{ fontSize: '16px', color: '#5a6a7a', marginBottom: '32px', lineHeight: 1.6 }}>
+          <p className='waitlist-sub'>
             We're expanding to cover additional Massachusetts fire promotional exams. Drop your email and we'll notify you when your exam goes live.
           </p>
           {status === "done" ? (
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '8px',
-              background: '#f0fdf4',
-              border: '1.5px solid #bbf7d0',
-              borderRadius: '12px',
-              padding: '20px',
-              color: '#166534',
-              fontWeight: 600,
-              fontSize: '15px'
-            }}>
+            <div className='waitlist-success'>
               <Check size={18} strokeWidth={3} />
               You're on the list! We'll reach out when it's ready.
             </div>
@@ -659,29 +638,13 @@ export default function LandingPage() {
                 placeholder="your@email.com"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '14px 16px',
-                  borderRadius: '10px',
-                  border: '1.5px solid #d1d5db',
-                  fontSize: '15px',
-                  outline: 'none',
-                  boxSizing: 'border-box'
-                }}
+                className='waitlist-input'
               />
               <select
                 value={examType}
                 onChange={e => setExamType(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '14px 16px',
-                  borderRadius: '10px',
-                  border: '1.5px solid #d1d5db',
-                  fontSize: '15px',
-                  color: examType ? '#111' : '#9ca3af',
-                  background: '#fff',
-                  boxSizing: 'border-box'
-                }}
+                className='waitlist-input'
+                style={{ color: examType ? undefined : '#9ca3af' }}
               >
                 <option value="">Which exam? (optional)</option>
                 <option value="lieutenant_2027">Lieutenant 2027</option>
