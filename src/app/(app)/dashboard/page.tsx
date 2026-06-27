@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import SubscriptionBadge from "@/components/SubscriptionBadge";
-import ReferralCard from "@/components/ReferralCard";
+import ReferralRewardsCard from "@/components/ReferralRewardsCard";
 import TrialExpirationPrompt from "@/components/TrialExpirationPrompt";
 
 export default function DashboardPage() {
@@ -130,7 +130,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <ReferralCard />
+        <ReferralRewardsCard />
       </div>
     </>
   );
