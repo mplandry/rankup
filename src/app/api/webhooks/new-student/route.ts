@@ -5,10 +5,24 @@ const ADMIN_EMAIL = 'mplandry77@gmail.com'
 export async function POST(request: Request) {
   try {
     const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET
+    const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY
     const RESEND_API_KEY = process.env.RESEND_API_KEY
 
-    const secret = request.headers.get('x-webhook-secret')
-    if (!secret || secret !== WEBHOOK_SECRET) {
+    // Supabase Database Webhooks can authenticate in two different ways
+    // depending on how they're configured: a custom header ("x-webhook-secret")
+    // or a "send service role JWT" auth header ("Authorization: Bearer <jwt>").
+    // Accept either so both styles of webhook work against this route.
+    const providedSecret = request.headers.get('x-webhook-secret')
+    const authHeader = request.headers.get('authorization')
+    const providedBearer = authHeader?.startsWith('Bearer ')
+      ? authHeader.slice('Bearer '.length)
+      : null
+
+    const authorizedBySecret = !!providedSecret && providedSecret === WEBHOOK_SECRET
+    const authorizedByServiceRole =
+      !!providedBearer && !!SERVICE_ROLE_KEY && providedBearer === SERVICE_ROLE_KEY
+
+    if (!authorizedBySecret && !authorizedByServiceRole) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
