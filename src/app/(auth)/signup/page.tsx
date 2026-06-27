@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import Image from "next/image";
@@ -10,7 +10,16 @@ import "../login/login.css";
 import "./signup.css";
 
 export default function SignupPage() {
+  return (
+    <Suspense fallback={null}>
+      <SignupForm />
+    </Suspense>
+  );
+}
+
+function SignupForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [form, setForm] = useState({
     full_name: "",
     department: "",
@@ -21,10 +30,37 @@ export default function SignupPage() {
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [referrerName, setReferrerName] = useState<string | null>(null);
 
   function set(field: string, value: string) {
     setForm((f) => ({ ...f, [field]: value }));
   }
+
+  // Show a "you were invited" banner when arriving via a /signup?ref=CODE
+  // link. This only checks validity and reads the referrer's name — actual
+  // attribution (writing referred_by) happens in handleSubmit below.
+  useEffect(() => {
+    const refCode = searchParams?.get("ref");
+    if (!refCode) return;
+
+    let cancelled = false;
+    fetch("/api/referral/validate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ referralCode: refCode }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (!cancelled && data?.valid) setReferrerName(data.referrerName);
+      })
+      .catch(() => {
+        // Best-effort — no banner if the lookup fails.
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [searchParams]);
 
   async function handleSubmit(e: { preventDefault(): void }) {
     e.preventDefault();
@@ -50,7 +86,11 @@ export default function SignupPage() {
       email: form.email,
       password: form.password,
       options: {
-        data: { full_name: form.full_name, department: finalDepartment },
+        data: {
+          full_name: form.full_name,
+          department: finalDepartment,
+          exam_type: form.exam_type,
+        },
         emailRedirectTo: `${location.origin}/auth/callback`,
       },
     });
@@ -59,17 +99,21 @@ export default function SignupPage() {
       setLoading(false);
       return;
     }
-    if (data.user) {
-      const { error: profileError } = await supabase
-        .from("profiles")
-        .update({ exam_type: form.exam_type })
-        .eq("id", data.user.id);
-      if (profileError) {
-        setError("Account created but failed to save exam type.");
-        setLoading(false);
-        return;
+
+    // Attribute the referral (best-effort — never blocks signup).
+    const refCode = searchParams?.get("ref");
+    if (data.user && refCode) {
+      try {
+        await fetch("/api/referral/validate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ referralCode: refCode, userId: data.user.id }),
+        });
+      } catch (err) {
+        console.error("Referral attribution failed:", err);
       }
     }
+
     // Redirect to welcome page instead of dashboard
     router.push("/welcome");
   }
@@ -93,6 +137,25 @@ export default function SignupPage() {
           <div className='login-logo-title'>RankUp</div>
           <div className='login-logo-sub'>Create your account</div>
         </div>
+
+        {referrerName && (
+          <div
+            style={{
+              background: "rgba(230, 126, 34, 0.12)",
+              border: "1px solid #E67E22",
+              borderRadius: 10,
+              padding: "12px 16px",
+              marginBottom: 16,
+              fontSize: 14,
+              color: "#E67E22",
+              textAlign: "center",
+              fontWeight: 600,
+            }}
+          >
+            🎉 {referrerName} invited you to RankUp — you&apos;ll get a discount
+            on your first payment.
+          </div>
+        )}
 
         <div className='login-card'>
           <form onSubmit={handleSubmit}>
