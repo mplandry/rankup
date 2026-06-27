@@ -91,7 +91,7 @@ export default function PrivacyPage() {
           },
           {
             title: "6. Your Rights",
-            content: `You have the right to access, correct, or delete your personal data at any time. To request deletion of your account and associated data, please contact us at privacy@rankupfire.com. We will process your request within 30 days.`,
+            content: `You have the right to access, correct, or delete your personal data at any time. To request deletion of your account and associated data, please contact us at support@rankupfire.com. We will process your request within 30 days.`,
           },
           {
             title: "7. Children's Privacy",
@@ -103,7 +103,7 @@ export default function PrivacyPage() {
           },
           {
             title: "9. Contact Us",
-            content: `If you have questions about this Privacy Policy, please contact us at privacy@rankupfire.com.`,
+            content: `If you have questions about this Privacy Policy, please contact us at support@rankupfire.com.`,
           },
         ].map(({ title, content }) => (
           <div key={title} style={{ marginBottom: "40px" }}>

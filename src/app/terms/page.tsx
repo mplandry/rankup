@@ -119,7 +119,7 @@ export default function TermsPage() {
           },
           {
             title: "13. Contact Information",
-            content: `For questions about these Terms of Service, please contact us at legal@rankupfire.com or support@rankupfire.com.`,
+            content: `For questions about these Terms of Service, please contact us at support@rankupfire.com.`,
           },
         ].map(({ title, content }) => (
           <div key={title} style={{ marginBottom: "40px" }}>
