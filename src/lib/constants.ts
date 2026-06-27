@@ -28,3 +28,22 @@ export const ANSWER_LABELS: Record<string, string> = {
 export const FIRE_RED = '#C0392B'
 export const FIRE_ORANGE = '#E67E22'
 export const FIRE_NAVY = '#1B2A4A'
+
+// ============================================================
+// Referral program — 10% both ways, tiered by plan.
+// Referrer gets a credit, referred user gets a discount on their
+// first payment. Referrer credit unlocks 30 days after the
+// referred user's payment clears (chargeback/refund protection).
+// Every 3rd unlocked referral earns the referrer a free month.
+// ============================================================
+export const REFERRAL_TIERS: Record<
+  'monthly' | 'exam_prep',
+  { referrerCreditCents: number; referredDiscountCents: number }
+> = {
+  monthly: { referrerCreditCents: 1000, referredDiscountCents: 1000 }, // $10 / $10
+  exam_prep: { referrerCreditCents: 3000, referredDiscountCents: 3000 }, // $30 / $30
+}
+
+export const REFERRAL_UNLOCK_DAYS = 30
+export const CREW_BONUS_MILESTONE = 3
+export const CREW_BONUS_CREDIT_CENTS = 4000 // free month, matches monthly plan price
