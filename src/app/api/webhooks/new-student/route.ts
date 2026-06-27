@@ -34,7 +34,7 @@ export async function POST(request: Request) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'RankUp <onboarding@resend.dev>',
+        from: 'RankUp <support@rankupfire.com>',
         to: ADMIN_EMAIL,
         subject: `New student enrolled: ${name}`,
         html: `<p>Name: ${name}</p><p>Email: ${email}</p><p>Department: ${department}</p><p>Joined: ${joinedAt}</p>`,

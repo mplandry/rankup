@@ -48,7 +48,7 @@ export async function POST() {
     for (const student of inactiveStudents || []) {
       try {
         await resend.emails.send({
-          from: "RankUp <onboarding@resend.dev>",
+          from: "RankUp <support@rankupfire.com>",
           to: student.email,
           subject: "We miss you at RankUp! 🔥",
           html: `

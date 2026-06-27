@@ -14,8 +14,9 @@ export async function POST(request: NextRequest) {
     }
 
     await resend.emails.send({
-      from: "RankUp <onboarding@resend.dev>",
+      from: "RankUp <support@rankupfire.com>",
       to: "mplandry77@gmail.com",
+      replyTo: email,
       subject: `Department Rate Inquiry — ${department}`,
       html: `
         <h2>New Department Rate Inquiry</h2>

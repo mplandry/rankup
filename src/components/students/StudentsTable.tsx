@@ -532,6 +532,7 @@ export default function StudentsTable({
         method: "POST",
       });
       const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to send emails");
       alert(`Sent ${data.count || 0} emails to inactive students.`);
     } catch (err) {
       alert("Failed to send emails.");
