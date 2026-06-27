@@ -6,9 +6,10 @@ export default function PrivacyPage() {
       style={{
         background: "#f8f9fb",
         minHeight: "100vh",
-        fontFamily: "Georgia,serif",
+        fontFamily: "'Barlow', sans-serif",
       }}
     >
+      <style>{`@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700;900&family=Barlow+Condensed:wght@600;700;800&display=swap');`}</style>
       <div
         style={{
           background: "#1B2A4A",
@@ -21,9 +22,9 @@ export default function PrivacyPage() {
         <Link
           href='/'
           style={{
-            fontFamily: "sans-serif",
-            fontWeight: 900,
-            fontSize: "24px",
+            fontFamily: "'Bebas Neue', sans-serif",
+            fontWeight: 400,
+            fontSize: "28px",
             color: "white",
             textDecoration: "none",
             letterSpacing: "2px",
@@ -37,7 +38,7 @@ export default function PrivacyPage() {
             color: "rgba(255,255,255,0.6)",
             fontSize: "14px",
             textDecoration: "none",
-            fontFamily: "sans-serif",
+            fontFamily: "'Barlow', sans-serif",
           }}
         >
           ← Back to home
@@ -48,9 +49,10 @@ export default function PrivacyPage() {
       >
         <h1
           style={{
-            fontFamily: "sans-serif",
-            fontWeight: 900,
-            fontSize: "36px",
+            fontFamily: "'Bebas Neue', sans-serif",
+            fontWeight: 400,
+            fontSize: "44px",
+            letterSpacing: "1px",
             color: "#1B2A4A",
             marginBottom: "8px",
           }}
@@ -62,7 +64,7 @@ export default function PrivacyPage() {
             color: "#888",
             fontSize: "14px",
             marginBottom: "48px",
-            fontFamily: "sans-serif",
+            fontFamily: "'Barlow', sans-serif",
           }}
         >
           Last updated: April 14, 2026
@@ -109,9 +111,9 @@ export default function PrivacyPage() {
           <div key={title} style={{ marginBottom: "40px" }}>
             <h2
               style={{
-                fontFamily: "sans-serif",
+                fontFamily: "'Barlow Condensed', sans-serif",
                 fontWeight: 700,
-                fontSize: "18px",
+                fontSize: "20px",
                 color: "#1B2A4A",
                 marginBottom: "12px",
               }}
@@ -129,7 +131,7 @@ export default function PrivacyPage() {
           background: "#1B2A4A",
           padding: "24px 48px",
           textAlign: "center",
-          fontFamily: "sans-serif",
+          fontFamily: "'Barlow', sans-serif",
           fontSize: "13px",
           color: "rgba(255,255,255,0.4)",
         }}

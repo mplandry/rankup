@@ -134,7 +134,9 @@ function SignupForm() {
               style={{ objectFit: "cover", width: "100%", height: "100%" }}
             />
           </div>
-          <div className='login-logo-title'>RankUp</div>
+          <div className='login-logo-title'>
+            Rank<span className='gold'>Up</span>
+          </div>
           <div className='login-logo-sub'>Create your account</div>
         </div>
 

@@ -46,6 +46,9 @@ export default function LandingPage() {
           </span>
         </Link>
         <div className='nav-actions'>
+          <Link href='/plans' className='btn-ghost'>
+            Pricing
+          </Link>
           <ThemeToggle variant='inverted' />
           <Link href='/login' className='btn-ghost'>
             Log In
@@ -678,10 +681,12 @@ export default function LandingPage() {
 
       <footer>
         <div className='footer-links'>
+          <Link href='/plans'>Pricing</Link>
           <Link href='/login'>Log In</Link>
           <Link href='/signup'>Sign Up</Link>
           <Link href='/privacy'>Privacy Policy</Link>
           <Link href='/terms'>Terms of Service</Link>
+          <a href='mailto:support@rankupfire.com'>Contact</a>
         </div>
       </footer>
     </>

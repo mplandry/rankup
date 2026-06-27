@@ -1,0 +1,53 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700;900&family=Barlow+Condensed:wght@600;700;800&display=swap');
+
+.pricing-hero{background:linear-gradient(160deg,#0d1829 0%,#1B2A4A 60%,#0d1829 100%);padding:90px 48px 70px;text-align:center;position:relative;overflow:hidden;}
+.pricing-hero::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(0deg,transparent,transparent 80px,rgba(255,255,255,0.015) 80px,rgba(255,255,255,0.015) 81px),repeating-linear-gradient(90deg,transparent,transparent 80px,rgba(255,255,255,0.015) 80px,rgba(255,255,255,0.015) 81px);pointer-events:none;}
+.pricing-hero-inner{position:relative;z-index:1;max-width:700px;margin:0 auto;}
+.pricing-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(192,57,43,0.2);border:1px solid rgba(192,57,43,0.4);border-radius:100px;padding:6px 16px;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#ff8a75;margin-bottom:20px;}
+.pricing-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(40px,6vw,64px);color:white;line-height:1;letter-spacing:1px;margin-bottom:16px;}
+.pricing-title .gold{color:#F5C842;}
+.pricing-sub{font-size:17px;color:rgba(255,255,255,0.65);line-height:1.6;}
+
+.pricing-section{background:#f4f5f7;padding:80px 48px 100px;}
+.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;max-width:1100px;margin:0 auto;align-items:stretch;}
+.pricing-card{background:white;border-radius:20px;padding:32px;border:1px solid rgba(0,0,0,0.06);position:relative;display:flex;flex-direction:column;}
+.pricing-card.recommended{border:2px solid #C0392B;box-shadow:0 20px 40px rgba(192,57,43,0.15);}
+.pricing-card-badge{position:absolute;top:-13px;left:50%;transform:translateX(-50%);padding:4px 14px;border-radius:6px;font-size:11px;font-weight:800;letter-spacing:0.05em;color:white;white-space:nowrap;}
+.pricing-card-badge.red{background:#C0392B;}
+.pricing-card-badge.gold{background:#F39C12;}
+.pricing-card-name{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;color:#1B2A4A;margin-bottom:6px;}
+.pricing-card-desc{font-size:13px;color:#5a6a7a;margin-bottom:20px;}
+.pricing-card-price{margin-bottom:24px;}
+.pricing-card-price .amount{font-family:'Bebas Neue',sans-serif;font-size:48px;color:#1B2A4A;letter-spacing:0.5px;}
+.pricing-card.recommended .pricing-card-price .amount{color:#C0392B;}
+.pricing-card-price .period{font-size:15px;color:#5a6a7a;font-weight:600;margin-left:4px;}
+.pricing-card-features{display:flex;flex-direction:column;gap:10px;margin-bottom:28px;flex:1;}
+.pricing-card-features div{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:#475569;}
+.pricing-card-features span.check{color:#10b981;font-size:15px;flex-shrink:0;}
+.pricing-card.recommended .pricing-card-features span.check{color:#C0392B;}
+.pricing-card-cta{display:block;text-align:center;width:100%;padding:13px 24px;border-radius:10px;font-size:15px;font-weight:700;text-decoration:none;margin-top:auto;transition:all 0.2s;box-sizing:border-box;}
+.pricing-card-cta.primary{background:#C0392B;color:white;}
+.pricing-card-cta.primary:hover{background:#E74C3C;}
+.pricing-card-cta.secondary{background:#1B2A4A;color:white;}
+.pricing-card-cta.secondary:hover{background:#26395e;}
+
+.pricing-note{max-width:1100px;margin:32px auto 0;text-align:center;font-size:13px;color:#5a6a7a;}
+
+.pricing-faq{background:white;padding:90px 48px;}
+.pricing-faq-inner{max-width:700px;margin:0 auto;}
+.pricing-faq-item{margin-bottom:28px;}
+.pricing-faq-q{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;color:#1B2A4A;margin-bottom:8px;}
+.pricing-faq-a{font-size:15px;color:#5a6a7a;line-height:1.65;}
+
+html.dark .pricing-section{background:#0d1421;}
+html.dark .pricing-card{background:#111c33;border-color:rgba(255,255,255,0.08);}
+html.dark .pricing-card-name{color:#e2e8f0;}
+html.dark .pricing-card-price .amount{color:#e2e8f0;}
+html.dark .pricing-card.recommended .pricing-card-price .amount{color:#e35d4d;}
+html.dark .pricing-card-desc,html.dark .pricing-card-price .period,html.dark .pricing-card-features div{color:#9aa7b8;}
+html.dark .pricing-faq{background:#0d1421;}
+html.dark .pricing-faq-q{color:#e2e8f0;}
+html.dark .pricing-faq-a{color:#9aa7b8;}
+html.dark .pricing-note{color:#9aa7b8;}
+
+@media(max-width:900px){.pricing-hero{padding:70px 24px 50px;}.pricing-section{padding:60px 24px 70px;}.pricing-faq{padding:70px 24px;}}

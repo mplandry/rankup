@@ -60,7 +60,9 @@ export default function LoginForm() {
               style={{ objectFit: "cover", width: "100%", height: "100%" }}
             />
           </div>
-          <div className='login-logo-title'>RankUp</div>
+          <div className='login-logo-title'>
+            Rank<span className='gold'>Up</span>
+          </div>
           <div className='login-logo-sub'>Sign in to your account</div>
         </div>
         <div className='login-card'>

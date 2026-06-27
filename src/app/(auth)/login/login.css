@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700;900&display=swap');
+
 .login-page {
   min-height: 100vh;
   display: flex;
@@ -5,7 +7,7 @@
   justify-content: center;
   padding: 40px 24px;
   background: linear-gradient(160deg, #0d1829 0%, #1B2A4A 60%, #0d1829 100%);
-  font-family: system-ui, sans-serif;
+  font-family: 'Barlow', system-ui, sans-serif;
 }
 
 .login-grid {
@@ -52,12 +54,17 @@
 }
 
 .login-logo-title {
-  font-size: 44px;
-  font-weight: 900;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 52px;
+  font-weight: 400;
   color: white;
-  letter-spacing: -1px;
+  letter-spacing: 1px;
   line-height: 1;
   margin-bottom: 8px;
+}
+
+.login-logo-title .gold {
+  color: #F5C842;
 }
 
 .login-logo-sub {
