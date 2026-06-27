@@ -1,7 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { calcScorePercent } from "@/lib/utils/score";
-import { trackSessionCompletion } from "@/lib/referral-tracker";
 interface Props {
   params: Promise<{ sessionId: string }>;
 }
@@ -85,9 +84,6 @@ export async function POST(_request: Request, { params }: Props) {
 
   if (updateErr)
     return NextResponse.json({ error: updateErr.message }, { status: 500 });
-
-  // Track session completion for referral bonuses
-  await trackSessionCompletion(user.id);
 
   try {
     await supabase.rpc("refresh_user_stats", { p_user_id: user.id });
