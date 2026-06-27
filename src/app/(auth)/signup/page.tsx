@@ -90,6 +90,9 @@ function SignupForm() {
           full_name: form.full_name,
           department: finalDepartment,
           exam_type: form.exam_type,
+          ...(searchParams?.get("plan")
+            ? { intended_plan: searchParams.get("plan") }
+            : {}),
         },
         emailRedirectTo: `${location.origin}/auth/callback`,
       },

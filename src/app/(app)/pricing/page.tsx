@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
@@ -69,6 +69,7 @@ const PRICING_TIERS: PricingTier[] = [
 
 export default function PricingPage() {
   const [user, setUser] = useState<any>(null);
+  const cardRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const [loading, setLoading] = useState<string | null>(null);
   const [showContactForm, setShowContactForm] = useState(false);
   const [contactForm, setContactForm] = useState({ name: "", email: "", department: "", count: "", message: "" });
@@ -91,6 +92,19 @@ export default function PricingPage() {
     };
     init();
   }, []);
+
+  // If they picked a plan on the public /plans page before signing up,
+  // scroll to and highlight that tier here so the choice carries through.
+  useEffect(() => {
+    const intendedPlan = user?.user_metadata?.intended_plan;
+    if (!intendedPlan) return;
+    const el = cardRefs.current[intendedPlan];
+    if (!el) return;
+    const timer = setTimeout(() => {
+      el.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [user]);
 
   const handleContactSubmit = async () => {
     setContactStatus("sending");
@@ -146,6 +160,7 @@ export default function PricingPage() {
     user?.user_metadata?.full_name ||
     user?.email?.split("@")[0] ||
     "Firefighter";
+  const intendedPlan = user?.user_metadata?.intended_plan;
 
   if (!user) return null;
 
@@ -263,24 +278,51 @@ export default function PricingPage() {
           marginBottom: 40,
         }}
       >
-        {PRICING_TIERS.map((tier) => (
+        {PRICING_TIERS.map((tier) => {
+          const isIntended = tier.id === intendedPlan;
+          return (
           <div
             key={tier.id}
+            ref={(el) => {
+              cardRefs.current[tier.id] = el;
+            }}
             style={{
               background: "#fff",
-              border: tier.recommended
-                ? "2px solid var(--red)"
-                : "1px solid #e0e6ed",
+              border: isIntended
+                ? "2px solid #16a34a"
+                : tier.recommended
+                  ? "2px solid var(--red)"
+                  : "1px solid #e0e6ed",
               borderRadius: 14,
               padding: 28,
               position: "relative",
-              boxShadow: tier.recommended
-                ? "0 10px 30px rgba(220, 38, 38, 0.15)"
-                : "none",
+              boxShadow: isIntended
+                ? "0 10px 30px rgba(22, 163, 74, 0.18)"
+                : tier.recommended
+                  ? "0 10px 30px rgba(220, 38, 38, 0.15)"
+                  : "none",
               display: "flex",
               flexDirection: "column",
             }}
           >
+            {isIntended && (
+              <div
+                style={{
+                  position: "absolute",
+                  top: -12,
+                  right: 16,
+                  background: "#16a34a",
+                  color: "#fff",
+                  padding: "4px 10px",
+                  borderRadius: 6,
+                  fontSize: 11,
+                  fontWeight: 700,
+                  letterSpacing: "0.05em",
+                }}
+              >
+                ✓ YOUR PICK
+              </div>
+            )}
             {/* Badge */}
             {tier.badge && (
               <div
@@ -394,7 +436,8 @@ export default function PricingPage() {
                   : "Get Started"}
             </button>
           </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* Testimonial */}

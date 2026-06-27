@@ -21,7 +21,7 @@ const TIERS = [
       "Mobile app access",
     ],
     cta: "Get Started Free",
-    href: "/signup",
+    href: "/signup?plan=monthly",
     ctaStyle: "secondary",
   },
   {
@@ -39,7 +39,7 @@ const TIERS = [
       "100% MA reading list coverage",
     ],
     cta: "Get Started Free",
-    href: "/signup",
+    href: "/signup?plan=exam_prep",
     ctaStyle: "primary",
     recommended: true,
     badge: "BEST VALUE",
