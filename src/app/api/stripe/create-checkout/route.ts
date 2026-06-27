@@ -1,6 +1,7 @@
 // src/app/api/stripe/create-checkout/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
+import { REFERRAL_TIERS } from "@/lib/constants";
 
 export const dynamic = "force-dynamic";
 
@@ -24,7 +25,7 @@ export async function POST(request: NextRequest) {
 
     const { data: profile } = await supabase
       .from("profiles")
-      .select("stripe_customer_id, email, full_name")
+      .select("stripe_customer_id, email, full_name, referred_by")
       .eq("id", userId)
       .single();
 
@@ -59,6 +60,32 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid price ID" }, { status: 400 });
     }
 
+    // Referred-user discount: 10% off first payment, tiered by plan. Only
+    // applies once — skip if this user already has a referral reward on file.
+    let discountCents = 0;
+    if (profile.referred_by && (pricing.plan === "monthly" || pricing.plan === "exam_prep")) {
+      const { data: existingReward } = await supabase
+        .from("referral_rewards")
+        .select("id")
+        .eq("referred_id", userId)
+        .maybeSingle();
+
+      if (!existingReward) {
+        discountCents = REFERRAL_TIERS[pricing.plan].referredDiscountCents;
+      }
+    }
+
+    let discounts: Stripe.Checkout.SessionCreateParams["discounts"];
+    if (discountCents > 0) {
+      const coupon = await stripe.coupons.create({
+        amount_off: discountCents,
+        currency: "usd",
+        duration: "once",
+        name: "Referral discount",
+      });
+      discounts = [{ coupon: coupon.id }];
+    }
+
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       line_items: [
@@ -88,6 +115,7 @@ export async function POST(request: NextRequest) {
         },
       ],
       mode: pricing.mode,
+      ...(discounts ? { discounts } : {}),
       success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/dashboard?payment=success`,
       cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/pricing?payment=canceled`,
       metadata: {
