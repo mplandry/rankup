@@ -76,7 +76,16 @@ export async function POST(request: Request) {
   try {
     const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET;
     const ADMIN_NUDGE_SECRET = process.env.ADMIN_NUDGE_SECRET;
-    const providedSecret = request.headers.get("x-webhook-secret");
+    const providedHeaderSecret = request.headers.get("x-webhook-secret");
+
+    const body = await request.json().catch(() => ({}));
+    const { email, id, secret: providedBodySecret } = body as {
+      email?: string;
+      id?: string;
+      secret?: string;
+    };
+
+    const providedSecret = providedHeaderSecret || providedBodySecret;
     const authorized =
       !!providedSecret &&
       (providedSecret === WEBHOOK_SECRET || providedSecret === ADMIN_NUDGE_SECRET);
@@ -84,8 +93,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const body = await request.json().catch(() => ({}));
-    const { email, id } = body as { email?: string; id?: string };
     if (!email && !id) {
       return NextResponse.json({ error: "Provide email or id" }, { status: 400 });
     }
