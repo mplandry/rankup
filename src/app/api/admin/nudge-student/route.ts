@@ -11,7 +11,9 @@
 // won't send a duplicate for that same milestone later.
 //
 // Auth mirrors src/app/api/webhooks/new-student/route.ts: a shared secret
-// passed via the `x-webhook-secret` header.
+// passed via the `x-webhook-secret` header. Accepts either WEBHOOK_SECRET
+// (shared with that route) or ADMIN_NUDGE_SECRET (dedicated to this route),
+// so this can be triggered independently of the webhook's secret.
 
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
@@ -73,8 +75,12 @@ function expiredEmailHtml(name: string) {
 export async function POST(request: Request) {
   try {
     const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET;
+    const ADMIN_NUDGE_SECRET = process.env.ADMIN_NUDGE_SECRET;
     const providedSecret = request.headers.get("x-webhook-secret");
-    if (!providedSecret || providedSecret !== WEBHOOK_SECRET) {
+    const authorized =
+      !!providedSecret &&
+      (providedSecret === WEBHOOK_SECRET || providedSecret === ADMIN_NUDGE_SECRET);
+    if (!authorized) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
