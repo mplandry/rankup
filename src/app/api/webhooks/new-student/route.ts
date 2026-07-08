@@ -10,13 +10,16 @@ export async function POST(request: Request) {
 
     // Supabase Database Webhooks can authenticate in two different ways
     // depending on how they're configured: a custom header ("x-webhook-secret")
-    // or a "send service role JWT" auth header ("Authorization: Bearer <jwt>").
-    // Accept either so both styles of webhook work against this route.
+    // or a "send service role JWT" auth header. The Supabase dashboard's
+    // "Authorization header with service_role key" webhook option sends the
+    // raw JWT with NO "Bearer " prefix — this previously required a "Bearer "
+    // prefix and silently 401'd on every real signup as a result (confirmed
+    // via net._http_response). Accept the token with or without that prefix.
     const providedSecret = request.headers.get('x-webhook-secret')
     const authHeader = request.headers.get('authorization')
     const providedBearer = authHeader?.startsWith('Bearer ')
       ? authHeader.slice('Bearer '.length)
-      : null
+      : authHeader
 
     const authorizedBySecret = !!providedSecret && providedSecret === WEBHOOK_SECRET
     const authorizedByServiceRole =
@@ -32,9 +35,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'No record' }, { status: 400 })
     }
 
-    const name = profile.full_name || 'Unknown'
+    // This webhook fires on INSERT into auth.users, so the payload record is
+    // the raw auth user row, not a public.profiles row. full_name/department
+    // live under raw_user_meta_data (set at signup), not top-level fields.
+    const metadata = profile.raw_user_meta_data || {}
+    const name = metadata.full_name || 'Unknown'
     const email = profile.email || 'No email'
-    const department = profile.department || 'Not provided'
+    const department = metadata.department || 'Not provided'
     const joinedAt = new Date(profile.created_at).toLocaleString('en-US', {
       timeZone: 'America/New_York',
       dateStyle: 'medium',
