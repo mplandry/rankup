@@ -98,6 +98,15 @@ export async function POST(request: Request) {
     Math.min(filters?.question_count || defaultCount, shuffled.length, remainingToday),
   );
 
+  // Starting a new session means any of the user's previous unfinished
+  // sessions are abandoned (this UI never resumes an old in_progress row) —
+  // clean those up so exam_sessions.status stays accurate for admin reporting.
+  await supabase
+    .from("exam_sessions")
+    .update({ status: "abandoned" })
+    .eq("user_id", user.id)
+    .eq("status", "in_progress");
+
   const { data: session, error: sessionError } = await supabase
     .from("exam_sessions")
     .insert({

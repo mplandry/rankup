@@ -7,21 +7,44 @@ export const dynamic = "force-dynamic";
 export default async function StudentsPage() {
   const supabase = createServiceRoleClient();
 
-  const { data: students, error } = await supabase
-    .from("profiles")
-    .select(
-      `
+  const [{ data: students, error }, { data: sessions, error: sessionsError }] =
+    await Promise.all([
+      supabase
+        .from("profiles")
+        .select(
+          `
       *,
       user_stats_cache(*)
     `,
-    )
-    .eq("role", "student")
-    .order("created_at", { ascending: false });
+        )
+        .eq("role", "student")
+        .order("created_at", { ascending: false }),
+      supabase.from("exam_sessions").select("user_id, status"),
+    ]);
 
   if (error) console.error("Students query error:", error);
+  if (sessionsError) console.error("Sessions query error:", sessionsError);
+
+  // user_stats_cache.total_sessions only counts *completed* sessions (by
+  // design — avg/best score can only be computed from a finished, scored
+  // session). That undercounts real engagement: a student who started 5
+  // sessions but only finished 1 looks like "1 session" in the stats cache.
+  // Build an attempts map (all statuses) here so the admin UI can show both.
+  const attemptsByUser = new Map<string, { total: number; completed: number }>();
+  for (const s of sessions || []) {
+    const entry = attemptsByUser.get(s.user_id) || { total: 0, completed: 0 };
+    entry.total += 1;
+    if (s.status === "completed") entry.completed += 1;
+    attemptsByUser.set(s.user_id, entry);
+  }
+
+  const studentsWithAttempts = (students || []).map((s) => ({
+    ...s,
+    attempts: attemptsByUser.get(s.id) || { total: 0, completed: 0 },
+  }));
 
   const activeSince = Date.now() - 5 * 60_000;
-  const activeNowCount = (students || []).filter(
+  const activeNowCount = studentsWithAttempts.filter(
     (s) => s.last_active_at && new Date(s.last_active_at).getTime() >= activeSince,
   ).length;
 
@@ -39,7 +62,7 @@ export default async function StudentsPage() {
           )}
         </p>
       </div>
-      <StudentsTable students={students || []} />
+      <StudentsTable students={studentsWithAttempts} />
     </div>
   );
 }

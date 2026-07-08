@@ -3,7 +3,10 @@
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import type { Profile } from "@/types";
-type StudentWithStats = Profile & { user_stats_cache: any | null };
+type StudentWithStats = Profile & {
+  user_stats_cache: any | null;
+  attempts?: { total: number; completed: number };
+};
 
 const ACTIVE_NOW_WINDOW_MINUTES = 5;
 
@@ -209,11 +212,16 @@ function StudentDetailModal({
             <div className='grid grid-cols-3 gap-4'>
               <div className='bg-blue-50 dark:bg-blue-950/30 rounded-lg p-4'>
                 <div className='text-xs text-blue-600 dark:text-blue-400 font-semibold'>
-                  Total Sessions
+                  Completed Sessions
                 </div>
                 <div className='text-2xl font-bold text-blue-900 dark:text-blue-300'>
                   {stats?.total_sessions || 0}
                 </div>
+                {(student.attempts?.total ?? 0) > (stats?.total_sessions ?? 0) && (
+                  <div className='text-xs text-blue-500 dark:text-blue-400/80 mt-0.5'>
+                    {student.attempts!.total} started total
+                  </div>
+                )}
               </div>
               <div className='bg-green-50 dark:bg-green-950/30 rounded-lg p-4'>
                 <div className='text-xs text-green-600 dark:text-green-400 font-semibold'>
@@ -500,7 +508,7 @@ export default function StudentsTable({
         if (performanceFilter === "passing") return avg >= 70;
         if (performanceFilter === "failing") return avg < 70 && avg > 0;
         if (performanceFilter === "nosessions")
-          return !s.user_stats_cache?.total_sessions;
+          return !s.attempts?.total;
         return true;
       });
     }
@@ -700,7 +708,7 @@ export default function StudentsTable({
               <th className='px-4 py-3'>Name</th>
               <th className='px-4 py-3'>Department</th>
               <th className='px-4 py-3'>Exam</th>
-              <th className='px-4 py-3'>Sessions</th>
+              <th className='px-4 py-3' title='Completed sessions (started sessions in parentheses if higher)'>Sessions</th>
               <th className='px-4 py-3'>Avg Score</th>
               <th className='px-4 py-3'>Best Score</th>
               <th className='px-4 py-3'>Plan</th>
@@ -771,6 +779,14 @@ export default function StudentsTable({
                   </td>
                   <td className='px-4 py-3 text-gray-600 dark:text-gray-400'>
                     {stats?.total_sessions ?? 0}
+                    {(s.attempts?.total ?? 0) > (stats?.total_sessions ?? 0) && (
+                      <span
+                        className='text-xs text-gray-400 dark:text-gray-500 ml-1'
+                        title='Sessions started but not finished'
+                      >
+                        ({s.attempts!.total} started)
+                      </span>
+                    )}
                   </td>
                   <td className='px-4 py-3'>
                     {stats?.avg_score_percent ? (
