@@ -11,6 +11,12 @@ const adminLinks = [
     description: 'Overview & stats'
   },
   {
+    href: '/admin/students',
+    label: 'Students',
+    icon: '👥',
+    description: 'Roster & activity'
+  },
+  {
     href: '/admin/review',
     label: 'Review Queue',
     icon: '✅',
@@ -36,7 +42,7 @@ export default function AdminNav() {
         <span className="text-lg font-bold text-[#1B2A4A] dark:text-[#e2e8f0]">Admin Tools</span>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
         {adminLinks.map(link => {
           const isActive = pathname === link.href
           return (

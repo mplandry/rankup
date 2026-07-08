@@ -1,8 +1,10 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
-import { BookOpen, Users, Upload, Database, List, ClipboardCheck, Sparkles, Wand2, Bell } from "lucide-react";
+import { BookOpen, Users, Upload, Database, List, ClipboardCheck, Sparkles, Wand2, Bell, Activity } from "lucide-react";
 import ExamTypeSwitcher from "@/components/admin/ExamTypeSwitcher";
 import AdminReadingList from "@/components/admin/AdminReadingList";
+
+const ACTIVE_NOW_WINDOW_MINUTES = 5;
 
 export default async function AdminPage() {
   const supabase = await createClient();
@@ -11,7 +13,11 @@ export default async function AdminPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const [questionsRes, studentsRes, sessionsRes, profileRes, pendingReviewRes] =
+  const activeSinceIso = new Date(
+    Date.now() - ACTIVE_NOW_WINDOW_MINUTES * 60_000,
+  ).toISOString();
+
+  const [questionsRes, studentsRes, sessionsRes, profileRes, pendingReviewRes, activeNowRes] =
     await Promise.all([
       supabase
         .from("questions")
@@ -32,28 +38,43 @@ export default async function AdminPage() {
         .select("*", { count: "exact", head: true })
         .eq("is_active", true)
         .in("review_status", ["pending", "needs_revision"]),
+      supabase
+        .from("profiles")
+        .select("*", { count: "exact", head: true })
+        .eq("role", "student")
+        .gte("last_active_at", activeSinceIso),
     ]);
 
   const pendingReview = pendingReviewRes.count ?? 0;
 
   const stats = [
     {
+      label: "Active Now",
+      value: activeNowRes.count ?? 0,
+      icon: Activity,
+      href: "/admin/students",
+      live: true,
+    },
+    {
       label: "Active Questions",
       value: questionsRes.count ?? 0,
       icon: Database,
       href: "/admin/questions",
+      live: false,
     },
     {
       label: "Students",
       value: studentsRes.count ?? 0,
       icon: Users,
       href: "/admin/students",
+      live: false,
     },
     {
       label: "Exams Completed",
       value: sessionsRes.count ?? 0,
       icon: BookOpen,
       href: "/admin/students",
+      live: false,
     },
   ];
 
@@ -72,7 +93,7 @@ export default async function AdminPage() {
       </div>
 
       <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8'>
-        {stats.map(({ label, value, icon: Icon, href }) => (
+        {stats.map(({ label, value, icon: Icon, href, live }) => (
           <Link
             key={label}
             href={href}
@@ -82,9 +103,20 @@ export default async function AdminPage() {
               <div className='w-9 h-9 bg-[#1B2A4A]/10 dark:bg-white/10 rounded-lg flex items-center justify-center'>
                 <Icon className='w-5 h-5 text-[#1B2A4A] dark:text-[#e2e8f0]' />
               </div>
+              {live && value > 0 && (
+                <span className='relative flex h-2.5 w-2.5'>
+                  <span className='animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75'></span>
+                  <span className='relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500'></span>
+                </span>
+              )}
             </div>
             <div className='text-3xl font-bold text-[#1B2A4A] dark:text-[#e2e8f0]'>{value}</div>
-            <div className='text-sm text-gray-500 dark:text-gray-400 mt-0.5'>{label}</div>
+            <div className='text-sm text-gray-500 dark:text-gray-400 mt-0.5'>
+              {label}
+              {live && (
+                <span className='text-gray-400 dark:text-gray-500'> (last {ACTIVE_NOW_WINDOW_MINUTES}m)</span>
+              )}
+            </div>
           </Link>
         ))}
       </div>

@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import type { Profile } from "@/types";
 type StudentWithStats = Profile & { user_stats_cache: any | null };
 
+const ACTIVE_NOW_WINDOW_MINUTES = 5;
+
 // ============================================================================
 // UTILITY FUNCTIONS
 // ============================================================================
@@ -26,6 +28,24 @@ function timeAgo(date: string | null): string {
   if (diffDays < 30) return `${Math.floor(diffDays / 7)}w ago`;
   if (diffDays < 365) return `${Math.floor(diffDays / 30)}mo ago`;
   return `${Math.floor(diffDays / 365)}y ago`;
+}
+
+// last_active_at is a heartbeat updated continuously while the app is open;
+// last_sign_in_at only updates once, at login. Use whichever is more recent
+// as the source of truth for "Last Active".
+function mostRecentActivity(student: StudentWithStats): string | null {
+  const times = [student.last_active_at, student.last_sign_in_at].filter(
+    (t): t is string => !!t,
+  );
+  if (times.length === 0) return null;
+  return times.reduce((latest, t) => (t > latest ? t : latest));
+}
+
+function isActiveNow(student: StudentWithStats): boolean {
+  if (!student.last_active_at) return false;
+  const diffMins =
+    (Date.now() - new Date(student.last_active_at).getTime()) / 60000;
+  return diffMins <= ACTIVE_NOW_WINDOW_MINUTES;
 }
 
 function exportToCSV(students: StudentWithStats[]) {
@@ -132,7 +152,11 @@ function StudentDetailModal({
               <div>
                 <div className='text-xs text-gray-500 dark:text-gray-400'>Last Active</div>
                 <div className='font-semibold'>
-                  {timeAgo(student.last_sign_in_at || null)}
+                  {isActiveNow(student) ? (
+                    <span className='text-green-600 dark:text-green-400'>Active now</span>
+                  ) : (
+                    timeAgo(mostRecentActivity(student))
+                  )}
                 </div>
               </div>
               <div>
@@ -449,19 +473,24 @@ export default function StudentsTable({
 
     // Activity filter
     if (activityFilter !== "all") {
-      const now = new Date();
-      filtered = filtered.filter((s) => {
-        if (!s.last_sign_in_at) return activityFilter === "inactive";
-        const lastActive = new Date(s.last_sign_in_at);
-        const daysSince = Math.floor(
-          (now.getTime() - lastActive.getTime()) / (1000 * 60 * 60 * 24),
-        );
+      if (activityFilter === "live") {
+        filtered = filtered.filter((s) => isActiveNow(s));
+      } else {
+        const now = new Date();
+        filtered = filtered.filter((s) => {
+          const lastActiveIso = mostRecentActivity(s);
+          if (!lastActiveIso) return activityFilter === "inactive";
+          const lastActive = new Date(lastActiveIso);
+          const daysSince = Math.floor(
+            (now.getTime() - lastActive.getTime()) / (1000 * 60 * 60 * 24),
+          );
 
-        if (activityFilter === "active7") return daysSince <= 7;
-        if (activityFilter === "active30") return daysSince <= 30;
-        if (activityFilter === "inactive") return daysSince > 30;
-        return true;
-      });
+          if (activityFilter === "active7") return daysSince <= 7;
+          if (activityFilter === "active30") return daysSince <= 30;
+          if (activityFilter === "inactive") return daysSince > 30;
+          return true;
+        });
+      }
     }
 
     // Performance filter
@@ -588,6 +617,7 @@ export default function StudentsTable({
             className='px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-sm'
           >
             <option value='all'>All Activity</option>
+            <option value='live'>Active Now</option>
             <option value='active7'>Active (7 days)</option>
             <option value='active30'>Active (30 days)</option>
             <option value='inactive'>Inactive (30+ days)</option>
@@ -710,7 +740,16 @@ export default function StudentsTable({
                       onClick={() => setDetailStudent(s)}
                       className='text-left hover:text-blue-600 dark:hover:text-blue-400'
                     >
-                      <div className='font-medium text-gray-800 dark:text-gray-200 hover:underline'>
+                      <div className='font-medium text-gray-800 dark:text-gray-200 hover:underline flex items-center gap-1.5'>
+                        {isActiveNow(s) && (
+                          <span
+                            className='relative flex h-2 w-2 shrink-0'
+                            title='Active now'
+                          >
+                            <span className='animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75'></span>
+                            <span className='relative inline-flex rounded-full h-2 w-2 bg-green-500'></span>
+                          </span>
+                        )}
                         {s.full_name || "—"}
                       </div>
                       <div className='text-xs text-gray-400 dark:text-gray-500'>{s.email}</div>
@@ -783,7 +822,11 @@ export default function StudentsTable({
                     )}
                   </td>
                   <td className='px-4 py-3 text-gray-500 dark:text-gray-400 text-xs'>
-                    {timeAgo(s.last_sign_in_at || null)}
+                    {isActiveNow(s) ? (
+                      <span className='text-green-600 dark:text-green-400 font-semibold'>Active now</span>
+                    ) : (
+                      timeAgo(mostRecentActivity(s))
+                    )}
                   </td>
                   <td className='px-4 py-3 whitespace-nowrap'>
                     {isConfirming ? (
