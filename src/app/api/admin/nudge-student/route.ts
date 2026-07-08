@@ -49,6 +49,32 @@ function daysLeftEmailHtml(name: string, daysLeft: number) {
   `;
 }
 
+// No day-count/urgency language at all — for cases where the countdown
+// framing isn't the right approach and this is just a plain "come try it"
+// conversion push instead of a trial-ending reminder.
+function generalEmailHtml(name: string) {
+  return `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+      <h2 style="color: ${FIRE_NAVY};">Hey ${name},</h2>
+      <p>Noticed you signed up for RankUp but haven't had a chance to dive in yet.</p>
+      <p>Here's what's waiting for you:</p>
+      <ul>
+        <li>📚 2,500+ MA-specific exam questions</li>
+        <li>📝 90-question exam simulations</li>
+        <li>🎯 Weak area analysis &amp; progress tracking</li>
+      </ul>
+      <p style="margin-top: 30px;">
+        <a href="https://rankupfire.com/pricing" style="background: ${FIRE_ORANGE}; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: bold;">
+          Take a Look
+        </a>
+      </p>
+      <p style="color: #666; font-size: 12px; margin-top: 40px;">
+        You're receiving this because you signed up for RankUp.
+      </p>
+    </div>
+  `;
+}
+
 function expiredEmailHtml(name: string) {
   return `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -79,10 +105,11 @@ export async function POST(request: Request) {
     const providedHeaderSecret = request.headers.get("x-webhook-secret");
 
     const body = await request.json().catch(() => ({}));
-    const { email, id, secret: providedBodySecret } = body as {
+    const { email, id, secret: providedBodySecret, variant } = body as {
       email?: string;
       id?: string;
       secret?: string;
+      variant?: "auto" | "general";
     };
 
     const providedSecret = providedHeaderSecret || providedBodySecret;
@@ -121,6 +148,26 @@ export async function POST(request: Request) {
     const remaining = daysRemaining(profile.trial_ends_at, profile.trial_extended_days);
     const name = profile.full_name || "there";
     const resend = new Resend(process.env.RESEND_API_KEY || "");
+
+    // "general" is a plain conversion push with no days-left/urgency framing.
+    // It doesn't stamp the trial_nudge_*_sent_at dedup columns, since those
+    // gate the automated milestone emails (cron sweep + the "auto" variant
+    // here) and this isn't one of those milestones.
+    if (variant === "general") {
+      const sendResult = await resend.emails.send({
+        from: "RankUp <support@rankupfire.com>",
+        to: profile.email,
+        subject: "A quick look at what RankUp can do for you",
+        html: generalEmailHtml(name),
+      });
+      return NextResponse.json({
+        ok: true,
+        student: { id: profile.id, email: profile.email, name },
+        daysRemaining: remaining,
+        template: "general",
+        resend: sendResult,
+      });
+    }
 
     let template: "days_left" | "expired";
     let sendResult;
