@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
-import { BookOpen, Users, Upload, Database, List, ClipboardCheck, Sparkles, Wand2, Bell, Activity } from "lucide-react";
+import { BookOpen, Users, Upload, Database, List, ClipboardCheck, Sparkles, Wand2, Bell, Activity, BarChart3, Video } from "lucide-react";
 import ExamTypeSwitcher from "@/components/admin/ExamTypeSwitcher";
 import AdminReadingList from "@/components/admin/AdminReadingList";
 
@@ -224,6 +224,41 @@ export default async function AdminPage() {
             </div>
           </div>
         </Link>
+      </div>
+
+      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8'>
+        <a
+          href="https://analytics.google.com/analytics/web/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-4 bg-white dark:bg-[#111827] border border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:border-red-300 dark:hover:border-red-700 hover:shadow-sm transition-all"
+        >
+          <div className="w-11 h-11 bg-indigo-100 dark:bg-indigo-950/40 rounded-xl flex items-center justify-center">
+            <BarChart3 className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+          </div>
+          <div>
+            <div className="font-semibold text-[#1B2A4A] dark:text-[#e2e8f0]">GA4 Realtime</div>
+            <div className="text-sm text-gray-500 dark:text-gray-400">
+              Live visitor traffic
+            </div>
+          </div>
+        </a>
+        <a
+          href="https://clarity.microsoft.com/projects/view/xakb835hpu/dashboard"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-4 bg-white dark:bg-[#111827] border border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:border-red-300 dark:hover:border-red-700 hover:shadow-sm transition-all"
+        >
+          <div className="w-11 h-11 bg-cyan-100 dark:bg-cyan-950/40 rounded-xl flex items-center justify-center">
+            <Video className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />
+          </div>
+          <div>
+            <div className="font-semibold text-[#1B2A4A] dark:text-[#e2e8f0]">Clarity</div>
+            <div className="text-sm text-gray-500 dark:text-gray-400">
+              Session replays & heatmaps
+            </div>
+          </div>
+        </a>
       </div>
 
       <AdminReadingList />
