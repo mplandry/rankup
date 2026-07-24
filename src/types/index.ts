@@ -11,6 +11,7 @@ export interface Profile {
   subscription_plan: string | null;
   subscription_tier: string | null;
   trial_ends_at: string | null;
+  trial_extended_days: number | null;
   created_at: string;
   last_sign_in_at: string | null;
   last_active_at: string | null;

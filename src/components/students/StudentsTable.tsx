@@ -51,6 +51,37 @@ function isActiveNow(student: StudentWithStats): boolean {
   return diffMins <= ACTIVE_NOW_WINDOW_MINUTES;
 }
 
+// Mirrors the effective-end-date logic in TrialExpirationPrompt.tsx:
+// trial_ends_at + trial_extended_days (manual admin extensions).
+type TrialInfo = {
+  label: string;
+  detail: string; // exact end date for tooltips
+  expired: boolean;
+  daysRemaining: number;
+} | null;
+
+function trialInfo(student: StudentWithStats): TrialInfo {
+  if (student.subscription_status === "active") return null;
+  if (!student.trial_ends_at) return null;
+
+  const endDate = new Date(student.trial_ends_at);
+  endDate.setDate(endDate.getDate() + (student.trial_extended_days || 0));
+
+  const daysRemaining = Math.ceil(
+    (endDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24),
+  );
+  const expired = daysRemaining <= 0;
+
+  return {
+    label: expired
+      ? `Expired ${Math.abs(daysRemaining)}d ago`
+      : `${daysRemaining}d left`,
+    detail: endDate.toLocaleDateString(),
+    expired,
+    daysRemaining: Math.max(0, daysRemaining),
+  };
+}
+
 function exportToCSV(students: StudentWithStats[]) {
   const headers = [
     "Name",
@@ -62,11 +93,14 @@ function exportToCSV(students: StudentWithStats[]) {
     "Best Score %",
     "Plan",
     "Payment Status",
+    "Trial Ends",
     "Last Active",
     "Created Date",
   ];
 
-  const rows = students.map((s) => [
+  const rows = students.map((s) => {
+    const trial = trialInfo(s);
+    return [
     s.full_name || "",
     s.email,
     s.department || "",
@@ -76,11 +110,13 @@ function exportToCSV(students: StudentWithStats[]) {
     s.user_stats_cache?.best_score_percent || 0,
     s.subscription_plan || "Free",
     s.subscription_status || "—",
+    trial ? `${trial.detail} (${trial.label})` : "—",
     s.last_sign_in_at
       ? new Date(s.last_sign_in_at).toLocaleDateString()
       : "Never",
     new Date(s.created_at).toLocaleDateString(),
-  ]);
+    ];
+  });
 
   const csvContent = [
     headers.join(","),
@@ -199,6 +235,20 @@ function StudentDetailModal({
                   ) : (
                     "—"
                   )}
+                </div>
+              </div>
+              <div>
+                <div className='text-xs text-gray-500 dark:text-gray-400'>Trial Ends</div>
+                <div className='font-semibold'>
+                  {(() => {
+                    const trial = trialInfo(student);
+                    if (!trial) return "—";
+                    return (
+                      <span className={trial.expired ? "text-red-600 dark:text-red-400" : ""}>
+                        {trial.detail} ({trial.label})
+                      </span>
+                    );
+                  })()}
                 </div>
               </div>
             </div>
@@ -713,6 +763,7 @@ export default function StudentsTable({
               <th className='px-4 py-3'>Best Score</th>
               <th className='px-4 py-3'>Plan</th>
               <th className='px-4 py-3'>Payment</th>
+              <th className='px-4 py-3'>Trial Ends</th>
               <th className='px-4 py-3'>Last Active</th>
               <th className='px-4 py-3'>Actions</th>
             </tr>
@@ -720,7 +771,7 @@ export default function StudentsTable({
           <tbody className='divide-y divide-gray-100 dark:divide-gray-800'>
             {filteredStudents.length === 0 && (
               <tr>
-                <td colSpan={11} className='px-4 py-8 text-center text-gray-400 dark:text-gray-500'>
+                <td colSpan={12} className='px-4 py-8 text-center text-gray-400 dark:text-gray-500'>
                   {students.length === 0
                     ? "No students registered yet"
                     : "No students match your filters"}
@@ -836,6 +887,30 @@ export default function StudentsTable({
                     ) : (
                       "—"
                     )}
+                  </td>
+                  <td className='px-4 py-3'>
+                    {(() => {
+                      const trial = trialInfo(s);
+                      if (!trial) {
+                        return (
+                          <span className='text-xs text-gray-400 dark:text-gray-500'>—</span>
+                        );
+                      }
+                      return (
+                        <span
+                          title={`Trial ends ${trial.detail}`}
+                          className={`text-xs font-semibold px-2 py-0.5 rounded-full whitespace-nowrap ${
+                            trial.expired
+                              ? "bg-red-100 dark:bg-red-950/40 text-red-700 dark:text-red-400"
+                              : trial.daysRemaining <= 3
+                                ? "bg-yellow-100 dark:bg-yellow-950/40 text-yellow-700 dark:text-yellow-400"
+                                : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400"
+                          }`}
+                        >
+                          {trial.label}
+                        </span>
+                      );
+                    })()}
                   </td>
                   <td className='px-4 py-3 text-gray-500 dark:text-gray-400 text-xs'>
                     {isActiveNow(s) ? (
