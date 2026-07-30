@@ -32,6 +32,22 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 
+  // Log every verified event for debugging/auditability, regardless of
+  // whether we have a handler for it below. Ignore duplicate-insert errors
+  // (23505) since Stripe can redeliver the same event id on retry.
+  const { error: logError } = await supabase
+    .from("stripe_webhook_events")
+    .insert({
+      event_id: event.id,
+      event_type: event.type,
+      payload: event as unknown as Record<string, unknown>,
+      processed: false,
+    });
+
+  if (logError && logError.code !== "23505") {
+    console.error("Failed to log webhook event:", logError);
+  }
+
   try {
     switch (event.type) {
       case "checkout.session.completed": {
@@ -44,22 +60,66 @@ export async function POST(request: NextRequest) {
           break;
         }
 
+        const plan = subscriptionPlan || "monthly";
+
         await supabase
           .from("profiles")
           .update({
             subscription_status: "active",
-            subscription_plan: subscriptionPlan || "monthly",
+            subscription_tier: "full_access",
+            subscription_plan: plan,
+            subscription_started_at: new Date().toISOString(),
             stripe_customer_id: session.customer as string,
+            updated_at: new Date().toISOString(),
           })
           .eq("id", userId);
 
         console.log(`✅ Activated subscription for user ${userId}`);
 
+        // Record the payment. Retrieve the PaymentIntent for the actual
+        // payment method used (session.payment_method_types is the list of
+        // *allowed* methods, not what the customer actually paid with).
+        if (session.payment_intent) {
+          const paymentIntentId =
+            typeof session.payment_intent === "string"
+              ? session.payment_intent
+              : session.payment_intent.id;
+
+          try {
+            const paymentIntent =
+              await stripe.paymentIntents.retrieve(paymentIntentId);
+
+            const { error: paymentError } = await supabase
+              .from("payment_transactions")
+              .insert({
+                user_id: userId,
+                stripe_payment_intent_id: paymentIntentId,
+                amount_cents: session.amount_total ?? paymentIntent.amount,
+                currency: session.currency ?? paymentIntent.currency,
+                status:
+                  session.payment_status === "paid" ? "succeeded" : paymentIntent.status,
+                payment_method: paymentIntent.payment_method_types?.[0] ?? null,
+                plan_type: plan,
+              });
+
+            if (paymentError && paymentError.code !== "23505") {
+              console.error("Failed to record payment transaction:", paymentError);
+            } else {
+              console.log(`✅ Recorded payment for user ${userId}`);
+            }
+          } catch (piError) {
+            console.error("Failed to retrieve/record payment intent:", piError);
+          }
+        } else {
+          console.error(
+            `checkout.session.completed for user ${userId} has no payment_intent`,
+          );
+        }
+
         // Referral payout: if this user was referred and doesn't already have
         // a reward on file, create one. Referrer's credit unlocks in 30 days
         // (see /api/referral/unlock); the referred user's discount, if any,
         // was already applied at checkout via a one-time coupon.
-        const plan = subscriptionPlan || "monthly";
         if (plan === "monthly" || plan === "exam_prep") {
           const { data: referredProfile } = await supabase
             .from("profiles")
@@ -113,7 +173,7 @@ export async function POST(request: NextRequest) {
             subscription.status === "active" ? "active" : "inactive";
           await supabase
             .from("profiles")
-            .update({ subscription_status: newStatus })
+            .update({ subscription_status: newStatus, updated_at: new Date().toISOString() })
             .eq("id", profile.id);
 
           console.log(`✅ Updated subscription status for user ${profile.id}`);
@@ -134,6 +194,11 @@ export async function POST(request: NextRequest) {
       case "charge.refunded": {
         const charge = event.data.object as Stripe.Charge;
         const customerId = charge.customer as string | null;
+
+        await supabase
+          .from("payment_transactions")
+          .update({ status: "refunded", updated_at: new Date().toISOString() })
+          .eq("stripe_payment_intent_id", charge.payment_intent as string);
 
         if (customerId) {
           const { data: profile } = await supabase
@@ -183,6 +248,11 @@ export async function POST(request: NextRequest) {
       default:
         console.log(`Unhandled event type: ${event.type}`);
     }
+
+    await supabase
+      .from("stripe_webhook_events")
+      .update({ processed: true, processed_at: new Date().toISOString() })
+      .eq("event_id", event.id);
 
     return NextResponse.json({ received: true });
   } catch (error: any) {
