@@ -28,24 +28,24 @@ function daysRemaining(trialEndsAt: string, trialExtendedDays: number | null) {
 
 function daysLeftEmailHtml(name: string, daysLeft: number) {
   return `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-      <h2 style="color: ${FIRE_NAVY};">Hey ${name}! ⏰</h2>
-      <p>Your RankUp free trial ends in <strong>${daysLeft} day${daysLeft === 1 ? "" : "s"}</strong>.</p>
-      <p>Subscribe now to keep unlimited access to:</p>
-      <ul>
-        <li>📚 2,500+ MA-specific exam questions</li>
-        <li>📝 90-question exam simulations</li>
-        <li>🎯 Weak area analysis &amp; progress tracking</li>
-      </ul>
-      <p style="margin-top: 30px;">
-        <a href="https://rankupfire.com/pricing" style="background: ${FIRE_ORANGE}; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: bold;">
-          View Plans &amp; Subscribe
-        </a>
-      </p>
-      <p style="color: #666; font-size: 12px; margin-top: 40px;">
-        You're receiving this because your RankUp trial is ending soon.
-      </p>
-    </div>
+  <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+    <h2 style="color: ${FIRE_NAVY};">Hey ${name}! ⏰</h2>
+    <p>Your RankUp free trial ends in <strong>${daysLeft} day${daysLeft === 1 ? "" : "s"}</strong>.</p>
+    <p>Subscribe now to keep unlimited access to:</p>
+    <ul>
+      <li>📚 2,500+ MA-specific exam questions</li>
+      <li>📝 90-question exam simulations</li>
+      <li>🎯 Weak area analysis &amp; progress tracking</li>
+    </ul>
+    <p style="margin-top: 30px;">
+      <a href="https://rankupfire.com/pricing" style="background: ${FIRE_ORANGE}; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: bold;">
+        View Plans &amp; Subscribe
+      </a>
+    </p>
+    <p style="color: #666; font-size: 12px; margin-top: 40px;">
+      You're receiving this because your RankUp trial is ending soon.
+    </p>
+  </div>
   `;
 }
 
@@ -54,47 +54,47 @@ function daysLeftEmailHtml(name: string, daysLeft: number) {
 // conversion push instead of a trial-ending reminder.
 function generalEmailHtml(name: string) {
   return `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-      <h2 style="color: ${FIRE_NAVY};">Hey ${name},</h2>
-      <p>Noticed you signed up for RankUp but haven't had a chance to dive in yet.</p>
-      <p>Here's what's waiting for you:</p>
-      <ul>
-        <li>📚 2,500+ MA-specific exam questions</li>
-        <li>📝 90-question exam simulations</li>
-        <li>🎯 Weak area analysis &amp; progress tracking</li>
-      </ul>
-      <p style="margin-top: 30px;">
-        <a href="https://rankupfire.com/pricing" style="background: ${FIRE_ORANGE}; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: bold;">
-          Take a Look
-        </a>
-      </p>
-      <p style="color: #666; font-size: 12px; margin-top: 40px;">
-        You're receiving this because you signed up for RankUp.
-      </p>
-    </div>
+  <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+    <h2 style="color: ${FIRE_NAVY};">Hey ${name},</h2>
+    <p>Noticed you signed up for RankUp but haven't had a chance to dive in yet.</p>
+    <p>Here's what's waiting for you:</p>
+    <ul>
+      <li>📚 2,500+ MA-specific exam questions</li>
+      <li>📝 90-question exam simulations</li>
+      <li>🎯 Weak area analysis &amp; progress tracking</li>
+    </ul>
+    <p style="margin-top: 30px;">
+      <a href="https://rankupfire.com/pricing" style="background: ${FIRE_ORANGE}; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: bold;">
+        Take a Look
+      </a>
+    </p>
+    <p style="color: #666; font-size: 12px; margin-top: 40px;">
+      You're receiving this because you signed up for RankUp.
+    </p>
+  </div>
   `;
 }
 
 function expiredEmailHtml(name: string) {
   return `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-      <h2 style="color: ${FIRE_NAVY};">Hey ${name},</h2>
-      <p>Your RankUp free trial has ended. You're now limited to 1 question/day until you subscribe.</p>
-      <p><strong>Don't lose momentum before exam day.</strong> Subscribe now to get back to:</p>
-      <ul>
-        <li>📚 Unlimited study mode &amp; 2,500+ questions</li>
-        <li>📝 Full 90-question exam simulations</li>
-        <li>🎯 Your saved progress and weak-area analysis</li>
-      </ul>
-      <p style="margin-top: 30px;">
-        <a href="https://rankupfire.com/pricing" style="background: ${FIRE_RED}; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: bold;">
-          Subscribe Now
-        </a>
-      </p>
-      <p style="color: #666; font-size: 12px; margin-top: 40px;">
-        You're receiving this because your RankUp trial has expired.
-      </p>
-    </div>
+  <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+    <h2 style="color: ${FIRE_NAVY};">Hey ${name},</h2>
+    <p>Your RankUp free trial has ended. You're now limited to 1 question/day until you subscribe.</p>
+    <p><strong>Don't lose momentum before exam day.</strong> Subscribe now to get back to:</p>
+    <ul>
+      <li>📚 Unlimited study mode &amp; 2,500+ questions</li>
+      <li>📝 Full 90-question exam simulations</li>
+      <li>🎯 Your saved progress and weak-area analysis</li>
+    </ul>
+    <p style="margin-top: 30px;">
+      <a href="https://rankupfire.com/pricing" style="background: ${FIRE_RED}; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: bold;">
+        Subscribe Now
+      </a>
+    </p>
+    <p style="color: #666; font-size: 12px; margin-top: 40px;">
+      You're receiving this because your RankUp trial has expired.
+    </p>
+  </div>
   `;
 }
 
@@ -105,11 +105,12 @@ export async function POST(request: Request) {
     const providedHeaderSecret = request.headers.get("x-webhook-secret");
 
     const body = await request.json().catch(() => ({}));
-    const { email, id, secret: providedBodySecret, variant } = body as {
+    const { email, id, secret: providedBodySecret, variant, force } = body as {
       email?: string;
       id?: string;
       secret?: string;
       variant?: "auto" | "general";
+      force?: boolean;
     };
 
     const providedSecret = providedHeaderSecret || providedBodySecret;
@@ -138,6 +139,24 @@ export async function POST(request: Request) {
     if (fetchError || !profile) {
       return NextResponse.json({ error: "Student not found" }, { status: 404 });
     }
+
+    // Guard: never send a "come back / your trial is ending" nudge to
+    // someone who has already converted. This is a manual, on-demand tool —
+    // an admin can look up a student by email/id without first checking
+    // their current status, so this can't rely on the caller filtering the
+    // candidate list the way the cron sweep's query does.
+    if (profile.subscription_status === "active" && !force) {
+      return NextResponse.json(
+        {
+          error: "Student already has an active subscription — nudge skipped",
+          student: { id: profile.id, email: profile.email },
+          subscription_status: profile.subscription_status,
+          hint: "Pass { force: true } to send anyway if this is intentional.",
+        },
+        { status: 409 },
+      );
+    }
+
     if (!profile.trial_ends_at) {
       return NextResponse.json(
         { error: "Student has no trial_ends_at set — nothing to nudge about" },
