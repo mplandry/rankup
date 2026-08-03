@@ -87,9 +87,9 @@ export default function ExamSession({ sessionId, timeLimitSecs, startedAt, sessi
   const unansweredCount = sessionQuestions.length - answeredCount
 
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex flex-col lg:flex-row h-screen overflow-y-auto lg:overflow-hidden">
       {/* Left: Question */}
-      <div className="flex-1 flex flex-col overflow-auto">
+      <div className="flex-1 flex flex-col lg:overflow-auto">
         {/* Top bar */}
         <div className="flex items-center justify-between px-6 py-3 bg-[#1B2A4A] text-white sticky top-0 z-10">
           <div className="text-sm font-medium">
@@ -151,7 +151,7 @@ export default function ExamSession({ sessionId, timeLimitSecs, startedAt, sessi
       </div>
 
       {/* Right: Nav grid */}
-      <div className="w-56 bg-white dark:bg-[#111827] border-l border-gray-200 dark:border-gray-700 flex flex-col">
+      <div className="w-full lg:w-56 bg-white dark:bg-[#111827] border-t lg:border-t-0 lg:border-l border-gray-200 dark:border-gray-700 flex flex-col">
         <div className="p-4 border-b border-gray-100 dark:border-gray-800">
           <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Progress</div>
           <div className="text-sm text-gray-700 dark:text-gray-300">
@@ -159,7 +159,7 @@ export default function ExamSession({ sessionId, timeLimitSecs, startedAt, sessi
             <span className="font-semibold text-gray-400 dark:text-gray-500">{unansweredCount}</span> left
           </div>
         </div>
-        <div className="flex-1 overflow-auto p-3">
+        <div className="p-3 lg:flex-1 lg:overflow-auto">
           <ExamQuestionNav
             total={sessionQuestions.length}
             current={index}
