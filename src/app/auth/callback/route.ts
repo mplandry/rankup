@@ -8,7 +8,21 @@ export async function GET(request: Request) {
 
   if (code) {
     const supabase = await createClient()
-    await supabase.auth.exchangeCodeForSession(code)
+    const { error } = await supabase.auth.exchangeCodeForSession(code)
+
+    if (!error) {
+      return NextResponse.redirect(`${origin}${next}`)
+    }
+
+    // Code was invalid, expired, or already used — this is the common case
+    // when an email client (e.g. Gmail's link-scanning) opens the link
+    // before the user does, or the user taps an old link twice. Send them
+    // back to request a fresh one instead of landing on a page with a
+    // silent "no session" error.
+    const fallbackPath = next.startsWith('/reset-password') ? '/reset-password' : '/login'
+    const redirectUrl = new URL(fallbackPath, origin)
+    redirectUrl.searchParams.set('error', 'link_expired')
+    return NextResponse.redirect(redirectUrl)
   }
 
   return NextResponse.redirect(`${origin}${next}`)
