@@ -52,6 +52,7 @@ export default async function FlashcardSessionPage({ params }: Props) {
       `,
       )
       .eq("is_active", true)
+      .eq("exam_cycle", "2026")
       .eq("flashcard_eligible", true)
       .in("exam_type", examTypes)
       .range(from, from + PAGE_SIZE - 1);

@@ -70,12 +70,16 @@ export async function POST(request: Request) {
   const eligibilityField = mode === "exam" ? "exam_eligible" : "study_eligible";
   const defaultCount = mode === "exam" ? EXAM_QUESTION_COUNT : DEFAULT_STUDY_COUNT;
 
+  // 2026 and 2027 question pools never mix. Default is the current 2026 pool.
+  const examCycle = filters?.exam_cycle === "2027" ? "2027" : "2026";
+
   let query = supabase
     .from("questions")
     .select("*")
     .eq("is_active", true)
     .eq("review_status", "approved")
     .eq(eligibilityField, true)
+    .eq("exam_cycle", examCycle)
     .in("exam_type", examTypes);
 
   if (filters?.book_title) query = query.eq("book_title", filters.book_title);
@@ -115,6 +119,7 @@ export async function POST(request: Request) {
       status: "in_progress",
       total_questions: selected.length,
       filters: filters || {},
+      exam_cycle: examCycle,
     })
     .select()
     .single();

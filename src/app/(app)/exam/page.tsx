@@ -24,6 +24,7 @@ export default async function ExamPage() {
     .from('questions')
     .select('id', { count: 'exact', head: true })
     .eq('is_active', true)
+    .eq('exam_cycle', '2026')
     .eq('exam_eligible', true)
     .in('exam_type', examTypes)
 

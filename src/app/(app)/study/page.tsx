@@ -48,6 +48,7 @@ export default async function StudyPage({
       .from('questions')
       .select('book_title, chapter, topic')
       .eq('is_active', true)
+      .eq('exam_cycle', '2026')
       .eq('study_eligible', true)
       .in('exam_type', examTypes)
       .range(from, from + PAGE_SIZE - 1)
