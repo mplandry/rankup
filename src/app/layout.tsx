@@ -5,7 +5,7 @@ import { ThemeProvider } from '@/components/theme/ThemeProvider'
 
 export const metadata: Metadata = {
   title: 'RankUp',
-  description: 'Firefighter Promotional Exam Prep',
+  description: '2027 MA Statewide Fire Lieutenant & Captain Promotional Exam Prep',
   icons: {
     icon: '/icon.png',
     apple: '/icon.png',

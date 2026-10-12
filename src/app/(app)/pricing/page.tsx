@@ -238,7 +238,7 @@ export default function PricingPage() {
         >
           <div>✓ 2,500+ MA-specific questions</div>
           <div>✓ 33% less than FiredUp</div>
-          <div>✓ Exam date: TBD</div>
+          <div>✓ Exam date: April 12, 2027</div>
         </div>
       </div>
 

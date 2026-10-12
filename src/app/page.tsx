@@ -63,8 +63,8 @@ export default function LandingPage() {
         <div className='hero-content'>
           <div className='hero-left'>
             <div className='badge'>
-              <div className='badge-dot'></div>2027 Massachusetts Fire
-              Promotional Exam
+              <div className='badge-dot'></div>April 12, 2027 &middot; MA Statewide Fire
+              Lieutenant &amp; Captain Promotional Exam
             </div>
             <h1 className='hero-title'>
               <span>PREPARE.</span>
@@ -74,10 +74,10 @@ export default function LandingPage() {
               <span className='red'>GET PROMOTED.</span>
             </h1>
             <p className='hero-subtitle'>
-              The most comprehensive Massachusetts firefighter promotional exam
-              prep platform for 2027. Study smarter with adaptive flashcards,
-              practice exams, and detailed progress tracking built around the MA
-              reading list.
+              The most comprehensive prep platform for the 2027 Massachusetts
+              statewide Lieutenant and Captain promotional exams. Study smarter
+              with adaptive flashcards, practice exams, and detailed progress
+              tracking built around the official 2027 reading lists.
             </p>
             <div className='hero-ctas'>
               <Link href='/signup' className='btn-hero-primary'>
@@ -474,7 +474,7 @@ export default function LandingPage() {
                 icon: Target,
                 cls: "fi-navy",
                 title: "2,500+ Questions",
-                desc: "Covering Building Construction, Company Officers, Massachusetts General Laws, ERG 2024, and more.",
+                desc: "Built from the 2027 reading lists: Building Construction (5th Ed.), Company Officers (7th Ed.), Structural Fire Fighting (3rd Ed.), Strategic & Tactical (4th Ed.), and ERG 2024.",
               },
               {
                 icon: Smartphone,
@@ -611,7 +611,7 @@ export default function LandingPage() {
             Get Started Free
           </Link>
           <p className='cta-note'>
-            Built for the 2027 MA Fire Promotional Exam · Free to get started
+            Built for the April 12, 2027 MA Statewide Lieutenant & Captain Exam · Free to get started
           </p>
         </div>
       </section>
