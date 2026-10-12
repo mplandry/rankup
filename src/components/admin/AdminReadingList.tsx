@@ -4,174 +4,160 @@ import { useState } from "react";
 
 type ExamTier = "lieutenant" | "captain";
 
+// Source: MA HRD Civil Service reading list announcements published Oct 9, 2026.
+// Exam date: April 12, 2027 (Statewide Fire Lieutenant and Statewide Fire Captain).
+
+const BUILDING = {
+  book: "Building Construction Related to the Fire Service",
+  edition: "5th Edition (2026)",
+  publisher: "IFSTA",
+  borderColor: "border-l-green-500",
+  expandBg: "bg-green-50 dark:bg-green-950/30",
+  labelColor: "text-green-600 dark:text-green-400",
+  icon: "🧱",
+  warning: null,
+};
+
+const ERG = {
+  book: "Emergency Response Guidebook",
+  edition: "2024",
+  publisher: "U.S. DOT / PHMSA",
+  chapters: "Selected sections",
+  chapterList: [
+    "Hazard Classification System",
+    "Introduction to the Tables of Markings, Labels and Placards",
+    "Globally Harmonized Systems of Classification and Labeling of Chemicals (GHS)",
+    "Hazard Identification Numbers Displayed on Some Intermodal Containers",
+    "Pipeline Transportation – exclude pg. 27 (“U.S. Pipeline Resources” and “Canadian Pipeline Resources”)",
+    "ERG2024 User’s Guide",
+    "Protective Clothing",
+    "Decontamination",
+    "Fire and Spill Control",
+    "Considerations for Lithium Battery and Electric Vehicle (EV) Fires",
+    "BLEVE and Heat Induced Tear",
+    "BLEVE – Safety Precautions",
+    "Criminal or Terrorist Use of Chemical, Biological and Radiological Agents – exclude pg. 364–366 (“Biological Warfare Agents” up to end of section)",
+  ],
+  borderColor: "border-l-orange-500",
+  expandBg: "bg-orange-50 dark:bg-orange-950/30",
+  labelColor: "text-orange-600 dark:text-orange-400",
+  icon: "⚠️",
+  warning: null,
+};
+
+const COMPANY_OFFICERS = {
+  book: "Fire and Emergency Services Company Officer",
+  edition: "7th Edition (2025)",
+  publisher: "IFSTA",
+  borderColor: "border-l-red-500",
+  expandBg: "bg-red-50 dark:bg-red-950/30",
+  labelColor: "text-red-600 dark:text-red-400",
+  icon: "🔥",
+  warning: null,
+};
+
 const LT_READING_LIST = [
   {
-    book: "Fire & Emergency Services Company Officer",
-    edition: "6th Edition",
-    publisher: "IFSTA",
-    chapters: "Chapters 1–10",
+    ...BUILDING,
+    chapters: "Chapters 2–9, 11, 13",
     chapterList: [
-      "Ch. 1 – Leadership",
-      "Ch. 2 – Supervision",
-      "Ch. 3 – Interpersonal Communications",
-      "Ch. 4 – Administrative Functions",
-      "Ch. 5 – Organizational Structure",
-      "Ch. 6 – Fire Department Communications",
-      "Ch. 7 – Human Resource Management I",
-      "Ch. 8 – Human Resource Management II",
-      "Ch. 9 – Community and Government Relations",
-      "Ch. 10 – Health and Safety",
+      "Ch. 2 – exclude pg. 49–54 (“Fire Resistance” up to “Occupancy Classifications”)",
+      "Ch. 3 – exclude pg. 71–74 (“Seismic Loads” up to “Soil Pressure Load”)",
+      "Ch. 4",
+      "Ch. 5 – exclude pg. 156–158 (“Fire Door Testing” up to “Fire Windows”) and pg. 162–165 (“Interior Finishes Tests” up to end of chapter)",
+      "Ch. 6",
+      "Ch. 7",
+      "Ch. 8",
+      "Ch. 9",
+      "Ch. 11",
+      "Ch. 13",
     ],
-    borderColor: "border-l-red-500",
-    expandBg: "bg-red-50 dark:bg-red-950/30",
-    labelColor: "text-red-600 dark:text-red-400",
-    icon: "🔥",
-    warning: null,
+  },
+  ERG,
+  {
+    ...COMPANY_OFFICERS,
+    chapters: "Chapters 1, 3, 4, 5, 7, 8, 9, 11",
+    chapterList: [
+      "Ch. 1",
+      "Ch. 3",
+      "Ch. 4 – exclude pg. 89–90 (start of chapter up to “Expectations of New Personnel”), pg. 98–100 (“Promotions” up to “Employee Assistance Programs (EAP)”), pg. 109–110 (“Leave Benefits” up to “Conflict Management”), and pg. 113–122 (“Grievances” up to end of chapter)",
+      "Ch. 5 – exclude pg. 137–151 (“Written Communication” up to “Communicating in Emergency Situations”)",
+      "Ch. 7",
+      "Ch. 8",
+      "Ch. 9 – exclude pg. 259–278 (start of chapter up to “Fire Protection Systems”) and pg. 282–311 (“Fire Dynamics” up to end of chapter)",
+      "Ch. 11 – exclude pg. 381–394 (“Property and Environmental Conservation” up to end of chapter)",
+    ],
   },
   {
-    book: "Fire Officer's Handbook of Tactics",
-    edition: "5th Edition",
-    publisher: "PennWell / Moran",
-    chapters: "Chapters 1–12",
+    book: "Structural Fire Fighting: Initial Response Strategy and Tactics",
+    edition: "3rd Edition (2022)",
+    publisher: "IFSTA",
+    chapters: "Chapters 1, 2, 4, 5, 6",
     chapterList: [
-      "Ch. 1 – Command Overview",
-      "Ch. 2 – Building Construction",
-      "Ch. 3 – Pre-fire Planning",
-      "Ch. 4 – Engine Company Operations",
-      "Ch. 5 – Ladder Company Operations",
-      "Ch. 6 – Private Dwellings",
-      "Ch. 7 – Multiple Dwellings",
-      "Ch. 8 – Taxpayers & Row Frames",
-      "Ch. 9 – Garden Apartments",
-      "Ch. 10 – High-Rise Operations",
-      "Ch. 11 – Commercial Buildings",
-      "Ch. 12 – Industrial Occupancies",
+      "Ch. 1",
+      "Ch. 2 – exclude pg. 71–109 (start of chapter up to “Prefire Planning”)",
+      "Ch. 4",
+      "Ch. 5",
+      "Ch. 6",
     ],
     borderColor: "border-l-blue-500",
     expandBg: "bg-blue-50 dark:bg-blue-950/30",
     labelColor: "text-blue-600 dark:text-blue-400",
     icon: "🏗️",
-    warning: null,
-  },
-  {
-    book: "Building Construction Related to the Fire Service",
-    edition: "4th Edition",
-    publisher: "IFSTA",
-    chapters: "Chapters 2–11",
-    chapterList: [
-      "Ch. 2 – Principles of Construction",
-      "Ch. 3 – Wood Construction",
-      "Ch. 4 – Ordinary Construction",
-      "Ch. 5 – Heavy Timber Construction",
-      "Ch. 6 – Non-Combustible Construction",
-      "Ch. 7 – Fire-Resistive Construction",
-      "Ch. 8 – Roof Coverings & Structural Elements",
-      "Ch. 9 – Doors & Windows",
-      "Ch. 10 – Renovations & Additions",
-      "Ch. 11 – High-Rise Buildings",
-    ],
-    borderColor: "border-l-green-500",
-    expandBg: "bg-green-50 dark:bg-green-950/30",
-    labelColor: "text-green-600 dark:text-green-400",
-    icon: "🧱",
     warning: null,
   },
 ];
 
 const CAPT_READING_LIST = [
   {
-    book: "Building Construction Related to the Fire Service",
-    edition: "4th Edition",
-    publisher: "IFSTA",
-    chapters: "Chapters 2–11",
+    ...BUILDING,
+    chapters: "Chapters 2–11, 13",
     chapterList: [
-      "Ch. 2 – Principles of Construction",
-      "Ch. 3 – Wood Construction",
-      "Ch. 4 – Ordinary Construction",
-      "Ch. 5 – Heavy Timber Construction",
-      "Ch. 6 – Non-Combustible Construction",
-      "Ch. 7 – Fire-Resistive Construction",
-      "Ch. 8 – Roof Coverings & Structural Elements",
-      "Ch. 9 – Doors & Windows",
-      "Ch. 10 – Renovations & Additions",
-      "Ch. 11 – High-Rise Buildings",
+      "Ch. 2 – exclude pg. 49–59 (“Fire Resistance” up to end of chapter)",
+      "Ch. 3 – exclude pg. 71–75 (“Seismic Loads” up to “Structural Accommodations for Loads”)",
+      "Ch. 4",
+      "Ch. 5 – exclude pg. 155–158 (“Fire Door Maintenance” up to “Fire Windows”) and pg. 162–165 (“Interior Finishes Tests” up to end of chapter)",
+      "Ch. 6",
+      "Ch. 7",
+      "Ch. 8",
+      "Ch. 9",
+      "Ch. 10 – exclude pg. 259–260 (“Quality Control of Concrete” up to “Fire Resistance of Concrete Construction”)",
+      "Ch. 11",
+      "Ch. 13",
     ],
-    borderColor: "border-l-green-500",
-    expandBg: "bg-green-50 dark:bg-green-950/30",
-    labelColor: "text-green-600 dark:text-green-400",
-    icon: "🧱",
-    warning: null,
+  },
+  ERG,
+  {
+    ...COMPANY_OFFICERS,
+    chapters: "Chapters 3, 4, 5, 7, 8, 10, 11",
+    chapterList: [
+      "Ch. 3",
+      "Ch. 4 – exclude pg. 89–90 (start of chapter up to “Expectations of New Personnel”), pg. 98–100 (“Promotions” up to “Employee Assistance Programs (EAP)”), pg. 109–110 (“Leave Benefits” up to “Conflict Management”), and pg. 113–122 (“Grievances” up to end of chapter)",
+      "Ch. 5 – exclude pg. 143–144 (“Policies and Procedures” up to “Reports”), pg. 148–149 (“Virtual Conferencing Technology” up to “Social Media Content”), and pg. 153–156 (“Alternative Communications Methods and Technologies” up to “Radio Communications”); INCLUDE pg. 150 “Career-Ending Posts – Social Media” box",
+      "Ch. 7",
+      "Ch. 8",
+      "Ch. 10 – exclude pg. 315–336 (start of chapter up to “Preincident Survey Process”) and pg. 347–353 (“Developing and Managing Preincident Plans” up to end of chapter)",
+      "Ch. 11 – exclude pg. 381–394 (“Property and Environmental Conservation” up to end of chapter)",
+    ],
   },
   {
-    book: "Fire Officer: Principles & Practice",
-    edition: "5th Edition (2025)",
-    publisher: "Jones & Bartlett / Ward",
-    chapters: "All Chapters",
-    chapterList: ["Full book — all chapters included"],
+    book: "Strategic and Tactical Considerations on the Fireground",
+    edition: "4th Edition (2017)",
+    publisher: "Pearson / James P. Smith",
+    chapters: "Chapters 1, 3, 4, 6, 7, 8, 9",
+    chapterList: [
+      "Ch. 1 – exclude pg. 9–35 (“Training” up to end of chapter)",
+      "Ch. 3",
+      "Ch. 4",
+      "Ch. 6",
+      "Ch. 7 – exclude green “Considerations…” sections (cellar fires, garden apartments, row houses and town houses, renovated buildings, hotels and motels, vacant buildings, wildland urban interface fires)",
+      "Ch. 8 – exclude pg. 336–346 (“Mass Casualty Incidents (MCIs)” up to “Houses of Worship”), pg. 359–367 (“Penal Institutions” up to “Public Assembly Buildings”), pg. 379–393 (“Schools and Other Active Shooter Incidents” up to end of chapter), and the green “Considerations…” sections (hospitals, nursing homes and assisted living, houses of worship, public assembly buildings, schools)",
+      "Ch. 9 – exclude pg. 423–456 (“Lumberyards” up to end of chapter) and the green “Considerations…” sections (commercial buildings and warehouses, strip malls, enclosed malls, supermarkets)",
+    ],
     borderColor: "border-l-purple-500",
     expandBg: "bg-purple-50 dark:bg-purple-950/30",
     labelColor: "text-purple-600 dark:text-purple-400",
     icon: "📘",
-    warning: null,
-  },
-  {
-    book: "Fire Officer's Handbook of Tactics",
-    edition: "5th Edition",
-    publisher: "PennWell / Moran",
-    chapters: "Chapters 2–23",
-    chapterList: [
-      "Ch. 2 – Building Construction",
-      "Ch. 3 – Pre-fire Planning",
-      "Ch. 4 – Engine Company Operations",
-      "Ch. 5 – Ladder Company Operations",
-      "Ch. 6 – Private Dwellings",
-      "Ch. 7 – Multiple Dwellings",
-      "Ch. 8 – Taxpayers & Row Frames",
-      "Ch. 9 – Garden Apartments",
-      "Ch. 10 – High-Rise Operations",
-      "Ch. 11 – Commercial Buildings",
-      "Ch. 12 – Industrial Occupancies",
-      "Ch. 13 – Churches",
-      "Ch. 14 – Lumberyards & Piers",
-      "Ch. 15 – Cellar & Subway Fires",
-      "Ch. 16 – Firefighter Safety",
-      "Ch. 17 – Emergency Medical Operations",
-      "Ch. 18 – Hazardous Materials",
-      "Ch. 19 – Collapse Operations",
-      "Ch. 20 – Water Supply",
-      "Ch. 21 – Rural Firefighting",
-      "Ch. 22 – Wildland–Urban Interface",
-      "Ch. 23 – Special Problems",
-    ],
-    borderColor: "border-l-blue-500",
-    expandBg: "bg-blue-50 dark:bg-blue-950/30",
-    labelColor: "text-blue-600 dark:text-blue-400",
-    icon: "🏗️",
-    warning: null,
-  },
-  {
-    book: "Massachusetts General Laws — Chapter 148",
-    edition: "Current Statute",
-    publisher: "Commonwealth of Massachusetts",
-    chapters: "§§ 3, 5, 26, 26A–H, 27A",
-    chapterList: [
-      "§ 3 – Powers of the State Fire Marshal",
-      "§ 5 – Duties of Local Fire Departments",
-      "§ 26 – Sprinkler Requirements (General)",
-      "§ 26A – New High-Rise Buildings",
-      "§ 26B – Existing High-Rise Buildings",
-      "§ 26C – Hotels & Motels",
-      "§ 26D – Board & Care Facilities",
-      "§ 26E – Lodging Houses",
-      "§ 26F – Dwelling Houses",
-      "§ 26G – Dormitories",
-      "§ 26H – Day Care Centers",
-      "§ 27A – Carbon Monoxide Detectors",
-    ],
-    borderColor: "border-l-orange-500",
-    expandBg: "bg-orange-50 dark:bg-orange-950/30",
-    labelColor: "text-orange-600 dark:text-orange-400",
-    icon: "⚖️",
     warning: null,
   },
 ];
@@ -187,7 +173,7 @@ export default function AdminReadingList() {
       <div className="flex items-center justify-between mb-4">
         <div>
           <h2 className="text-lg font-bold text-[#1B2A4A] dark:text-[#e2e8f0]">
-            📋 MA Promotional Exam Reading Lists
+            📋 MA Statewide 2027 Reading Lists
           </h2>
           <p className="text-sm text-gray-500 dark:text-gray-400">Admin reference — official reading lists by rank</p>
         </div>
@@ -212,11 +198,9 @@ export default function AdminReadingList() {
         ))}
       </div>
 
-      {activeTab === "captain" && (
-        <div className="mb-4 bg-yellow-50 dark:bg-yellow-950/30 border border-yellow-300 dark:border-yellow-700 rounded-lg px-4 py-2.5 text-sm text-yellow-800 dark:text-yellow-300 font-semibold">
-          📅 MA Statewide Captain Exam: TBD · 4 source materials (including 1 statute)
-        </div>
-      )}
+      <div className="mb-4 bg-yellow-50 dark:bg-yellow-950/30 border border-yellow-300 dark:border-yellow-700 rounded-lg px-4 py-2.5 text-sm text-yellow-800 dark:text-yellow-300 font-semibold">
+        📅 MA Statewide {activeTab === "lieutenant" ? "Lieutenant" : "Captain"} Exam: April 12, 2027 · {list.length} source materials · lists published Oct 9, 2026
+      </div>
 
       <div className="flex flex-col gap-3">
         {list.map((item, i) => (
@@ -278,11 +262,6 @@ export default function AdminReadingList() {
         <span>
           📚 <strong>{list.length} source materials</strong> for {activeTab === "lieutenant" ? "Lieutenant" : "Captain"} exam
         </span>
-        {activeTab === "captain" && (
-          <span className="text-green-700 dark:text-green-400 font-semibold">
-            ✅ All sources in question bank
-          </span>
-        )}
         <span className="ml-auto">Click any book to expand chapter list</span>
       </div>
     </div>
