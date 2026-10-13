@@ -196,7 +196,7 @@ export default function LandingPage() {
                   {[
                     { l: "Building Const.", p: 92, c: "#22c55e" },
                     { l: "Co. Officers", p: 78, c: "#22c55e" },
-                    { l: "Mass Gen. Laws", p: 61, c: "#f59e0b" },
+                    { l: "Structural FF", p: 61, c: "#f59e0b" },
                     { l: "ERG 2024", p: 55, c: "#ef4444" },
                   ].map(({ l, p, c }) => (
                     <div key={l} className='progress-row'>

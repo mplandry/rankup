@@ -44,7 +44,7 @@ const PRICING_TIERS: PricingTier[] = [
       "No recurring charges",
       "33% less than FiredUp",
       "Save $60+ vs monthly",
-      "100% MA reading list coverage",
+      "Built from the official 2027 MA reading lists",
     ],
     recommended: true,
     badge: "BEST VALUE",
@@ -186,7 +186,7 @@ export default function PricingPage() {
           7,500+ Questions. One Exam. Zero Wasted Time.
         </div>
         <div style={{ fontSize: 15, color: "#64748b", marginBottom: 16 }}>
-          100% MA reading list coverage • Built by MA firefighters for MA
+          Built from the official 2027 MA reading lists • Built by MA firefighters for MA
           firefighters
         </div>
 

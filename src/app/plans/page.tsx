@@ -36,7 +36,7 @@ const TIERS = [
       "No recurring charges",
       "33% less than FiredUp",
       "Save $60+ vs. monthly",
-      "100% MA reading list coverage",
+      "Built from the official 2027 MA reading lists",
     ],
     cta: "Get Started Free",
     href: "/signup?plan=exam_prep",
@@ -97,7 +97,7 @@ export default function PlansPage() {
             7,500+ Questions. <span className='gold'>One Exam.</span>
           </h1>
           <p className='pricing-sub'>
-            100% MA reading list coverage. Built by MA firefighters, for MA
+            Built from the official 2027 MA reading lists. Built by MA firefighters, for MA
             firefighters — no nationwide filler content, just what you need
             to pass.
           </p>

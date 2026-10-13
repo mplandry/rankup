@@ -54,7 +54,7 @@ export async function POST() {
           html: `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
               <h2>Hey ${student.full_name || "there"}! 👋</h2>
-              <p>We noticed you haven't been on RankUp in a while. Your promotional exam is coming up soon!</p>
+              <p>We noticed you haven't been on RankUp in a while. The April 12, 2027 Lieutenant &amp; Captain exam is coming up fast!</p>
               <p><strong>Don't let your study streak break!</strong></p>
               <ul>
                 <li>📚 Your question bank is waiting</li>

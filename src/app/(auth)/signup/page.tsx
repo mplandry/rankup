@@ -294,7 +294,7 @@ function SignupForm() {
 
             <div className='login-field'>
               <label className='login-label'>
-                Which exam are you preparing for?
+                Which April 12, 2027 exam are you preparing for?
               </label>
               <div
                 style={{
