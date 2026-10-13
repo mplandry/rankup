@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import FlashcardSession from "@/components/flashcards/FlashcardSession";
+import { hasFullAccess, todayKeyEastern } from "@/lib/access";
 
 export const dynamic = "force-dynamic";
 
@@ -18,20 +19,31 @@ export default async function FlashcardSessionPage({ params }: Props) {
 
   // sessionId encodes the filters: "book__chapter" or "all" or "due"
   const [bookEncoded, chapterEncoded] = sessionId.split("__");
-  const book = bookEncoded === "all" ? null : decodeURIComponent(bookEncoded);
-  const chapter =
+  let book: string | null =
+    bookEncoded === "all" ? null : decodeURIComponent(bookEncoded);
+  let chapter: string | null =
     chapterEncoded === "none" || !chapterEncoded
       ? null
       : decodeURIComponent(chapterEncoded);
-  const isDueOnly = sessionId === "due";
+  let isDueOnly = sessionId === "due";
 
   // Only this student's track (plus "both"), matching the filtering used
   // by /api/sessions and Study Mode.
   const { data: profile } = await supabase
     .from("profiles")
-    .select("exam_type")
+    .select("exam_type, role, subscription_status, trial_ends_at, trial_extended_days")
     .eq("id", user.id)
     .single();
+
+  // After the trial: one "card of the day", picked from the student's whole
+  // track (book/chapter/due filters ignored) so switching filters or
+  // refreshing can't hand out more cards.
+  const fullAccess = hasFullAccess(profile);
+  if (!fullAccess) {
+    book = null;
+    chapter = null;
+    isDueOnly = false;
+  }
   const examTypes = profile?.exam_type
     ? [profile.exam_type, "both"]
     : ["lieutenant", "captain", "both"];
@@ -106,13 +118,30 @@ export default async function FlashcardSessionPage({ params }: Props) {
 
   if (filtered.length === 0) redirect("/flashcards");
 
+  let cards = filtered;
+  if (!fullAccess) {
+    // Stable pick per user per Eastern day: same card all day long.
+    const seed = `${user.id}:${todayKeyEastern()}`;
+    let hash = 0;
+    for (let i = 0; i < seed.length; i++) {
+      hash = (hash * 31 + seed.charCodeAt(i)) >>> 0;
+    }
+    const pool = [...questions].sort((a, b) => String(a.id).localeCompare(String(b.id)));
+    cards = [pool[hash % pool.length]];
+  }
+
   return (
     <FlashcardSession
-      questions={filtered}
+      questions={cards}
       progressMap={progressMap}
       userId={user.id}
       book={book}
       chapter={chapter}
+      limitedNotice={
+        fullAccess
+          ? undefined
+          : "Your trial has ended, so you get 1 free flashcard a day. Subscribe for the full deck."
+      }
     />
   );
 }

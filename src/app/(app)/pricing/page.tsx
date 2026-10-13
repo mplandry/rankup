@@ -554,8 +554,9 @@ export default function PricingPage() {
               What happens after my trial ends?
             </div>
             <div style={{ fontSize: 14, color: "#64748b" }}>
-              You'll get downgraded to limited access (1 question/day).
-              Subscribe anytime to unlock everything again.
+              You'll keep limited free access: 1 study question and 1
+              flashcard per day (resets at midnight Eastern). Exam Mode is for
+              subscribers. Subscribe anytime to unlock everything again.
             </div>
           </div>
           <div>

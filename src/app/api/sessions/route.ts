@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { FREE_DAILY_QUESTION_LIMIT, EXAM_QUESTION_COUNT, DEFAULT_STUDY_COUNT } from "@/lib/constants";
+import { hasFullAccess as checkFullAccess, startOfTodayEastern } from "@/lib/access";
 
 export async function POST(request: Request) {
   const supabase = await createClient();
@@ -18,24 +19,26 @@ export async function POST(request: Request) {
 
   const { mode, filters } = await request.json();
 
-  // Admins and active subscribers always have full access. Otherwise, full
-  // access requires being within the trial window (including any bonus days).
-  let hasFullAccess =
-    profile?.role === "admin" || profile?.subscription_status === "active";
+  // Admins, active subscribers, and users still inside their trial (incl.
+  // bonus days) get full access. Rules live in src/lib/access.ts.
+  const hasFullAccess = checkFullAccess(profile);
 
-  if (!hasFullAccess && profile?.trial_ends_at) {
-    const trialEndsAt = new Date(profile.trial_ends_at);
-    trialEndsAt.setDate(trialEndsAt.getDate() + (profile.trial_extended_days || 0));
-    hasFullAccess = new Date() < trialEndsAt;
-  } else if (!hasFullAccess && !profile?.trial_ends_at) {
-    // No trial data on record — don't lock the user out unexpectedly.
-    hasFullAccess = true;
+  // After the trial, Exam Mode is subscribers-only — a 1-question
+  // "practice exam" isn't a real simulation.
+  if (!hasFullAccess && mode === "exam") {
+    return NextResponse.json(
+      {
+        error: "Your trial has ended. Exam Mode is for subscribers — subscribe to take full timed practice exams.",
+        code: "TRIAL_EXPIRED",
+      },
+      { status: 403 },
+    );
   }
 
   let remainingToday = Infinity;
   if (!hasFullAccess) {
-    const startOfDay = new Date();
-    startOfDay.setHours(0, 0, 0, 0);
+    // The free allowance resets at midnight Eastern, not midnight UTC.
+    const startOfDay = startOfTodayEastern();
 
     const { data: todaySessions } = await supabase
       .from("exam_sessions")

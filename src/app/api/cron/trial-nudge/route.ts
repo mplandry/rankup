@@ -47,7 +47,7 @@ function expiredEmailHtml(name: string) {
   return `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
       <h2 style="color: ${FIRE_NAVY};">Hey ${name},</h2>
-      <p>Your RankUp free trial has ended. You're now limited to 1 question/day until you subscribe.</p>
+      <p>Your RankUp free trial has ended. You're now limited to 1 study question and 1 flashcard a day, and Exam Mode is locked until you subscribe.</p>
       <p><strong>Don't lose momentum before exam day.</strong> Subscribe now to get back to:</p>
       <ul>
         <li>📚 Unlimited study mode &amp; 2,500+ questions</li>

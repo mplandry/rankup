@@ -28,6 +28,7 @@ interface Props {
   userId: string;
   book: string | null;
   chapter: string | null;
+  limitedNotice?: string;
 }
 
 export default function FlashcardSession({
@@ -36,6 +37,7 @@ export default function FlashcardSession({
   userId,
   book,
   chapter,
+  limitedNotice,
 }: Props) {
   const router = useRouter();
   const [index, setIndex] = useState(0);
@@ -98,6 +100,17 @@ export default function FlashcardSession({
   if (done) {
     return (
       <div className='px-4 py-6 sm:p-8 max-w-2xl mx-auto'>
+        {limitedNotice && (
+          <div className='mb-6 rounded-lg border border-amber-300 bg-amber-50 dark:border-amber-700/60 dark:bg-amber-950/30 px-4 py-3 text-sm text-amber-900 dark:text-amber-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2'>
+            <span>{limitedNotice}</span>
+            <button
+              onClick={() => router.push("/pricing")}
+              className='self-start sm:self-auto px-3 py-1.5 rounded-md bg-[#C0392B] text-white text-xs font-semibold hover:bg-[#96281B]'
+            >
+              See Plans
+            </button>
+          </div>
+        )}
         <div className='bg-white dark:bg-[#111827] border border-gray-200 dark:border-gray-700 rounded-xl p-6 sm:p-8 text-center'>
           <div className='w-16 h-16 bg-blue-100 dark:bg-blue-950/40 rounded-full flex items-center justify-center mx-auto mb-4'>
             <CheckCircle className='w-8 h-8 text-blue-600 dark:text-blue-400' />
@@ -144,6 +157,17 @@ export default function FlashcardSession({
 
   return (
     <div className='px-4 py-6 sm:p-8 max-w-2xl mx-auto'>
+      {limitedNotice && (
+        <div className='mb-6 rounded-lg border border-amber-300 bg-amber-50 dark:border-amber-700/60 dark:bg-amber-950/30 px-4 py-3 text-sm text-amber-900 dark:text-amber-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2'>
+          <span>{limitedNotice}</span>
+          <button
+            onClick={() => router.push("/pricing")}
+            className='self-start sm:self-auto px-3 py-1.5 rounded-md bg-[#C0392B] text-white text-xs font-semibold hover:bg-[#96281B]'
+          >
+            See Plans
+          </button>
+        </div>
+      )}
       {/* Progress */}
       <div className='mb-6'>
         <div className='flex items-center justify-between text-sm text-gray-500 dark:text-gray-400 mb-2'>
