@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   BookOpen,
@@ -18,6 +18,13 @@ import ThemeToggle from "@/components/theme/ThemeToggle";
 export default function LandingPage() {
   const [email, setEmail] = useState("");
   const [examType, setExamType] = useState("");
+  const [daysToExam, setDaysToExam] = useState<number | null>(null);
+
+  useEffect(() => {
+    const examDay = new Date("2027-04-12T08:00:00-04:00").getTime();
+    const days = Math.ceil((examDay - Date.now()) / 86400000);
+    setDaysToExam(days > 0 ? days : 0);
+  }, []);
   const [status, setStatus] = useState<"idle" | "loading" | "done" | "error">("idle");
 
   async function handleWaitlist(e: React.FormEvent) {
@@ -79,6 +86,24 @@ export default function LandingPage() {
               with adaptive flashcards, practice exams, and detailed progress
               tracking built around the official 2027 reading lists.
             </p>
+            <div className='exam-notice'>
+              <div className='exam-notice-date'>
+                <div className='exam-notice-label'>Exam Day</div>
+                <div className='exam-notice-big'>April 12, 2027</div>
+                {daysToExam !== null && (
+                  <div className='exam-notice-count'>{daysToExam} days to go</div>
+                )}
+              </div>
+              <div className='exam-notice-divider'></div>
+              <div className='exam-notice-bank'>
+                <div className='exam-notice-pill'>Coming Soon</div>
+                <div className='exam-notice-title'>The New 2027 Question Bank</div>
+                <div className='exam-notice-text'>
+                  Built only from the new 2027 reading lists. Create your free
+                  account now and you&apos;ll be first in when it opens.
+                </div>
+              </div>
+            </div>
             <div className='hero-ctas'>
               <Link href='/signup' className='btn-hero-primary'>
                 <svg
@@ -590,8 +615,8 @@ export default function LandingPage() {
         <div className='cta-inner'>
           <h2 className='cta-title'>READY TO RANK UP?</h2>
           <p className='cta-sub'>
-            Start your free account today and begin studying with 2,500+ exam
-            questions.
+            The new 2027 question bank is coming soon. Create your free account
+            today and you&apos;ll be first to know when it opens.
           </p>
           <Link href='/signup' className='btn-cta-white'>
             <svg
