@@ -14,7 +14,7 @@ const TIERS = [
     description: "Cancel anytime",
     features: [
       "Unlimited study mode",
-      "2,500+ MA-specific questions",
+      "7,500+ questions from the 2027 reading lists",
       "90-question exam simulations",
       "Weak area analysis",
       "Performance analytics",
@@ -94,7 +94,7 @@ export default function PlansPage() {
             <span className='badge-dot' /> Simple Pricing
           </div>
           <h1 className='pricing-title'>
-            2,500+ Questions. <span className='gold'>One Exam.</span>
+            7,500+ Questions. <span className='gold'>One Exam.</span>
           </h1>
           <p className='pricing-sub'>
             100% MA reading list coverage. Built by MA firefighters, for MA

@@ -33,7 +33,7 @@ function daysLeftEmailHtml(name: string, daysLeft: number) {
     <p>Your RankUp free trial ends in <strong>${daysLeft} day${daysLeft === 1 ? "" : "s"}</strong>.</p>
     <p>Subscribe now to keep unlimited access to:</p>
     <ul>
-      <li>📚 2,500+ MA-specific exam questions</li>
+      <li>📚 The new 2027 question bank (7,500+ questions, coming soon)</li>
       <li>📝 90-question exam simulations</li>
       <li>🎯 Weak area analysis &amp; progress tracking</li>
     </ul>
@@ -59,7 +59,7 @@ function generalEmailHtml(name: string) {
     <p>Noticed you signed up for RankUp but haven't had a chance to dive in yet.</p>
     <p>Here's what's waiting for you:</p>
     <ul>
-      <li>📚 2,500+ MA-specific exam questions</li>
+      <li>📚 The new 2027 question bank (7,500+ questions, coming soon)</li>
       <li>📝 90-question exam simulations</li>
       <li>🎯 Weak area analysis &amp; progress tracking</li>
     </ul>
@@ -82,7 +82,7 @@ function expiredEmailHtml(name: string) {
     <p>Your RankUp free trial has ended. You're now limited to 1 question/day until you subscribe.</p>
     <p><strong>Don't lose momentum before exam day.</strong> Subscribe now to get back to:</p>
     <ul>
-      <li>📚 Unlimited study mode &amp; 2,500+ questions</li>
+      <li>📚 Unlimited study mode &amp; the full question bank</li>
       <li>📝 Full 90-question exam simulations</li>
       <li>🎯 Your saved progress and weak-area analysis</li>
     </ul>

@@ -99,8 +99,8 @@ export default function LandingPage() {
                 <div className='exam-notice-pill'>Coming Soon</div>
                 <div className='exam-notice-title'>The New 2027 Question Bank</div>
                 <div className='exam-notice-text'>
-                  Built only from the new 2027 reading lists. Create your free
-                  account now and you&apos;ll be first in when it opens.
+                  Built only from the new 2027 reading lists. Sign up now and
+                  we&apos;ll let you know the day it opens.
                 </div>
               </div>
             </div>
@@ -128,13 +128,13 @@ export default function LandingPage() {
             </div>
             <div className='hero-stats'>
               <div className='stat'>
-                <div className='stat-num'>2,500+</div>
-                <div className='stat-label'>Questions</div>
+                <div className='stat-num'>7,500+</div>
+                <div className='stat-label'>2027 Questions</div>
               </div>
               <div className='stat-divider'></div>
               <div className='stat'>
-                <div className='stat-num'>5</div>
-                <div className='stat-label'>Study Books</div>
+                <div className='stat-num'>4</div>
+                <div className='stat-label'>Books per Exam</div>
               </div>
               <div className='stat-divider'></div>
               <div className='stat'>
@@ -385,7 +385,7 @@ export default function LandingPage() {
             margin: '0 auto 32px',
             lineHeight: 1.6
           }}>
-            Get complete access to all 2,500+ questions, study modes, practice exams, and progress tracking. No credit card required. No time limits during the trial period.
+            Get complete access to the full question bank, study modes, practice exams, and progress tracking. No credit card required. No time limits during the trial period.
           </p>
           
           <div style={{
@@ -498,7 +498,7 @@ export default function LandingPage() {
               {
                 icon: Target,
                 cls: "fi-navy",
-                title: "2,500+ Questions",
+                title: "7,500+ Questions",
                 desc: "Built from the 2027 reading lists: Building Construction (5th Ed.), Company Officers (7th Ed.), Structural Fire Fighting (3rd Ed.), Strategic & Tactical (4th Ed.), and ERG 2024.",
               },
               {
@@ -615,8 +615,8 @@ export default function LandingPage() {
         <div className='cta-inner'>
           <h2 className='cta-title'>READY TO RANK UP?</h2>
           <p className='cta-sub'>
-            The new 2027 question bank is coming soon. Create your free account
-            today and you&apos;ll be first to know when it opens.
+            The new 2027 question bank is coming soon. Create an account today
+            and you&apos;ll be the first to know when it opens.
           </p>
           <Link href='/signup' className='btn-cta-white'>
             <svg
