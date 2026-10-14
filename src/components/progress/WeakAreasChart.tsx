@@ -16,7 +16,9 @@ export default function WeakAreasChart({ items, labelKey }: Props) {
           item.book_title === "Massachusetts General Laws Chapter 148";
         const label =
           labelKey === "chapter"
-            ? `${isMassLaw ? "Sec." : "Ch."} ${item.chapter}`
+            ? /^\d/.test(String(item.chapter ?? ""))
+              ? `${isMassLaw ? "Sec." : "Ch."} ${item.chapter}`
+              : String(item.chapter ?? "")
             : item.topic || "Unknown";
         const bookLabel = item.book_title || "";
         const pct = Math.round(item.pct ?? 0);

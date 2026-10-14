@@ -37,6 +37,7 @@ export default async function ProgressPage() {
     `,
     )
     .eq("user_id", session.user.id)
+    .eq("exam_cycle", "2027")
     .order("started_at", { ascending: false });
 
   const stats = statsRes.data as any | null;

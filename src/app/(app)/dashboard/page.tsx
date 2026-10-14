@@ -29,7 +29,8 @@ export default function DashboardPage() {
         .from("exam_sessions")
         .select("mode, score, score_percent, total_questions")
         .eq("user_id", session.user.id)
-        .eq("status", "completed");
+        .eq("status", "completed")
+        .eq("exam_cycle", "2027");
 
       const totalSessions = data?.length || 0;
       const totalQuestions =
