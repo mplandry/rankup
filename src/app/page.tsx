@@ -96,11 +96,11 @@ export default function LandingPage() {
               </div>
               <div className='exam-notice-divider'></div>
               <div className='exam-notice-bank'>
-                <div className='exam-notice-pill'>Coming Soon</div>
+                <div className='exam-notice-pill'>Now Live</div>
                 <div className='exam-notice-title'>The New 2027 Question Bank</div>
                 <div className='exam-notice-text'>
-                  Built only from the new 2027 reading lists. Sign up now and
-                  we&apos;ll let you know the day it opens.
+                  Built only from the new 2027 reading lists. Strategic &amp;
+                  Tactical questions for Captain are being added now.
                 </div>
               </div>
             </div>
@@ -499,7 +499,7 @@ export default function LandingPage() {
                 icon: Target,
                 cls: "fi-navy",
                 title: "7,500+ Questions",
-                desc: "Built from the 2027 reading lists: Building Construction (5th Ed.), Company Officers (7th Ed.), Structural Fire Fighting (3rd Ed.), Strategic & Tactical (4th Ed.), and ERG 2024.",
+                desc: "Built from the 2027 reading lists: Building Construction (5th Ed.), Company Officers (7th Ed.), Structural Fire Fighting (3rd Ed.), and ERG 2024. Strategic & Tactical (4th Ed.) coming soon.",
               },
               {
                 icon: Smartphone,
@@ -589,12 +589,6 @@ export default function LandingPage() {
               role: "Firefighter, preparing for Captain",
               text: "The flashcard spaced repetition is a game changer. I studied on my phone between shifts and the material actually stuck.",
             },
-            {
-              init: "DK",
-              name: "D. Kowalski",
-              role: "Promoted to Captain",
-              text: "Best exam prep resource for MA firefighters. The Mass General Laws section alone is worth it.",
-            },
           ].map(({ init, name, role, text }) => (
             <div key={name} className='testimonial'>
               <div className='stars'>★★★★★</div>
@@ -615,8 +609,8 @@ export default function LandingPage() {
         <div className='cta-inner'>
           <h2 className='cta-title'>READY TO RANK UP?</h2>
           <p className='cta-sub'>
-            The new 2027 question bank is coming soon. Create an account today
-            and you&apos;ll be the first to know when it opens.
+            The new 2027 question bank is live. Create an account and start
+            studying today.
           </p>
           <Link href='/signup' className='btn-cta-white'>
             <svg

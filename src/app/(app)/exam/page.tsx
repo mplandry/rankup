@@ -31,6 +31,11 @@ export default async function ExamPage() {
     <div style={{ flex: 1, padding: '36px 40px', maxWidth: 1100, margin: '0 auto' }}>
       <div style={{ fontSize: 26, fontWeight: 700, marginBottom: 4, color: '#1B2A4A' }}>Exam Mode</div>
       <div style={{ fontSize: 13.5, color: '#64748b', marginBottom: 28 }}>Simulate the real promotional exam</div>
+      {profile?.exam_type === 'captain' && (
+        <div style={{ background: '#fffbeb', border: '1px solid #fcd34d', borderRadius: 8, padding: '10px 14px', marginBottom: 20, fontSize: 13.5, color: '#92400e' }}>
+          Captain practice exams currently cover Building Construction, Company Officers, and ERG 2024. Strategic &amp; Tactical questions are being added.
+        </div>
+      )}
       <ExamStart availableCount={count || 0} requiredCount={EXAM_QUESTION_COUNT} />
     </div>
   )

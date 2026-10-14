@@ -27,7 +27,7 @@ function threeDayEmailHtml(name: string, daysLeft: number) {
       <p>Your RankUp free trial ends in <strong>${daysLeft} day${daysLeft === 1 ? "" : "s"}</strong>.</p>
       <p>Subscribe now to keep unlimited access to:</p>
       <ul>
-        <li>📚 The new 2027 question bank (7,500+ questions, coming soon)</li>
+        <li>📚 The new 2027 question bank (7,500+ questions, now live)</li>
         <li>📝 90-question exam simulations</li>
         <li>🎯 Weak area analysis &amp; progress tracking</li>
       </ul>
