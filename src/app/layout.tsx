@@ -38,6 +38,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){dataLayer.push(arguments);}
                 gtag('js', new Date());
+                try { if (localStorage.getItem('rankup_internal') === '1') gtag('set', { traffic_type: 'internal' }); } catch (e) {}
                 gtag('config', '${GA_ID}');
               `}
             </Script>
@@ -51,6 +52,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
                   y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
               })(window, document, "clarity", "script", "${CLARITY_ID}");
+              // Admin's own visits (flag set by src/lib/analytics.ts on login) get tagged
+              // so Clarity's "Real users" segment can hide them on any network.
+              try { if (localStorage.getItem('rankup_internal') === '1') clarity('set', 'platform_admin', 'yes'); } catch (e) {}
             `}
           </Script>
         )}

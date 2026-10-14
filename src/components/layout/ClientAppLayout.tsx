@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { AuthProvider, useAuth } from "@/components/auth/AuthProvider";
 import TopNav from "@/components/layout/TopNav";
+import { identifyUser } from "@/lib/analytics";
 
 const HEARTBEAT_INTERVAL_MS = 60_000;
 
@@ -37,6 +38,9 @@ function useHeartbeat(userId: string | null) {
 function AppLayoutContent({ children }: { children: React.ReactNode }) {
   const { userId, userRole, fullName, email } = useAuth();
   useHeartbeat(userId);
+  useEffect(() => {
+    identifyUser({ userId, role: userRole });
+  }, [userId, userRole]);
 
   return (
     <div className="min-h-screen bg-[#f8f9fb] dark:bg-[#0b1220]">

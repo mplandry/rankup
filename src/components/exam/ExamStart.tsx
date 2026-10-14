@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Flame, Clock, FileText, AlertTriangle, Loader2 } from 'lucide-react'
 import { EXAM_QUESTION_COUNT, EXAM_TIME_LIMIT_SECS } from '@/lib/constants'
 import { formatTime } from '@/lib/utils/score'
+import { track } from '@/lib/analytics'
 
 interface Props {
   availableCount: number
@@ -28,6 +29,7 @@ export default function ExamStart({ availableCount, requiredCount }: Props) {
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Failed to start exam')
+      track('exam_started')
       router.push(`/exam/${data.session_id}`)
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Something went wrong')

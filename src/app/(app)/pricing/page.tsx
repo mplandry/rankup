@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { track } from "@/lib/analytics";
 
 interface PricingTier {
   id: string;
@@ -77,6 +78,9 @@ export default function PricingPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const paymentStatus = searchParams?.get("payment");
+  useEffect(() => {
+    if (paymentStatus === "success") track("purchase_completed");
+  }, [paymentStatus]);
 
   useEffect(() => {
     const init = async () => {
@@ -133,6 +137,7 @@ export default function PricingPage() {
     }
 
     setLoading(planType);
+    track("checkout_started", { plan: planType });
 
     try {
       const res = await fetch("/api/stripe/create-checkout", {

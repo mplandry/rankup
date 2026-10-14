@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { BookOpen, Loader2 } from "lucide-react";
 import { DEFAULT_STUDY_COUNT } from "@/lib/constants";
+import { track } from "@/lib/analytics";
 
 interface Props {
   books: string[];
@@ -74,6 +75,7 @@ export default function StudyConfig({
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to start session");
+      track("study_started");
       router.push("/study/" + data.session_id);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");

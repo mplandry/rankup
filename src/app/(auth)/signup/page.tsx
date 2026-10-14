@@ -4,6 +4,7 @@ import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import { track } from "@/lib/analytics";
 import Image from "next/image";
 import ThemeToggle from "@/components/theme/ThemeToggle";
 import "../login/login.css";
@@ -116,6 +117,8 @@ function SignupForm() {
         console.error("Referral attribution failed:", err);
       }
     }
+
+    track("signup_completed");
 
     // Redirect to welcome page instead of dashboard
     router.push("/welcome");

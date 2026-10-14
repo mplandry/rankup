@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Layers, BookOpen } from "lucide-react";
+import { track } from "@/lib/analytics";
 
 interface Props {
   books: string[];
@@ -19,6 +20,7 @@ export default function FlashcardConfig({ books, bookChapters }: Props) {
   const isMassLaw = book === "Massachusetts General Laws Chapter 148";
 
   function handleStart(dueOnly: boolean) {
+    track("flashcards_started");
     if (dueOnly) {
       router.push("/flashcards/due");
       return;
