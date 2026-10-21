@@ -1,5 +1,6 @@
 import type { Question, Answer } from "@/types";
 import { CheckCircle2, XCircle, BookOpen, FileText } from "lucide-react";
+import ReportQuestion from "./ReportQuestion";
 
 interface Props {
   question: Question;
@@ -91,6 +92,12 @@ export default function AnswerFeedback({ question, selectedAnswer }: Props) {
           </div>
         )}
       </div>
+
+      <ReportQuestion
+        key={String(question.id)}
+        questionId={String(question.id)}
+        selectedAnswer={selectedAnswer}
+      />
     </div>
   );
 }
