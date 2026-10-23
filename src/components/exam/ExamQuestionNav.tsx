@@ -25,7 +25,7 @@ export default function ExamQuestionNav({ total, current, answered, flaggedIndex
               'w-full aspect-square rounded text-xs font-medium transition-all',
               isCurrent && 'ring-2 ring-[#C0392B] ring-offset-1',
               isFlagged && 'bg-amber-400 text-white',
-              !isFlagged && isAnswered && 'bg-green-500 text-white',
+              !isFlagged && isAnswered && 'bg-green-600 text-white',
               !isFlagged && !isAnswered && 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700',
             )}
           >

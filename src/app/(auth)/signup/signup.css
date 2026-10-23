@@ -92,7 +92,7 @@
   display: block;
   font-size: 11px;
   font-weight: 700;
-  color: #9ca3af;
+  color: #6b7280;
   text-transform: uppercase;
   letter-spacing: 1.5px;
   margin-bottom: 10px;
@@ -192,7 +192,7 @@
   background: white;
   font-size: 11px;
   font-weight: 700;
-  color: #d1d5db;
+  color: #6b7280;
   text-transform: uppercase;
   letter-spacing: 1.5px;
 }
@@ -238,7 +238,7 @@
 .login-disclaimer {
   text-align: center;
   font-size: 11px;
-  color: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.6);
   margin-top: 20px;
   line-height: 1.7;
   padding: 0 8px;
@@ -312,7 +312,7 @@
 }
 .exam-btn-sub {
   font-size: 11px;
-  color: #9ca3af;
+  color: #6b7280;
   font-weight: 500;
 }
 .exam-btn-active .exam-btn-sub {

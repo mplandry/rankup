@@ -166,7 +166,7 @@ export default function QuestionForm({ question, mode }: Props) {
                   <span
                     className={`w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold ${
                       form.correct_answer === opt
-                        ? "bg-green-500 text-white"
+                        ? "bg-green-600 text-white"
                         : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400"
                     }`}
                   >

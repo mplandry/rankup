@@ -77,7 +77,7 @@ export default async function StudyPage({
 
   return (
     <div style={{ flex: 1, padding: '36px 40px', maxWidth: 1100, margin: '0 auto' }}>
-      <div style={{ fontSize: 26, fontWeight: 700, marginBottom: 4, color: '#1B2A4A' }}>Study Mode</div>
+      <div style={{ fontSize: 26, fontWeight: 700, marginBottom: 4, color: 'var(--text-strong)' }}>Study Mode</div>
       <div style={{ fontSize: 13.5, color: '#64748b', marginBottom: 28 }}>
         Practice with instant feedback and chapter references
       </div>
