@@ -73,30 +73,50 @@ export async function POST(request: Request) {
   const eligibilityField = mode === "exam" ? "exam_eligible" : "study_eligible";
   const defaultCount = mode === "exam" ? EXAM_QUESTION_COUNT : DEFAULT_STUDY_COUNT;
 
-  let query = supabase
-    .from("questions")
-    .select("*")
-    .eq("is_active", true)
-    .eq("review_status", "approved")
-    .eq("exam_cycle", ACTIVE_EXAM_CYCLE)
-    .eq(eligibilityField, true)
-    .in("exam_type", examTypes);
+  // Build the eligible-question query fresh per page. Only ids are needed here
+  // (the session rows below store question_id), and the full pool for a track
+  // (~6-7k rows) is bigger than both the old .limit(5000) and PostgREST's
+  // default max-rows cap, so we page through it. A stable order keeps the
+  // pages from overlapping or skipping rows.
+  const buildQuery = () => {
+    let q = supabase
+      .from("questions")
+      .select("id")
+      .eq("is_active", true)
+      .eq("review_status", "approved")
+      .eq("exam_cycle", ACTIVE_EXAM_CYCLE)
+      .eq(eligibilityField, true)
+      .in("exam_type", examTypes)
+      .order("id");
+    if (filters?.book_title) q = q.eq("book_title", filters.book_title);
+    if (filters?.chapter) q = q.eq("chapter", filters.chapter);
+    if (filters?.topic) q = q.eq("topic", filters.topic);
+    if (filters?.difficulty) q = q.eq("difficulty", filters.difficulty);
+    return q;
+  };
 
-  if (filters?.book_title) query = query.eq("book_title", filters.book_title);
-  if (filters?.chapter) query = query.eq("chapter", filters.chapter);
-  if (filters?.topic) query = query.eq("topic", filters.topic);
-  if (filters?.difficulty) query = query.eq("difficulty", filters.difficulty);
-
-  const { data: questions, error } = await query.limit(5000);
-  if (error)
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  if (!questions?.length)
+  const PAGE_SIZE = 1000;
+  const questions: { id: string }[] = [];
+  for (let from = 0; ; from += PAGE_SIZE) {
+    const { data, error } = await buildQuery().range(from, from + PAGE_SIZE - 1);
+    if (error)
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    if (!data || data.length === 0) break;
+    questions.push(...data);
+    if (data.length < PAGE_SIZE) break;
+  }
+  if (!questions.length)
     return NextResponse.json(
       { error: "No questions found matching your filters" },
       { status: 404 },
     );
 
-  const shuffled = questions.sort(() => Math.random() - 0.5);
+  // Fisher-Yates: unbiased (sort(() => Math.random() - 0.5) is not).
+  const shuffled = questions;
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
   const selected = shuffled.slice(
     0,
     Math.min(filters?.question_count || defaultCount, shuffled.length, remainingToday),
