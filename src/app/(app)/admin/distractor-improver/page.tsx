@@ -269,7 +269,7 @@ Respond with ONLY a JSON object in this exact format:
         <div style={{ fontSize: 26, fontWeight: 700, marginBottom: 4 }}>
           🎯 Distractor Improver
         </div>
-        <div style={{ fontSize: 13.5, color: "var(--text-muted)" }}>
+        <div style={{ fontSize: 13.5, color: "var(--text-soft)" }}>
           Upload CSV files to make question distractors more challenging and
           realistic
         </div>
@@ -296,7 +296,7 @@ Respond with ONLY a JSON object in this exact format:
           <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 8 }}>
             Drop CSV file here or click to browse
           </div>
-          <div style={{ fontSize: 13, color: "var(--text-muted)" }}>
+          <div style={{ fontSize: 13, color: "var(--text-soft)" }}>
             Supports standard RankUp CSV format with question_text and answer
             columns
           </div>
@@ -333,7 +333,7 @@ Respond with ONLY a JSON object in this exact format:
               style={{
                 display: "block",
                 fontSize: 13,
-                color: "var(--text-muted)",
+                color: "var(--text-soft)",
                 marginBottom: 8,
               }}
             >
@@ -358,7 +358,7 @@ Respond with ONLY a JSON object in this exact format:
             <div
               style={{
                 fontSize: 12,
-                color: "var(--text-muted)",
+                color: "var(--text-soft)",
                 marginTop: 6,
               }}
             >
@@ -371,7 +371,7 @@ Respond with ONLY a JSON object in this exact format:
               style={{
                 display: "block",
                 fontSize: 13,
-                color: "var(--text-muted)",
+                color: "var(--text-soft)",
                 marginBottom: 8,
               }}
             >
@@ -434,7 +434,7 @@ Respond with ONLY a JSON object in this exact format:
           <div
             style={{
               fontSize: 13,
-              color: "var(--text-muted)",
+              color: "var(--text-soft)",
               marginBottom: 12,
             }}
           >
@@ -487,7 +487,7 @@ Respond with ONLY a JSON object in this exact format:
                 <div style={{ fontSize: 24, fontWeight: 700 }}>
                   {stat.value}
                 </div>
-                <div style={{ fontSize: 11, color: "var(--text-muted)" }}>
+                <div style={{ fontSize: 11, color: "var(--text-soft)" }}>
                   {stat.label}
                 </div>
               </div>
