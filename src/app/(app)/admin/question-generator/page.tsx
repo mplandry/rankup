@@ -217,7 +217,7 @@ export default function QuestionGenerator() {
         <div style={{ fontSize: 26, fontWeight: 700, marginBottom: 4 }}>
           🎯 Question Generator
         </div>
-        <div style={{ fontSize: 13.5, color: "#6B7280" }}>
+        <div style={{ fontSize: 13.5, color: "var(--text-soft)" }}>
           Upload book screenshots → AI generates questions → Import to database
         </div>
       </div>
@@ -227,8 +227,8 @@ export default function QuestionGenerator() {
           {/* Screenshot Upload */}
           <div
             style={{
-              background: "#FFFFFF",
-              border: "1px solid #E5E7EB",
+              background: "var(--white)",
+              border: "1px solid var(--card-border)",
               borderRadius: 12,
               padding: 28,
               marginBottom: 20,
@@ -250,7 +250,7 @@ export default function QuestionGenerator() {
                 padding: "60px 40px",
                 textAlign: "center",
                 cursor: "pointer",
-                background: "#F9FAFB",
+                background: "var(--bg)",
                 marginBottom: 16,
               }}
             >
@@ -259,13 +259,13 @@ export default function QuestionGenerator() {
                   width: 48,
                   height: 48,
                   margin: "0 auto 16px",
-                  color: "#6B7280",
+                  color: "var(--text-soft)",
                 }}
               />
               <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 8 }}>
                 Drop screenshots here or click to browse
               </div>
-              <div style={{ fontSize: 13, color: "#6B7280" }}>
+              <div style={{ fontSize: 13, color: "var(--text-soft)" }}>
                 Upload 1-15 book pages (PNG, JPG, PDF)
               </div>
               <input
@@ -288,8 +288,8 @@ export default function QuestionGenerator() {
           {/* Metadata Form */}
           <div
             style={{
-              background: "#FFFFFF",
-              border: "1px solid #E5E7EB",
+              background: "var(--white)",
+              border: "1px solid var(--card-border)",
               borderRadius: 12,
               padding: 28,
               marginBottom: 20,
@@ -312,7 +312,7 @@ export default function QuestionGenerator() {
                     display: "block",
                     fontSize: 13,
                     marginBottom: 6,
-                    color: "#6B7280",
+                    color: "var(--text-soft)",
                   }}
                 >
                   Book Title *
@@ -327,7 +327,7 @@ export default function QuestionGenerator() {
                   style={{
                     width: "100%",
                     padding: "10px 12px",
-                    border: "1px solid #E5E7EB",
+                    border: "1px solid var(--card-border)",
                     borderRadius: 8,
                     fontSize: 14,
                   }}
@@ -339,7 +339,7 @@ export default function QuestionGenerator() {
                     display: "block",
                     fontSize: 13,
                     marginBottom: 6,
-                    color: "#6B7280",
+                    color: "var(--text-soft)",
                   }}
                 >
                   Edition *
@@ -354,7 +354,7 @@ export default function QuestionGenerator() {
                   style={{
                     width: "100%",
                     padding: "10px 12px",
-                    border: "1px solid #E5E7EB",
+                    border: "1px solid var(--card-border)",
                     borderRadius: 8,
                     fontSize: 14,
                   }}
@@ -374,7 +374,7 @@ export default function QuestionGenerator() {
                     display: "block",
                     fontSize: 13,
                     marginBottom: 6,
-                    color: "#6B7280",
+                    color: "var(--text-soft)",
                   }}
                 >
                   Chapter *
@@ -389,7 +389,7 @@ export default function QuestionGenerator() {
                   style={{
                     width: "100%",
                     padding: "10px 12px",
-                    border: "1px solid #E5E7EB",
+                    border: "1px solid var(--card-border)",
                     borderRadius: 8,
                     fontSize: 14,
                   }}
@@ -401,7 +401,7 @@ export default function QuestionGenerator() {
                     display: "block",
                     fontSize: 13,
                     marginBottom: 6,
-                    color: "#6B7280",
+                    color: "var(--text-soft)",
                   }}
                 >
                   Page Start
@@ -416,7 +416,7 @@ export default function QuestionGenerator() {
                   style={{
                     width: "100%",
                     padding: "10px 12px",
-                    border: "1px solid #E5E7EB",
+                    border: "1px solid var(--card-border)",
                     borderRadius: 8,
                     fontSize: 14,
                   }}
@@ -428,7 +428,7 @@ export default function QuestionGenerator() {
                     display: "block",
                     fontSize: 13,
                     marginBottom: 6,
-                    color: "#6B7280",
+                    color: "var(--text-soft)",
                   }}
                 >
                   Page End
@@ -443,7 +443,7 @@ export default function QuestionGenerator() {
                   style={{
                     width: "100%",
                     padding: "10px 12px",
-                    border: "1px solid #E5E7EB",
+                    border: "1px solid var(--card-border)",
                     borderRadius: 8,
                     fontSize: 14,
                   }}
@@ -455,8 +455,8 @@ export default function QuestionGenerator() {
           {/* Strategy Selection */}
           <div
             style={{
-              background: "#FFFFFF",
-              border: "1px solid #E5E7EB",
+              background: "var(--white)",
+              border: "1px solid var(--card-border)",
               borderRadius: 12,
               padding: 28,
               marginBottom: 20,
@@ -471,7 +471,7 @@ export default function QuestionGenerator() {
               style={{
                 width: "100%",
                 padding: "10px 12px",
-                border: "1px solid #E5E7EB",
+                border: "1px solid var(--card-border)",
                 borderRadius: 8,
                 fontSize: 14,
               }}
@@ -536,8 +536,8 @@ export default function QuestionGenerator() {
       {stage === "processing" && (
         <div
           style={{
-            background: "#FFFFFF",
-            border: "1px solid #E5E7EB",
+            background: "var(--white)",
+            border: "1px solid var(--card-border)",
             borderRadius: 12,
             padding: 28,
           }}
@@ -547,7 +547,7 @@ export default function QuestionGenerator() {
           </div>
           <div
             style={{
-              background: "#F5F5F5",
+              background: "var(--surface-soft)",
               borderRadius: 99,
               height: 8,
               marginBottom: 20,
@@ -599,7 +599,7 @@ export default function QuestionGenerator() {
               <div style={{ fontSize: 18, fontWeight: 700, marginBottom: 4 }}>
                 Generated {generatedQuestions.length} questions
               </div>
-              <div style={{ fontSize: 13, color: "#6B7280" }}>
+              <div style={{ fontSize: 13, color: "var(--text-soft)" }}>
                 Review and edit before importing to database
               </div>
             </div>
@@ -613,9 +613,9 @@ export default function QuestionGenerator() {
                 }}
                 style={{
                   padding: "10px 20px",
-                  background: "#FFFFFF",
-                  color: "#374151",
-                  border: "1px solid #E5E7EB",
+                  background: "var(--white)",
+                  color: "var(--text-body)",
+                  border: "1px solid var(--card-border)",
                   borderRadius: 8,
                   fontSize: 14,
                   fontWeight: 600,
@@ -655,8 +655,8 @@ export default function QuestionGenerator() {
               <div
                 key={idx}
                 style={{
-                  background: "#FFFFFF",
-                  border: "1px solid #E5E7EB",
+                  background: "var(--white)",
+                  border: "1px solid var(--card-border)",
                   borderRadius: 12,
                   padding: 24,
                 }}
@@ -686,8 +686,8 @@ export default function QuestionGenerator() {
                     </span>
                     <span
                       style={{
-                        background: "#F3F4F6",
-                        color: "#374151",
+                        background: "var(--surface-soft)",
+                        color: "var(--text-body)",
                         padding: "4px 12px",
                         borderRadius: 6,
                         fontSize: 12,
@@ -745,7 +745,7 @@ export default function QuestionGenerator() {
                     style={{
                       display: "block",
                       fontSize: 12,
-                      color: "#6B7280",
+                      color: "var(--text-soft)",
                       marginBottom: 6,
                       fontWeight: 600,
                     }}
@@ -762,7 +762,7 @@ export default function QuestionGenerator() {
                     style={{
                       width: "100%",
                       padding: "12px",
-                      border: "1px solid #E5E7EB",
+                      border: "1px solid var(--card-border)",
                       borderRadius: 8,
                       fontSize: 14,
                       fontFamily: "inherit",
@@ -788,7 +788,7 @@ export default function QuestionGenerator() {
                           display: "flex",
                           alignItems: "center",
                           fontSize: 12,
-                          color: "#6B7280",
+                          color: "var(--text-soft)",
                           marginBottom: 6,
                           fontWeight: 600,
                           gap: 8,
@@ -831,7 +831,7 @@ export default function QuestionGenerator() {
                           border:
                             question.correct_answer.toLowerCase() === letter
                               ? "2px solid #10B981"
-                              : "1px solid #E5E7EB",
+                              : "1px solid var(--card-border)",
                           borderRadius: 8,
                           fontSize: 13,
                           fontFamily: "inherit",
@@ -840,7 +840,7 @@ export default function QuestionGenerator() {
                           background:
                             question.correct_answer.toLowerCase() === letter
                               ? "#F0FDF4"
-                              : "#FFFFFF",
+                              : "var(--white)",
                         }}
                       />
                     </div>
@@ -853,7 +853,7 @@ export default function QuestionGenerator() {
                     style={{
                       display: "block",
                       fontSize: 12,
-                      color: "#6B7280",
+                      color: "var(--text-soft)",
                       marginBottom: 6,
                       fontWeight: 600,
                     }}
@@ -870,7 +870,7 @@ export default function QuestionGenerator() {
                     style={{
                       width: "100%",
                       padding: "12px",
-                      border: "1px solid #E5E7EB",
+                      border: "1px solid var(--card-border)",
                       borderRadius: 8,
                       fontSize: 13,
                       fontFamily: "inherit",

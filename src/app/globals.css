@@ -20,6 +20,16 @@
   --green: #27ae60;
   --green-light: #d1fae5;
 
+  --text-strong: #1b2a4a;
+  --text-body: #475569;
+  --text-soft: #64748b;
+  --surface-soft: #f8fafc;
+  --card-border: #e0e6ed;
+  --callout-bg: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  --callout-border: #fcd34d;
+  --callout-title: #92400e;
+  --callout-text: #78350f;
+
   color-scheme: light;
 }
 
@@ -38,6 +48,16 @@
   --green: #34d399;
   --green-light: #0f2a20;
 
+  --text-strong: #f1f5f9;
+  --text-body: #cbd5e1;
+  --text-soft: #94a3b8;
+  --surface-soft: #0f172a;
+  --card-border: #2a3649;
+  --callout-bg: linear-gradient(135deg, rgba(245, 158, 11, 0.16) 0%, rgba(245, 158, 11, 0.07) 100%);
+  --callout-border: rgba(245, 158, 11, 0.4);
+  --callout-title: #fcd34d;
+  --callout-text: #fde68a;
+
   color-scheme: dark;
 }
 
@@ -52,4 +72,11 @@ body {
   background: var(--background);
   color: var(--foreground);
   transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+/* Light mode: Tailwind gray-400 / slate-400 text is ~2.5:1 on white, too faint
+   for dates, emails and empty states. Darken it (dark mode keeps its own
+   dark: variants). */
+html:not(.dark) :where(.text-gray-400, .text-slate-400) {
+  color: #6b7280;
 }

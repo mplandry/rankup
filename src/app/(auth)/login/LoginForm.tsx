@@ -100,7 +100,7 @@ export default function LoginForm() {
                 href='/reset-password'
                 style={{
                   fontSize: "13px",
-                  color: "#C41E3A",
+                  color: "var(--red)",
                   textDecoration: "none",
                   fontWeight: 500,
                 }}
