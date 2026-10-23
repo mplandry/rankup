@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import FlashcardConfig from "@/components/flashcards/FlashcardConfig";
+import { ACTIVE_EXAM_CYCLE } from "@/lib/constants";
 
 export const dynamic = "force-dynamic";
 
@@ -47,6 +48,7 @@ export default async function FlashcardsPage() {
       .from("questions")
       .select("book_title, chapter")
       .eq("is_active", true)
+      .eq("exam_cycle", ACTIVE_EXAM_CYCLE)
       .eq("flashcard_eligible", true)
       .in("exam_type", examTypes)
       .range(from, from + PAGE_SIZE - 1);

@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import FlashcardSession from "@/components/flashcards/FlashcardSession";
 import { hasFullAccess, todayKeyEastern } from "@/lib/access";
+import { ACTIVE_EXAM_CYCLE } from "@/lib/constants";
 
 export const dynamic = "force-dynamic";
 
@@ -64,6 +65,7 @@ export default async function FlashcardSessionPage({ params }: Props) {
       `,
       )
       .eq("is_active", true)
+      .eq("exam_cycle", ACTIVE_EXAM_CYCLE)
       .eq("flashcard_eligible", true)
       .in("exam_type", examTypes)
       .range(from, from + PAGE_SIZE - 1);

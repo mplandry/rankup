@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
-import { FREE_DAILY_QUESTION_LIMIT, EXAM_QUESTION_COUNT, DEFAULT_STUDY_COUNT } from "@/lib/constants";
+import { ACTIVE_EXAM_CYCLE, FREE_DAILY_QUESTION_LIMIT, EXAM_QUESTION_COUNT, DEFAULT_STUDY_COUNT } from "@/lib/constants";
 import { hasFullAccess as checkFullAccess, startOfTodayEastern } from "@/lib/access";
 
 export async function POST(request: Request) {
@@ -78,6 +78,7 @@ export async function POST(request: Request) {
     .select("*")
     .eq("is_active", true)
     .eq("review_status", "approved")
+    .eq("exam_cycle", ACTIVE_EXAM_CYCLE)
     .eq(eligibilityField, true)
     .in("exam_type", examTypes);
 

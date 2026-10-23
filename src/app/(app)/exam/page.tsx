@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import ExamStart from '@/components/exam/ExamStart'
-import { EXAM_QUESTION_COUNT } from '@/lib/constants'
+import { ACTIVE_EXAM_CYCLE, EXAM_QUESTION_COUNT } from '@/lib/constants'
 
 export default async function ExamPage() {
   const supabase = await createClient()
@@ -26,7 +26,7 @@ export default async function ExamPage() {
     .eq('is_active', true)
     .eq('exam_eligible', true)
     .eq('review_status', 'approved')
-    .eq('exam_cycle', '2027')
+    .eq('exam_cycle', ACTIVE_EXAM_CYCLE)
     .in('exam_type', examTypes)
 
   return (

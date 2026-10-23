@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import StudyConfig from '@/components/study/StudyConfig'
+import { ACTIVE_EXAM_CYCLE } from '@/lib/constants'
 
 // Numeric chapters ascend numerically (so "2" sorts before "10"), suffixed
 // chapters like "26A" sort near their numeric neighbor, and non-numeric
@@ -48,6 +49,7 @@ export default async function StudyPage({
       .from('questions')
       .select('book_title, chapter, topic')
       .eq('is_active', true)
+      .eq('exam_cycle', ACTIVE_EXAM_CYCLE)
       .eq('study_eligible', true)
       .in('exam_type', examTypes)
       .range(from, from + PAGE_SIZE - 1)
