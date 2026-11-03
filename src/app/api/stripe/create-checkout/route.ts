@@ -13,8 +13,8 @@ const PRODUCT_COPY: Record<string, { name: string; description: string }> = {
     description: "Full access for 6 months - one-time payment, no auto-renewal",
   },
   exam_prep: {
-    name: "RankUp Exam Prep Bundle",
-    description: "One-time payment - access until exam day",
+    name: "RankUp 1-Year Exam Prep Bundle",
+    description: "One-time payment - 12 months of full access, no auto-renewal",
   },
 };
 

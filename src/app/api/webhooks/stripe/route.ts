@@ -4,6 +4,12 @@ import Stripe from "stripe";
 import { REFERRAL_TIERS, REFERRAL_UNLOCK_DAYS } from "@/lib/constants";
 import { sendPaymentAlert } from "@/lib/payment-alerts";
 
+// One-time plans that expire, and how many months of access they give.
+const FIXED_PLAN_MONTHS: Record<string, number> = {
+  six_month: 6,
+  exam_prep: 12,
+};
+
 export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
@@ -75,12 +81,14 @@ export async function POST(request: NextRequest) {
 
         const plan = subscriptionPlan || "monthly";
 
-        // The 6-month plan is a one-time payment that expires. If they buy it
-        // again while still active, extend from the current end date so they
-        // don't lose the time they already paid for. The daily
-        // /api/cron/expire-plans job flips expired accounts off.
+        // The 6-month and 1-year (exam_prep) plans are one-time payments that
+        // expire. If they buy the same plan again while still active, extend
+        // from the current end date so they don't lose the time they already
+        // paid for. The daily /api/cron/expire-plans job flips expired
+        // accounts off.
+        const durationMonths = FIXED_PLAN_MONTHS[plan];
         let subscriptionEndsAt: string | null = null;
-        if (plan === "six_month") {
+        if (durationMonths) {
           const { data: existing } = await supabase
             .from("profiles")
             .select("subscription_plan, subscription_status, subscription_ends_at")
@@ -89,14 +97,14 @@ export async function POST(request: NextRequest) {
 
           const base = new Date();
           if (
-            existing?.subscription_plan === "six_month" &&
+            existing?.subscription_plan === plan &&
             existing.subscription_status === "active" &&
             existing.subscription_ends_at
           ) {
             const currentEnd = new Date(existing.subscription_ends_at);
             if (currentEnd > base) base.setTime(currentEnd.getTime());
           }
-          base.setMonth(base.getMonth() + 6);
+          base.setMonth(base.getMonth() + durationMonths);
           subscriptionEndsAt = base.toISOString();
         }
 

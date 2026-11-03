@@ -1,9 +1,11 @@
 // src/app/api/cron/expire-plans/route.ts
 //
-// Daily sweep: the 6-month plan is a one-time payment, not a Stripe
-// subscription, so nothing in Stripe ends it. This flips accounts whose
-// subscription_ends_at has passed from "active" to "expired", which puts them
-// back on the free tier everywhere subscription_status is checked.
+// Daily sweep: the 6-month and 1-year (exam_prep) plans are one-time
+// payments, not Stripe subscriptions, so nothing in Stripe ends them. This
+// flips accounts whose subscription_ends_at has passed from "active" to
+// "expired", which puts them back on the free tier everywhere
+// subscription_status is checked. Accounts with no end date (exam_prep bought
+// before it became a 12-month plan) are never touched.
 // Hit by a Vercel Cron job (see vercel.json) with the standard
 // `Authorization: Bearer ${CRON_SECRET}` header.
 
@@ -26,7 +28,7 @@ export async function GET(req: NextRequest) {
   const { data: expired, error } = await supabase
     .from("profiles")
     .update({ subscription_status: "expired", updated_at: nowIso })
-    .eq("subscription_plan", "six_month")
+    .in("subscription_plan", ["six_month", "exam_prep"])
     .eq("subscription_status", "active")
     .lt("subscription_ends_at", nowIso)
     .select("id");

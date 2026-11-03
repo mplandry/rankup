@@ -51,14 +51,15 @@ const PRICING_TIERS: PricingTier[] = [
   },
   {
     id: "exam_prep",
-    name: "Exam Prep Bundle",
+    name: "1-Year Exam Prep Bundle",
     price: "$300",
     period: "one-time",
-    description: "Full access until exam day",
+    description: "Full access for 12 months",
     features: [
       "Everything in Monthly",
-      "Access until exam day",
-      "No recurring charges",
+      "12 months of full access",
+      "One payment, no auto-renewal",
+      "Save $180 vs. 12 months of monthly",
       "33% less than FiredUp",
       "Built from the official 2027 MA reading lists",
     ],
@@ -499,8 +500,9 @@ export default function PricingPage() {
             <div style={{ fontSize: 14, color: "var(--text-soft)" }}>
               Monthly is $40/month and you can cancel anytime. The 6-Month plan
               is a single $200 payment (that's $40 less than six months of
-              Monthly) and does not renew. The Exam Prep Bundle is a single
-              $300 payment with access until exam day.
+              Monthly) and does not renew. The 1-Year Exam Prep Bundle is a
+              single $300 payment with 12 months of access ($180 less than 12
+              months of Monthly) and also does not renew.
             </div>
           </div>
           <div>
@@ -512,12 +514,12 @@ export default function PricingPage() {
                 marginBottom: 6,
               }}
             >
-              Does the 6-Month plan renew automatically?
+              Do the 6-Month and 1-Year plans renew automatically?
             </div>
             <div style={{ fontSize: 14, color: "var(--text-soft)" }}>
-              No. It's one payment for 6 months of full access. When the 6
-              months are up, your account goes back to the limited free tier
-              and you can buy again anytime.
+              No. Each is one payment for a fixed period of full access (6 or
+              12 months). When it ends, your account goes back to the limited
+              free tier and you can buy again anytime.
             </div>
           </div>
         </div>

@@ -17,14 +17,14 @@ export const EXPECTED_LIST_PRICE_CENTS: Record<string, number> = {
 const PLAN_LABELS: Record<string, string> = {
   monthly: "Monthly subscription",
   six_month: "6-Month access (one-time, 6 months, no auto-renewal)",
-  exam_prep: "Exam Prep Bundle (one-time, through exam day)",
+  exam_prep: "1-Year Exam Prep Bundle (one-time, 12 months, no auto-renewal)",
   department: "Department rate (one-time, per person)",
 };
 
 const PLAN_SHORT: Record<string, string> = {
   monthly: "Monthly",
   six_month: "6-Month",
-  exam_prep: "Exam Prep",
+  exam_prep: "1-Year Exam Prep",
   department: "Department rate",
 };
 

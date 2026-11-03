@@ -45,14 +45,15 @@ const TIERS = [
   },
   {
     id: "exam_prep",
-    name: "Exam Prep Bundle",
+    name: "1-Year Exam Prep Bundle",
     price: "$300",
     period: "one-time",
-    description: "Full access until exam day",
+    description: "Full access for 12 months",
     features: [
       "Everything in Monthly",
-      "Access until exam day",
-      "No recurring charges",
+      "12 months of full access",
+      "One payment, no auto-renewal",
+      "Save $180 vs. 12 months of monthly",
       "33% less than FiredUp",
       "Built from the official 2027 MA reading lists",
     ],
@@ -168,11 +169,14 @@ export default function PlansPage() {
           </div>
           <div className='pricing-faq-item'>
             <div className='pricing-faq-q'>
-              Is the Exam Prep Bundle really a better deal?
+              Which plan should I choose?
             </div>
             <div className='pricing-faq-a'>
-              Yes — 9 months of Monthly costs $360. The Exam Prep Bundle is
-              $300 one-time through exam day, saving you $60+.
+              Monthly is $40/month and you can cancel anytime. The 6-Month
+              plan is a single $200 payment ($40 less than six months of
+              Monthly). The 1-Year Exam Prep Bundle is a single $300 payment
+              ($180 less than twelve months of Monthly). Neither renews
+              automatically.
             </div>
           </div>
         </div>
