@@ -211,7 +211,7 @@ function StudentDetailModal({
                     <span className='text-xs font-semibold px-2 py-0.5 rounded-full bg-purple-100 dark:bg-purple-950/40 text-purple-700 dark:text-purple-400 whitespace-nowrap'>
                       {student.subscription_plan === 'monthly' ? 'Monthly' :
                        student.subscription_plan === 'exam_prep' ? 'Exam Prep' :
-                       student.subscription_plan === 'department' ? 'Department Rate' :
+                       student.subscription_plan === 'six_month' ? '6-Month' :
                        student.subscription_plan}
                     </span>
                   ) : (
@@ -459,7 +459,6 @@ function EditStudentModal({
               <option value=''>None (Free)</option>
               <option value='exam_prep'>Exam Prep</option>
               <option value='monthly'>Monthly</option>
-              <option value='department'>Department Rate</option>
             </select>
           </div>
         </div>
@@ -866,7 +865,7 @@ export default function StudentsTable({
                       <span className='text-xs font-semibold px-2 py-0.5 rounded-full bg-purple-100 dark:bg-purple-950/40 text-purple-700 dark:text-purple-400 whitespace-nowrap'>
                         {s.subscription_plan === 'monthly' ? 'Monthly' :
                          s.subscription_plan === 'exam_prep' ? 'Exam Prep' :
-                         s.subscription_plan === 'department' ? 'Dept Rate' :
+                         s.subscription_plan === 'six_month' ? '6-Month' :
                          s.subscription_plan}
                       </span>
                     ) : (

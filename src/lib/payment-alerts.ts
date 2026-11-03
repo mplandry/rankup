@@ -9,18 +9,21 @@ const ALERT_TO = process.env.PAYMENT_ALERT_EMAIL || "mplandry77@gmail.com";
 // src/app/api/stripe/create-checkout/route.ts.
 export const EXPECTED_LIST_PRICE_CENTS: Record<string, number> = {
   monthly: 4000,
+  six_month: 20000,
   exam_prep: 30000,
   department: 25000,
 };
 
 const PLAN_LABELS: Record<string, string> = {
   monthly: "Monthly subscription",
+  six_month: "6-Month access (one-time, 6 months, no auto-renewal)",
   exam_prep: "Exam Prep Bundle (one-time, through exam day)",
   department: "Department rate (one-time, per person)",
 };
 
 const PLAN_SHORT: Record<string, string> = {
   monthly: "Monthly",
+  six_month: "6-Month",
   exam_prep: "Exam Prep",
   department: "Department rate",
 };
@@ -70,7 +73,13 @@ export async function sendPaymentAlert(alert: PaymentAlert): Promise<void> {
     );
   }
   if (alert.plan === "department") {
+    // Retired plan; only possible from a checkout opened before it was removed.
     flags.push("Department rate: confirm the department and seat count.");
+  }
+  if (alert.plan === "six_month" && discount > 0) {
+    flags.push(
+      `A ${money(discount)} discount was applied to the 6-month plan, which is meant to have no coupons.`,
+    );
   }
 
   const notes: string[] = [];
@@ -90,7 +99,7 @@ export async function sendPaymentAlert(alert: PaymentAlert): Promise<void> {
   const who = alert.customerName || alert.customerEmail || "Unknown customer";
   const planShort = PLAN_SHORT[alert.plan] ?? alert.plan;
   const kindLabel = alert.kind === "renewal" ? "Renewal" : "New payment";
-  const warn = flags.some((f) => f.startsWith("Price mismatch") || f.startsWith("Unknown"));
+  const warn = flags.some((f) => !f.startsWith("Department rate"));
   const subject = `${warn ? "WARNING " : ""}${kindLabel}: ${who} - ${planShort} - ${money(
     alert.paidCents,
   )}`;

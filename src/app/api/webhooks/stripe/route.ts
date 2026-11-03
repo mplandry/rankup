@@ -75,12 +75,38 @@ export async function POST(request: NextRequest) {
 
         const plan = subscriptionPlan || "monthly";
 
+        // The 6-month plan is a one-time payment that expires. If they buy it
+        // again while still active, extend from the current end date so they
+        // don't lose the time they already paid for. The daily
+        // /api/cron/expire-plans job flips expired accounts off.
+        let subscriptionEndsAt: string | null = null;
+        if (plan === "six_month") {
+          const { data: existing } = await supabase
+            .from("profiles")
+            .select("subscription_plan, subscription_status, subscription_ends_at")
+            .eq("id", userId)
+            .single();
+
+          const base = new Date();
+          if (
+            existing?.subscription_plan === "six_month" &&
+            existing.subscription_status === "active" &&
+            existing.subscription_ends_at
+          ) {
+            const currentEnd = new Date(existing.subscription_ends_at);
+            if (currentEnd > base) base.setTime(currentEnd.getTime());
+          }
+          base.setMonth(base.getMonth() + 6);
+          subscriptionEndsAt = base.toISOString();
+        }
+
         await supabase
           .from("profiles")
           .update({
             subscription_status: "active",
             subscription_tier: "full_access",
             subscription_plan: plan,
+            subscription_ends_at: subscriptionEndsAt,
             subscription_started_at: new Date().toISOString(),
             stripe_customer_id: session.customer as string,
             updated_at: new Date().toISOString(),

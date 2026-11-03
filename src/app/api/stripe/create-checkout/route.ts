@@ -3,6 +3,21 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { REFERRAL_TIERS } from "@/lib/constants";
 
+const PRODUCT_COPY: Record<string, { name: string; description: string }> = {
+  monthly: {
+    name: "RankUp Monthly Subscription",
+    description: "Full access to all study materials",
+  },
+  six_month: {
+    name: "RankUp 6-Month Access",
+    description: "Full access for 6 months - one-time payment, no auto-renewal",
+  },
+  exam_prep: {
+    name: "RankUp Exam Prep Bundle",
+    description: "One-time payment - access until exam day",
+  },
+};
+
 export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
@@ -52,7 +67,7 @@ export async function POST(request: NextRequest) {
     const pricingMap: Record<string, { amount: number; plan: string; mode: "subscription" | "payment" }> = {
       monthly: { amount: 4000, plan: "monthly", mode: "subscription" },
       exam_prep: { amount: 30000, plan: "exam_prep", mode: "payment" },
-      department: { amount: 25000, plan: "department", mode: "payment" },
+      six_month: { amount: 20000, plan: "six_month", mode: "payment" },
     };
 
     const pricing = pricingMap[priceId];
@@ -62,6 +77,8 @@ export async function POST(request: NextRequest) {
 
     // Referred-user discount: 10% off first payment, tiered by plan. Only
     // applies once — skip if this user already has a referral reward on file.
+    // Only monthly and exam_prep get the referral discount. six_month is
+    // intentionally excluded: no coupons or referral discounts on that plan.
     let discountCents = 0;
     if (profile.referred_by && (pricing.plan === "monthly" || pricing.plan === "exam_prep")) {
       const { data: existingReward } = await supabase
@@ -93,18 +110,8 @@ export async function POST(request: NextRequest) {
           price_data: {
             currency: "usd",
             product_data: {
-              name:
-                pricing.plan === "monthly"
-                  ? "RankUp Monthly Subscription"
-                  : pricing.plan === "exam_prep"
-                    ? "RankUp Exam Prep Bundle"
-                    : "RankUp Department Rate",
-              description:
-                pricing.plan === "monthly"
-                  ? "Full access to all study materials"
-                  : pricing.plan === "exam_prep"
-                    ? "One-time payment - access until exam day"
-                    : "Department group pricing (5+ firefighters)",
+              name: PRODUCT_COPY[pricing.plan].name,
+              description: PRODUCT_COPY[pricing.plan].description,
             },
             unit_amount: pricing.amount,
             ...(pricing.mode === "subscription" && {

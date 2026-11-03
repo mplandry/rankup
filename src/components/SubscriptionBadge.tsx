@@ -85,7 +85,9 @@ export default function SubscriptionBadge() {
               ? "Monthly"
               : status.subscriptionPlan === "exam_prep"
                 ? "Exam Prep"
-                : "Department"}
+                : status.subscriptionPlan === "six_month"
+                  ? "6-Month"
+                  : status.subscriptionPlan}
           </span>
         )}
       </div>
