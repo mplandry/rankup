@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { REFERRAL_TIERS, REFERRAL_UNLOCK_DAYS } from "@/lib/constants";
+import { sendPaymentAlert } from "@/lib/payment-alerts";
 
 export const dynamic = "force-dynamic";
 
@@ -46,6 +47,18 @@ export async function POST(request: NextRequest) {
 
   if (logError && logError.code !== "23505") {
     console.error("Failed to log webhook event:", logError);
+  }
+
+  // Stripe redelivers events on any non-2xx response. If this event already
+  // finished processing once, don't send the payment alert email again.
+  let alreadyProcessed = false;
+  if (logError?.code === "23505") {
+    const { data: prior } = await supabase
+      .from("stripe_webhook_events")
+      .select("processed")
+      .eq("event_id", event.id)
+      .maybeSingle();
+    alreadyProcessed = !!prior?.processed;
   }
 
   try {
@@ -153,6 +166,82 @@ export async function POST(request: NextRequest) {
               console.log(`✅ Referral reward pending for referrer ${referredProfile.referred_by}`);
             }
           }
+        }
+
+        // Payment alert email to the admin. Never let a failed email make
+        // Stripe retry the whole webhook.
+        if (!alreadyProcessed) {
+          try {
+            const { data: payer } = await supabase
+              .from("profiles")
+              .select("full_name, email, department, referred_by")
+              .eq("id", userId)
+              .single();
+
+            await sendPaymentAlert({
+              kind: "new",
+              plan,
+              paidCents: session.amount_total ?? 0,
+              listCents: session.amount_subtotal,
+              discountCents: session.total_details?.amount_discount ?? 0,
+              customerName: payer?.full_name ?? null,
+              customerEmail: payer?.email ?? session.customer_details?.email ?? null,
+              department: payer?.department ?? null,
+              referred: !!payer?.referred_by,
+              customerId:
+                typeof session.customer === "string"
+                  ? session.customer
+                  : (session.customer?.id ?? null),
+              livemode: event.livemode,
+            });
+          } catch (alertError) {
+            console.error("Failed to send payment alert:", alertError);
+          }
+        }
+        break;
+      }
+
+      case "invoice.paid": {
+        const invoice = event.data.object as Stripe.Invoice;
+
+        // The first invoice of a new subscription is already covered by
+        // checkout.session.completed above; only alert on recurring renewals.
+        if (invoice.billing_reason !== "subscription_cycle" || alreadyProcessed) {
+          break;
+        }
+
+        try {
+          const customerId =
+            typeof invoice.customer === "string"
+              ? invoice.customer
+              : (invoice.customer?.id ?? null);
+
+          const { data: payer } = customerId
+            ? await supabase
+                .from("profiles")
+                .select("full_name, email, department, referred_by, subscription_plan")
+                .eq("stripe_customer_id", customerId)
+                .maybeSingle()
+            : { data: null };
+
+          await sendPaymentAlert({
+            kind: "renewal",
+            plan: payer?.subscription_plan || "monthly",
+            paidCents: invoice.amount_paid,
+            listCents: invoice.subtotal,
+            discountCents: (invoice.total_discount_amounts ?? []).reduce(
+              (sum, d) => sum + d.amount,
+              0,
+            ),
+            customerName: payer?.full_name ?? invoice.customer_name ?? null,
+            customerEmail: payer?.email ?? invoice.customer_email ?? null,
+            department: payer?.department ?? null,
+            referred: !!payer?.referred_by,
+            customerId,
+            livemode: event.livemode,
+          });
+        } catch (alertError) {
+          console.error("Failed to send renewal alert:", alertError);
         }
         break;
       }
