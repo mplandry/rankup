@@ -98,7 +98,7 @@ const ALARM_SCOPE = [
   'All books · 30 s timer',
 ]
 const REVIEW_DELAY_MS = 3200
-const MAX_AIR = 3
+const MAX_AIR = 5
 
 // Same algorithm as QuestionCard / AnswerFeedback so a question shows its
 // options in the same order here as it does in Study mode.
@@ -131,7 +131,7 @@ function AirBar({ air }: { air: number }) {
           <div
             key={i}
             className={cn(
-              'h-3 w-8 rounded-sm transition-colors',
+              'h-3 w-5 rounded-sm transition-colors',
               i < air ? 'bg-[#C0392B]' : 'bg-gray-200 dark:bg-gray-700',
             )}
           />
@@ -389,7 +389,7 @@ export default function AlarmGame() {
 
           <ul className='text-sm text-gray-700 dark:text-gray-300 space-y-2 my-6 list-disc pl-5'>
             <li>Each alarm is 10 questions. Get 7 right to move up.</li>
-            <li>You have 3 air. A miss costs 1; every 5 in a row gives 1 back. Out of air ends the run.</li>
+            <li>You have 5 air. A miss costs 1; every 5 in a row gives 1 back. Out of air ends the run.</li>
             <li>Questions you miss come back a few questions later.</li>
             <li>Accuracy comes first: answering faster adds bonus points, but slow answers still score.</li>
           </ul>
