@@ -478,10 +478,16 @@ export default function AlarmGame() {
             )}
           </div>
           <h2 className='text-2xl font-bold text-[#1B2A4A] dark:text-[#e2e8f0] mb-1'>
-            {cleared ? 'All five alarms cleared!' : `Run over at the ${alarmName(summary?.alarm_level ?? stats.alarm)}`}
+            {cleared
+              ? 'All five alarms cleared!'
+              : summary?.filters?.end_reason === 'quit'
+                ? `You called it off on the ${alarmName(summary?.alarm_level ?? stats.alarm)}`
+                : `Out of air on the ${alarmName(summary?.alarm_level ?? stats.alarm)}`}
           </h2>
           <p className='text-gray-500 dark:text-gray-400 mb-6'>
-            {summary?.filters?.end_reason === 'quit' ? 'You ended this run.' : cleared ? 'Strong work.' : 'You ran out of air.'}
+            {cleared
+              ? 'Strong work.'
+              : `You got ${summary?.score ?? 0} of ${summary?.total_questions ?? 0} right. Review what you missed in Study mode, then go again.`}
           </p>
 
           <div className='grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6'>
