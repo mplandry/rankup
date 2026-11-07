@@ -131,6 +131,17 @@ export default function DashboardPage() {
           </div>
         </div>
 
+        <div
+          onClick={() => router.push("/game")}
+          className="bg-gradient-to-br from-[#1B2A4A] to-[#C0392B] text-white rounded-xl p-9 mb-7 cursor-pointer hover:shadow-lg transition-shadow"
+        >
+          <div className="text-5xl mb-4">🔥</div>
+          <div className="text-[22px] font-bold mb-2">Alarm Levels</div>
+          <div className="text-white/80 text-sm">
+            Beat the clock, protect your air, and clear five alarms of exam questions
+          </div>
+        </div>
+
         <ReferralRewardsCard />
       </div>
     </>
