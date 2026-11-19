@@ -13,11 +13,15 @@ interface Props {
   timeLimitSecs: number
   startedAt: string
   sessionQuestions: (ExamSessionQuestion & { question: ExamQuestion })[]
+  // Which question to open on — computed server-side in page.tsx as the
+  // first unanswered question (or the last one, if somehow all are
+  // answered), so a resumed exam doesn't snap back to question 1.
+  initialIndex: number
 }
 
-export default function ExamSession({ sessionId, timeLimitSecs, startedAt, sessionQuestions }: Props) {
+export default function ExamSession({ sessionId, timeLimitSecs, startedAt, sessionQuestions, initialIndex }: Props) {
   const router = useRouter()
-  const [index, setIndex] = useState(0)
+  const [index, setIndex] = useState(initialIndex)
   const [answers, setAnswers] = useState<Record<string, Answer>>(() => {
     const init: Record<string, Answer> = {}
     sessionQuestions.forEach((sq) => {
