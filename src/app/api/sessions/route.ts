@@ -17,7 +17,7 @@ export async function POST(request: Request) {
     .eq("id", user.id)
     .single();
 
-  const { mode, filters } = await request.json();
+  const { mode, filters, force_new } = await request.json();
 
   // Admins, active subscribers, and users still inside their trial (incl.
   // bonus days) get full access. Rules live in src/lib/access.ts.
@@ -33,6 +33,26 @@ export async function POST(request: Request) {
       },
       { status: 403 },
     );
+  }
+
+  // Resume support: if the student already has an unfinished session of
+  // this mode, hand that one back instead of silently abandoning it and
+  // starting a new one. force_new lets the client explicitly discard it
+  // (a confirmed "Start New Exam" action) and begin fresh.
+  if (!force_new) {
+    const { data: existing } = await supabase
+      .from("exam_sessions")
+      .select("id")
+      .eq("user_id", user.id)
+      .eq("mode", mode)
+      .eq("status", "in_progress")
+      .order("started_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (existing) {
+      return NextResponse.json({ session_id: existing.id, resumed: true });
+    }
   }
 
   let remainingToday = Infinity;
@@ -122,13 +142,16 @@ export async function POST(request: Request) {
     Math.min(filters?.question_count || defaultCount, shuffled.length, remainingToday),
   );
 
-  // Starting a new session means any of the user's previous unfinished
-  // sessions are abandoned (this UI never resumes an old in_progress row) —
-  // clean those up so exam_sessions.status stays accurate for admin reporting.
+  // Starting a new session abandons the student's previous unfinished
+  // session of THIS SAME MODE (resuming is handled above; this only runs
+  // when there's no existing in_progress row, or the student explicitly
+  // chose "Start New" via force_new) — scoped to mode so starting a study
+  // session can't silently abandon an in-progress exam, or vice versa.
   await supabase
     .from("exam_sessions")
     .update({ status: "abandoned" })
     .eq("user_id", user.id)
+    .eq("mode", mode)
     .eq("status", "in_progress");
 
   const { data: session, error: sessionError } = await supabase
