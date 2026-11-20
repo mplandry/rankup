@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import StudyConfig from '@/components/study/StudyConfig'
+import { ACTIVE_EXAM_CYCLE } from '@/lib/constants'
 
 // Numeric chapters ascend numerically (so "2" sorts before "10"), suffixed
 // chapters like "26A" sort near their numeric neighbor, and non-numeric
@@ -41,13 +42,14 @@ export default async function StudyPage({
   // Paginated fetch of filter metadata — an unbounded select caps at 1000
   // rows by default, which previously truncated books/chapters silently.
   const PAGE_SIZE = 1000
-  let meta: { book_title: string; chapter: string | number | null; topic: string | null }[] = []
+  let meta: { book_title: string; chapter: string | number | null; topic: string | null; difficulty: string | null }[] = []
   let from = 0
   while (true) {
     const { data, error } = await supabase
       .from('questions')
-      .select('book_title, chapter, topic')
+      .select('book_title, chapter, topic, difficulty')
       .eq('is_active', true)
+      .eq('exam_cycle', ACTIVE_EXAM_CYCLE)
       .eq('study_eligible', true)
       .in('exam_type', examTypes)
       .range(from, from + PAGE_SIZE - 1)
@@ -66,6 +68,7 @@ export default async function StudyPage({
 
   const bookChapters: Record<string, string[]> = {}
   const bookTopics: Record<string, string[]> = {}
+  const bookDifficulties: Record<string, string[]> = {}
   for (const b of books) {
     const rowsForBook = meta.filter((q) => q.book_title === b)
     bookChapters[b] = [...new Set(rowsForBook.map((q) => q.chapter))]
@@ -73,11 +76,15 @@ export default async function StudyPage({
       .map((c) => String(c))
     bookTopics[b] = [...new Set(rowsForBook.map((q) => q.topic).filter(Boolean))]
       .sort((a, b) => String(a).localeCompare(String(b))) as string[]
+    // Which difficulties actually have eligible questions for this book —
+    // not every book has easy/hard content, and picking an empty combo
+    // silently returns zero questions (looks identical to "no new questions").
+    bookDifficulties[b] = [...new Set(rowsForBook.map((q) => q.difficulty).filter(Boolean))] as string[]
   }
 
   return (
     <div style={{ flex: 1, padding: '36px 40px', maxWidth: 1100, margin: '0 auto' }}>
-      <div style={{ fontSize: 26, fontWeight: 700, marginBottom: 4, color: '#1B2A4A' }}>Study Mode</div>
+      <div style={{ fontSize: 26, fontWeight: 700, marginBottom: 4, color: 'var(--text-strong)' }}>Study Mode</div>
       <div style={{ fontSize: 13.5, color: '#64748b', marginBottom: 28 }}>
         Practice with instant feedback and chapter references
       </div>
@@ -87,6 +94,7 @@ export default async function StudyPage({
         topics={topics}
         bookChapters={bookChapters}
         bookTopics={bookTopics}
+        bookDifficulties={bookDifficulties}
         initialBook={initialBook}
         initialChapter={initialChapter}
       />

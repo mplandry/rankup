@@ -6,12 +6,15 @@ import { BookOpen, Loader2 } from "lucide-react";
 import { DEFAULT_STUDY_COUNT } from "@/lib/constants";
 import { track } from "@/lib/analytics";
 
+const ALL_DIFFICULTIES = ["easy", "medium", "hard"];
+
 interface Props {
   books: string[];
   chapters: string[];
   topics: string[];
   bookChapters: Record<string, string[]>;
   bookTopics: Record<string, string[]>;
+  bookDifficulties: Record<string, string[]>;
   initialBook?: string;
   initialChapter?: string;
 }
@@ -22,6 +25,7 @@ export default function StudyConfig({
   topics,
   bookChapters,
   bookTopics,
+  bookDifficulties,
   initialBook = "",
   initialChapter = "",
 }: Props) {
@@ -49,10 +53,22 @@ export default function StudyConfig({
 
   const filteredTopics = book ? bookTopics[book] || [] : [];
 
+  // Not every book has questions at every difficulty (e.g. a book that's
+  // medium-only). Picking an empty combo silently returns zero questions,
+  // which looks identical to "study mode won't give me anything new" — so
+  // gray those combos out instead.
+  const availableDifficulties = book
+    ? new Set(bookDifficulties[book] || [])
+    : new Set(ALL_DIFFICULTIES);
+
   function handleBookChange(val: string) {
     setBook(val);
     setChapter("");
     setTopic("");
+    const stillAvailable = val
+      ? (bookDifficulties[val] || []).includes(difficulty)
+      : true;
+    if (difficulty && !stillAvailable) setDifficulty("");
   }
 
   async function handleStart() {
@@ -163,16 +179,27 @@ export default function StudyConfig({
           Difficulty
         </label>
         <div className='flex gap-2'>
-          {["", "easy", "medium", "hard"].map((d) => (
-            <button
-              key={d}
-              type='button'
-              onClick={() => setDifficulty(d)}
-              className={`px-3 py-1.5 rounded-lg text-xs border transition-all capitalize ${difficulty === d ? "border-red-500 bg-red-50 dark:bg-red-950/30 text-red-700 dark:text-red-400 font-medium" : "border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600"}`}
-            >
-              {d || "All"}
-            </button>
-          ))}
+          {["", "easy", "medium", "hard"].map((d) => {
+            const isDisabled = d !== "" && !availableDifficulties.has(d);
+            return (
+              <button
+                key={d}
+                type='button'
+                disabled={isDisabled}
+                title={isDisabled ? `No ${d} questions for this book` : undefined}
+                onClick={() => setDifficulty(d)}
+                className={`px-3 py-1.5 rounded-lg text-xs border transition-all capitalize ${
+                  isDisabled
+                    ? "border-gray-100 dark:border-gray-800 text-gray-300 dark:text-gray-600 cursor-not-allowed opacity-60"
+                    : difficulty === d
+                      ? "border-red-500 bg-red-50 dark:bg-red-950/30 text-red-700 dark:text-red-400 font-medium"
+                      : "border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600"
+                }`}
+              >
+                {d || "All"}
+              </button>
+            );
+          })}
         </div>
       </div>
 
