@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
-import { BookOpen, Users, Upload, Database, List, ClipboardCheck, Sparkles, Wand2, Bell, Activity, BarChart3, Video } from "lucide-react";
+import { BookOpen, Users, Upload, Database, List, ClipboardCheck, Sparkles, Wand2, Bell, Activity, BarChart3, Video, Flag } from "lucide-react";
+import { createServiceRoleClient } from "@/lib/supabase/service-role";
 import ExamTypeSwitcher from "@/components/admin/ExamTypeSwitcher";
 import AdminReadingList from "@/components/admin/AdminReadingList";
 
@@ -46,6 +47,13 @@ export default async function AdminPage() {
     ]);
 
   const pendingReview = pendingReviewRes.count ?? 0;
+
+  // Table may not exist until migration 008 is applied; treat that as zero.
+  const { count: openReportsCount } = await createServiceRoleClient()
+    .from("question_reports")
+    .select("*", { count: "exact", head: true })
+    .eq("status", "open");
+  const openReports = openReportsCount ?? 0;
 
   const stats = [
     {
@@ -181,6 +189,23 @@ export default async function AdminPage() {
       </div>
 
       <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8'>
+        <Link
+          href='/admin/reports'
+          className='flex items-center gap-4 bg-white dark:bg-[#111827] border border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:border-red-300 dark:hover:border-red-700 hover:shadow-sm transition-all'
+        >
+          <div className='w-11 h-11 bg-red-100 dark:bg-red-950/40 rounded-xl flex items-center justify-center'>
+            <Flag className='w-5 h-5 text-red-600 dark:text-red-400' />
+          </div>
+          <div className='flex-1'>
+            <div className='font-semibold text-[#1B2A4A] dark:text-[#e2e8f0]'>Reported Questions</div>
+            <div className='text-sm text-gray-500 dark:text-gray-400'>Student flags to check</div>
+          </div>
+          {openReports > 0 && (
+            <span className='text-xs font-bold bg-red-100 dark:bg-red-950/40 text-red-700 dark:text-red-400 px-2.5 py-1 rounded-full'>
+              {openReports}
+            </span>
+          )}
+        </Link>
         <Link
           href='/admin/review'
           className='flex items-center gap-4 bg-white dark:bg-[#111827] border border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:border-red-300 dark:hover:border-red-700 hover:shadow-sm transition-all'

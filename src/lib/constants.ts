@@ -1,3 +1,7 @@
+// Which question bank students are served. Every student-facing query pins to
+// this so old-cycle rows can never leak into a session even if reactivated.
+// Flip this (and release the new bank) when the next exam cycle goes live.
+export const ACTIVE_EXAM_CYCLE = '2027'
 export const EXAM_QUESTION_COUNT = 90
 export const EXAM_TIME_LIMIT_SECS = 90 * 60 // 90 minutes
 export const PASSING_SCORE_PCT = 70

@@ -45,7 +45,7 @@ export default function ResetPasswordPage() {
             <Image src="/icon.png" alt="RankUp" width={56} height={56} className="object-cover" priority />
           </div>
           <h1 style={{ fontSize: 24, fontWeight: 700, color: 'var(--text)', marginBottom: 8 }}>Reset Password</h1>
-          <p style={{ fontSize: 14, color: 'var(--text-muted)' }}>
+          <p style={{ fontSize: 14, color: 'var(--text-soft)' }}>
             Enter your email and we'll send you a link to reset your password
           </p>
         </div>
@@ -104,10 +104,10 @@ export default function ResetPasswordPage() {
           <div style={{ background: 'var(--white)', border: '1px solid var(--border)', borderRadius: 12, padding: 24, textAlign: 'center' }}>
             <div style={{ fontSize: 48, marginBottom: 16 }}>📧</div>
             <h2 style={{ fontSize: 18, fontWeight: 600, marginBottom: 8 }}>Check your email</h2>
-            <p style={{ fontSize: 14, color: 'var(--text-muted)', marginBottom: 20 }}>
+            <p style={{ fontSize: 14, color: 'var(--text-soft)', marginBottom: 20 }}>
               We've sent a password reset link to <strong>{email}</strong>
             </p>
-            <p style={{ fontSize: 13, color: 'var(--text-muted)' }}>
+            <p style={{ fontSize: 13, color: 'var(--text-soft)' }}>
               Didn't receive it? Check your spam folder or{' '}
               <button
                 onClick={() => setSent(false)}
@@ -120,7 +120,7 @@ export default function ResetPasswordPage() {
         )}
 
         <div style={{ marginTop: 20, textAlign: 'center' }}>
-          <Link href="/login" style={{ fontSize: 13, color: 'var(--text-muted)', textDecoration: 'none' }}>
+          <Link href="/login" style={{ fontSize: 13, color: 'var(--text-soft)', textDecoration: 'none' }}>
             ← Back to login
           </Link>
         </div>

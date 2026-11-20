@@ -138,7 +138,7 @@ export default function ReferralRewardsCard() {
           <div className="text-xs text-gray-500 dark:text-gray-400">Referred</div>
         </div>
         <div className="text-center">
-          <div className="text-2xl font-bold text-orange-500 dark:text-orange-400">
+          <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">
             {formatCents(stats.pendingCents)}
           </div>
           <div className="text-xs text-gray-500 dark:text-gray-400">Pending</div>

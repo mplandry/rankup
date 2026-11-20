@@ -85,7 +85,7 @@ export default function WelcomePage() {
             </Link>
           </div>
 
-          <p style={{ fontSize: 12, color: '#94a3b8', marginTop: 20, lineHeight: 1.5 }}>
+          <p style={{ fontSize: 12, color: '#64748b', marginTop: 20, lineHeight: 1.5 }}>
             Didn't receive the email? Check your spam folder or contact support.
           </p>
         </div>

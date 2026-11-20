@@ -116,7 +116,7 @@ export default function QuestionCard({
                   "w-7 h-7 rounded-full border-2 flex items-center justify-center text-sm font-bold shrink-0",
                   showResult &&
                     isCorrect &&
-                    "border-green-500 bg-green-500 text-white",
+                    "border-green-500 bg-green-600 text-white",
                   showResult &&
                     isSelected &&
                     !isCorrect &&

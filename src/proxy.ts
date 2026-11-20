@@ -35,6 +35,7 @@ export async function proxy(request: NextRequest) {
     pathname.startsWith('/progress') ||
     pathname.startsWith('/admin') ||
     pathname.startsWith('/flashcards') ||
+    pathname.startsWith('/game') ||
     pathname.startsWith('/pricing')
 
   if (isAppRoute && !user) {

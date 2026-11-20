@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
-import { FREE_DAILY_QUESTION_LIMIT, EXAM_QUESTION_COUNT, DEFAULT_STUDY_COUNT } from "@/lib/constants";
+import { ACTIVE_EXAM_CYCLE, FREE_DAILY_QUESTION_LIMIT, EXAM_QUESTION_COUNT, DEFAULT_STUDY_COUNT } from "@/lib/constants";
 import { hasFullAccess as checkFullAccess, startOfTodayEastern } from "@/lib/access";
 
 export async function POST(request: Request) {
@@ -17,7 +17,7 @@ export async function POST(request: Request) {
     .eq("id", user.id)
     .single();
 
-  const { mode, filters } = await request.json();
+  const { mode, filters, force_new } = await request.json();
 
   // Admins, active subscribers, and users still inside their trial (incl.
   // bonus days) get full access. Rules live in src/lib/access.ts.
@@ -33,6 +33,26 @@ export async function POST(request: Request) {
       },
       { status: 403 },
     );
+  }
+
+  // Resume support: if the student already has an unfinished session of
+  // this mode, hand that one back instead of silently abandoning it and
+  // starting a new one. force_new lets the client explicitly discard it
+  // (a confirmed "Start New Exam" action) and begin fresh.
+  if (!force_new) {
+    const { data: existing } = await supabase
+      .from("exam_sessions")
+      .select("id")
+      .eq("user_id", user.id)
+      .eq("mode", mode)
+      .eq("status", "in_progress")
+      .order("started_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (existing) {
+      return NextResponse.json({ session_id: existing.id, resumed: true });
+    }
   }
 
   let remainingToday = Infinity;
@@ -73,41 +93,65 @@ export async function POST(request: Request) {
   const eligibilityField = mode === "exam" ? "exam_eligible" : "study_eligible";
   const defaultCount = mode === "exam" ? EXAM_QUESTION_COUNT : DEFAULT_STUDY_COUNT;
 
-  let query = supabase
-    .from("questions")
-    .select("*")
-    .eq("is_active", true)
-    .eq("review_status", "approved")
-    .eq(eligibilityField, true)
-    .in("exam_type", examTypes);
+  // Build the eligible-question query fresh per page. Only ids are needed here
+  // (the session rows below store question_id), and the full pool for a track
+  // (~6-7k rows) is bigger than both the old .limit(5000) and PostgREST's
+  // default max-rows cap, so we page through it. A stable order keeps the
+  // pages from overlapping or skipping rows.
+  const buildQuery = () => {
+    let q = supabase
+      .from("questions")
+      .select("id")
+      .eq("is_active", true)
+      .eq("review_status", "approved")
+      .eq("exam_cycle", ACTIVE_EXAM_CYCLE)
+      .eq(eligibilityField, true)
+      .in("exam_type", examTypes)
+      .order("id");
+    if (filters?.book_title) q = q.eq("book_title", filters.book_title);
+    if (filters?.chapter) q = q.eq("chapter", filters.chapter);
+    if (filters?.topic) q = q.eq("topic", filters.topic);
+    if (filters?.difficulty) q = q.eq("difficulty", filters.difficulty);
+    return q;
+  };
 
-  if (filters?.book_title) query = query.eq("book_title", filters.book_title);
-  if (filters?.chapter) query = query.eq("chapter", filters.chapter);
-  if (filters?.topic) query = query.eq("topic", filters.topic);
-  if (filters?.difficulty) query = query.eq("difficulty", filters.difficulty);
-
-  const { data: questions, error } = await query.limit(5000);
-  if (error)
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  if (!questions?.length)
+  const PAGE_SIZE = 1000;
+  const questions: { id: string }[] = [];
+  for (let from = 0; ; from += PAGE_SIZE) {
+    const { data, error } = await buildQuery().range(from, from + PAGE_SIZE - 1);
+    if (error)
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    if (!data || data.length === 0) break;
+    questions.push(...data);
+    if (data.length < PAGE_SIZE) break;
+  }
+  if (!questions.length)
     return NextResponse.json(
       { error: "No questions found matching your filters" },
       { status: 404 },
     );
 
-  const shuffled = questions.sort(() => Math.random() - 0.5);
+  // Fisher-Yates: unbiased (sort(() => Math.random() - 0.5) is not).
+  const shuffled = questions;
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
   const selected = shuffled.slice(
     0,
     Math.min(filters?.question_count || defaultCount, shuffled.length, remainingToday),
   );
 
-  // Starting a new session means any of the user's previous unfinished
-  // sessions are abandoned (this UI never resumes an old in_progress row) —
-  // clean those up so exam_sessions.status stays accurate for admin reporting.
+  // Starting a new session abandons the student's previous unfinished
+  // session of THIS SAME MODE (resuming is handled above; this only runs
+  // when there's no existing in_progress row, or the student explicitly
+  // chose "Start New" via force_new) — scoped to mode so starting a study
+  // session can't silently abandon an in-progress exam, or vice versa.
   await supabase
     .from("exam_sessions")
     .update({ status: "abandoned" })
     .eq("user_id", user.id)
+    .eq("mode", mode)
     .eq("status", "in_progress");
 
   const { data: session, error: sessionError } = await supabase

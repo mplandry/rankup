@@ -2,6 +2,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { REFERRAL_TIERS, REFERRAL_UNLOCK_DAYS } from "@/lib/constants";
+import { sendPaymentAlert } from "@/lib/payment-alerts";
+
+// One-time plans that expire, and how many months of access they give.
+const FIXED_PLAN_MONTHS: Record<string, number> = {
+  six_month: 6,
+  exam_prep: 12,
+};
 
 export const dynamic = "force-dynamic";
 
@@ -48,6 +55,18 @@ export async function POST(request: NextRequest) {
     console.error("Failed to log webhook event:", logError);
   }
 
+  // Stripe redelivers events on any non-2xx response. If this event already
+  // finished processing once, don't send the payment alert email again.
+  let alreadyProcessed = false;
+  if (logError?.code === "23505") {
+    const { data: prior } = await supabase
+      .from("stripe_webhook_events")
+      .select("processed")
+      .eq("event_id", event.id)
+      .maybeSingle();
+    alreadyProcessed = !!prior?.processed;
+  }
+
   try {
     switch (event.type) {
       case "checkout.session.completed": {
@@ -62,12 +81,40 @@ export async function POST(request: NextRequest) {
 
         const plan = subscriptionPlan || "monthly";
 
+        // The 6-month and 1-year (exam_prep) plans are one-time payments that
+        // expire. If they buy the same plan again while still active, extend
+        // from the current end date so they don't lose the time they already
+        // paid for. The daily /api/cron/expire-plans job flips expired
+        // accounts off.
+        const durationMonths = FIXED_PLAN_MONTHS[plan];
+        let subscriptionEndsAt: string | null = null;
+        if (durationMonths) {
+          const { data: existing } = await supabase
+            .from("profiles")
+            .select("subscription_plan, subscription_status, subscription_ends_at")
+            .eq("id", userId)
+            .single();
+
+          const base = new Date();
+          if (
+            existing?.subscription_plan === plan &&
+            existing.subscription_status === "active" &&
+            existing.subscription_ends_at
+          ) {
+            const currentEnd = new Date(existing.subscription_ends_at);
+            if (currentEnd > base) base.setTime(currentEnd.getTime());
+          }
+          base.setMonth(base.getMonth() + durationMonths);
+          subscriptionEndsAt = base.toISOString();
+        }
+
         await supabase
           .from("profiles")
           .update({
             subscription_status: "active",
             subscription_tier: "full_access",
             subscription_plan: plan,
+            subscription_ends_at: subscriptionEndsAt,
             subscription_started_at: new Date().toISOString(),
             stripe_customer_id: session.customer as string,
             updated_at: new Date().toISOString(),
@@ -153,6 +200,82 @@ export async function POST(request: NextRequest) {
               console.log(`✅ Referral reward pending for referrer ${referredProfile.referred_by}`);
             }
           }
+        }
+
+        // Payment alert email to the admin. Never let a failed email make
+        // Stripe retry the whole webhook.
+        if (!alreadyProcessed) {
+          try {
+            const { data: payer } = await supabase
+              .from("profiles")
+              .select("full_name, email, department, referred_by")
+              .eq("id", userId)
+              .single();
+
+            await sendPaymentAlert({
+              kind: "new",
+              plan,
+              paidCents: session.amount_total ?? 0,
+              listCents: session.amount_subtotal,
+              discountCents: session.total_details?.amount_discount ?? 0,
+              customerName: payer?.full_name ?? null,
+              customerEmail: payer?.email ?? session.customer_details?.email ?? null,
+              department: payer?.department ?? null,
+              referred: !!payer?.referred_by,
+              customerId:
+                typeof session.customer === "string"
+                  ? session.customer
+                  : (session.customer?.id ?? null),
+              livemode: event.livemode,
+            });
+          } catch (alertError) {
+            console.error("Failed to send payment alert:", alertError);
+          }
+        }
+        break;
+      }
+
+      case "invoice.paid": {
+        const invoice = event.data.object as Stripe.Invoice;
+
+        // The first invoice of a new subscription is already covered by
+        // checkout.session.completed above; only alert on recurring renewals.
+        if (invoice.billing_reason !== "subscription_cycle" || alreadyProcessed) {
+          break;
+        }
+
+        try {
+          const customerId =
+            typeof invoice.customer === "string"
+              ? invoice.customer
+              : (invoice.customer?.id ?? null);
+
+          const { data: payer } = customerId
+            ? await supabase
+                .from("profiles")
+                .select("full_name, email, department, referred_by, subscription_plan")
+                .eq("stripe_customer_id", customerId)
+                .maybeSingle()
+            : { data: null };
+
+          await sendPaymentAlert({
+            kind: "renewal",
+            plan: payer?.subscription_plan || "monthly",
+            paidCents: invoice.amount_paid,
+            listCents: invoice.subtotal,
+            discountCents: (invoice.total_discount_amounts ?? []).reduce(
+              (sum, d) => sum + d.amount,
+              0,
+            ),
+            customerName: payer?.full_name ?? invoice.customer_name ?? null,
+            customerEmail: payer?.email ?? invoice.customer_email ?? null,
+            department: payer?.department ?? null,
+            referred: !!payer?.referred_by,
+            customerId,
+            livemode: event.livemode,
+          });
+        } catch (alertError) {
+          console.error("Failed to send renewal alert:", alertError);
         }
         break;
       }

@@ -34,37 +34,35 @@ const PRICING_TIERS: PricingTier[] = [
     ],
   },
   {
-    id: "exam_prep",
-    name: "Exam Prep Bundle",
-    price: "$300",
+    id: "six_month",
+    name: "6-Month Access",
+    price: "$200",
     period: "one-time",
-    description: "Best value - full access until exam day",
+    description: "Best value - full access for 6 months",
     features: [
       "Everything in Monthly",
-      "Access until exam day",
-      "No recurring charges",
-      "33% less than FiredUp",
-      "Save $60+ vs monthly",
+      "6 months of full access",
+      "One payment, no auto-renewal",
+      "Save $40 vs. 6 months of monthly",
       "Built from the official 2027 MA reading lists",
     ],
     recommended: true,
     badge: "BEST VALUE",
   },
   {
-    id: "department",
-    name: "Department Rate",
-    price: "$250",
-    period: "/person",
-    description: "5+ firefighters from same department",
+    id: "exam_prep",
+    name: "1-Year Exam Prep Bundle",
+    price: "$300",
+    period: "one-time",
+    description: "Full access for 12 months",
     features: [
-      "Everything in Exam Prep",
-      "17% discount per person",
-      "Department leaderboard",
-      "Group progress tracking",
-      "Priority support",
-      "Contact for group billing",
+      "Everything in Monthly",
+      "12 months of full access",
+      "One payment, no auto-renewal",
+      "Save $180 vs. 12 months of monthly",
+      "33% less than FiredUp",
+      "Built from the official 2027 MA reading lists",
     ],
-    badge: "TEAM PLAN",
   },
 ];
 
@@ -72,9 +70,6 @@ export default function PricingPage() {
   const [user, setUser] = useState<any>(null);
   const cardRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const [loading, setLoading] = useState<string | null>(null);
-  const [showContactForm, setShowContactForm] = useState(false);
-  const [contactForm, setContactForm] = useState({ name: "", email: "", department: "", count: "", message: "" });
-  const [contactStatus, setContactStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const router = useRouter();
   const searchParams = useSearchParams();
   const paymentStatus = searchParams?.get("payment");
@@ -110,31 +105,8 @@ export default function PricingPage() {
     return () => clearTimeout(timer);
   }, [user]);
 
-  const handleContactSubmit = async () => {
-    setContactStatus("sending");
-    try {
-      const res = await fetch("/api/contact-department", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(contactForm),
-      });
-      if (res.ok) {
-        setContactStatus("sent");
-      } else {
-        setContactStatus("error");
-      }
-    } catch {
-      setContactStatus("error");
-    }
-  };
-
   const handleSubscribe = async (planType: string) => {
     if (!user) return;
-
-    if (planType === "department") {
-      setShowContactForm(true);
-      return;
-    }
 
     setLoading(planType);
     track("checkout_started", { plan: planType });
@@ -185,12 +157,12 @@ export default function PricingPage() {
             fontSize: 32,
             fontWeight: 700,
             marginBottom: 8,
-            color: "#1B2A4A",
+            color: "var(--text-strong)",
           }}
         >
           7,500+ Questions. One Exam. Zero Wasted Time.
         </div>
-        <div style={{ fontSize: 15, color: "#64748b", marginBottom: 16 }}>
+        <div style={{ fontSize: 15, color: "var(--text-soft)", marginBottom: 16 }}>
           Built from the official 2027 MA reading lists • Built by MA firefighters for MA
           firefighters
         </div>
@@ -236,7 +208,7 @@ export default function PricingPage() {
             justifyContent: "center",
             gap: 24,
             fontSize: 13,
-            color: "#64748b",
+            color: "var(--text-soft)",
             marginTop: 20,
             flexWrap: "wrap",
           }}
@@ -250,8 +222,8 @@ export default function PricingPage() {
       {/* Competitive advantage callout */}
       <div
         style={{
-          background: "linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)",
-          border: "1px solid #fcd34d",
+          background: "var(--callout-bg)",
+          border: "1px solid var(--callout-border)",
           borderRadius: 12,
           padding: 20,
           marginBottom: 32,
@@ -262,13 +234,13 @@ export default function PricingPage() {
           style={{
             fontSize: 16,
             fontWeight: 600,
-            color: "#92400e",
+            color: "var(--callout-title)",
             marginBottom: 6,
           }}
         >
           🎯 Why pay $450 for nationwide content?
         </div>
-        <div style={{ fontSize: 14, color: "#78350f" }}>
+        <div style={{ fontSize: 14, color: "var(--callout-text)" }}>
           Every question is from the actual MA reading list — no California
           building codes, no Texas-specific content. Just what you need to pass.
         </div>
@@ -292,12 +264,12 @@ export default function PricingPage() {
               cardRefs.current[tier.id] = el;
             }}
             style={{
-              background: "#fff",
+              background: "var(--white)",
               border: isIntended
                 ? "2px solid #16a34a"
                 : tier.recommended
                   ? "2px solid var(--red)"
-                  : "1px solid #e0e6ed",
+                  : "1px solid var(--card-border)",
               borderRadius: 14,
               padding: 28,
               position: "relative",
@@ -336,7 +308,7 @@ export default function PricingPage() {
                   top: -12,
                   left: "50%",
                   transform: "translateX(-50%)",
-                  background: tier.recommended ? "var(--red)" : "#f59e0b",
+                  background: tier.recommended ? "var(--red)" : "#b45309",
                   color: "#fff",
                   padding: "4px 12px",
                   borderRadius: 6,
@@ -354,7 +326,7 @@ export default function PricingPage() {
               style={{
                 fontSize: 20,
                 fontWeight: 700,
-                color: "#1B2A4A",
+                color: "var(--text-strong)",
                 marginBottom: 8,
               }}
             >
@@ -362,7 +334,7 @@ export default function PricingPage() {
             </div>
 
             {/* Description */}
-            <div style={{ fontSize: 13, color: "#64748b", marginBottom: 20 }}>
+            <div style={{ fontSize: 13, color: "var(--text-soft)", marginBottom: 20 }}>
               {tier.description}
             </div>
 
@@ -372,12 +344,12 @@ export default function PricingPage() {
                 style={{
                   fontSize: 48,
                   fontWeight: 800,
-                  color: tier.recommended ? "var(--red)" : "#1B2A4A",
+                  color: tier.recommended ? "var(--red)" : "var(--text-strong)",
                 }}
               >
                 {tier.price}
               </span>
-              <span style={{ fontSize: 16, color: "#64748b", fontWeight: 600 }}>
+              <span style={{ fontSize: 16, color: "var(--text-soft)", fontWeight: 600 }}>
                 {tier.period}
               </span>
             </div>
@@ -400,12 +372,12 @@ export default function PricingPage() {
                     alignItems: "flex-start",
                     gap: 8,
                     fontSize: 13,
-                    color: "#475569",
+                    color: "var(--text-body)",
                   }}
                 >
                   <span
                     style={{
-                      color: tier.recommended ? "var(--red)" : "#10b981",
+                      color: tier.recommended ? "var(--red)" : "#059669",
                       fontSize: 16,
                     }}
                   >
@@ -423,7 +395,7 @@ export default function PricingPage() {
               style={{
                 width: "100%",
                 padding: "13px 24px",
-                background: tier.recommended ? "#C0392B" : "#1B2A4A",
+                background: tier.recommended ? "#C0392B" : "#2f4a7d",
                 color: "#fff",
                 border: "none",
                 borderRadius: 10,
@@ -434,11 +406,7 @@ export default function PricingPage() {
                 marginTop: "auto",
               }}
             >
-              {loading === tier.id
-                ? "Loading..."
-                : tier.id === "department"
-                  ? "Contact Us"
-                  : "Get Started"}
+              {loading === tier.id ? "Loading..." : "Get Started"}
             </button>
           </div>
           );
@@ -448,8 +416,8 @@ export default function PricingPage() {
       {/* Testimonial */}
       <div
         style={{
-          background: "#f8fafc",
-          border: "1px solid #e0e6ed",
+          background: "var(--surface-soft)",
+          border: "1px solid var(--card-border)",
           borderRadius: 12,
           padding: 28,
           textAlign: "center",
@@ -459,7 +427,7 @@ export default function PricingPage() {
           style={{
             fontSize: 18,
             fontStyle: "italic",
-            color: "#475569",
+            color: "var(--text-body)",
             marginBottom: 12,
             lineHeight: 1.6,
           }}
@@ -467,72 +435,10 @@ export default function PricingPage() {
           "Every question was from the actual reading list. No fluff, no wasted
           time studying irrelevant material. Worth every dollar."
         </div>
-        <div style={{ fontSize: 14, fontWeight: 600, color: "#1B2A4A" }}>
+        <div style={{ fontSize: 14, fontWeight: 600, color: "var(--text-strong)" }}>
           — Jeff S., MA Firefighter
         </div>
       </div>
-
-      {/* Contact Form Modal */}
-      {showContactForm && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
-          <div style={{ background: "#fff", borderRadius: 16, padding: 32, maxWidth: 480, width: "100%", position: "relative" }}>
-            <button onClick={() => { setShowContactForm(false); setContactStatus("idle"); }} style={{ position: "absolute", top: 16, right: 16, background: "none", border: "none", fontSize: 20, cursor: "pointer", color: "#64748b" }}>✕</button>
-
-            {contactStatus === "sent" ? (
-              <div style={{ textAlign: "center", padding: "20px 0" }}>
-                <div style={{ fontSize: 48, marginBottom: 16 }}>✅</div>
-                <div style={{ fontSize: 20, fontWeight: 700, color: "#1B2A4A", marginBottom: 8 }}>Message Sent!</div>
-                <div style={{ fontSize: 14, color: "#64748b" }}>We'll be in touch within 24 hours to set up your department rate.</div>
-                <button onClick={() => { setShowContactForm(false); setContactStatus("idle"); }} style={{ marginTop: 24, padding: "10px 24px", background: "#1B2A4A", color: "#fff", border: "none", borderRadius: 8, fontSize: 14, fontWeight: 600, cursor: "pointer" }}>Close</button>
-              </div>
-            ) : (
-              <>
-                <div style={{ fontSize: 22, fontWeight: 700, color: "#1B2A4A", marginBottom: 4 }}>Department Rate Inquiry</div>
-                <div style={{ fontSize: 14, color: "#64748b", marginBottom: 24 }}>5+ firefighters from the same department get $250/person. Fill this out and we'll reach out within 24 hours.</div>
-
-                {[
-                  { label: "Your Name", key: "name", placeholder: "John Smith", type: "text" },
-                  { label: "Your Email", key: "email", placeholder: "john@springfieldfd.com", type: "email" },
-                  { label: "Department", key: "department", placeholder: "Springfield Fire Department", type: "text" },
-                  { label: "Number of Firefighters", key: "count", placeholder: "e.g. 8", type: "number" },
-                ].map(({ label, key, placeholder, type }) => (
-                  <div key={key} style={{ marginBottom: 16 }}>
-                    <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#1B2A4A", marginBottom: 6 }}>{label}</label>
-                    <input
-                      type={type}
-                      placeholder={placeholder}
-                      value={contactForm[key as keyof typeof contactForm]}
-                      onChange={(e) => setContactForm(prev => ({ ...prev, [key]: e.target.value }))}
-                      style={{ width: "100%", padding: "10px 12px", border: "1px solid #e0e6ed", borderRadius: 8, fontSize: 14, boxSizing: "border-box" }}
-                    />
-                  </div>
-                ))}
-
-                <div style={{ marginBottom: 20 }}>
-                  <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#1B2A4A", marginBottom: 6 }}>Message (optional)</label>
-                  <textarea
-                    placeholder="Any questions or specific needs?"
-                    value={contactForm.message}
-                    onChange={(e) => setContactForm(prev => ({ ...prev, message: e.target.value }))}
-                    rows={3}
-                    style={{ width: "100%", padding: "10px 12px", border: "1px solid #e0e6ed", borderRadius: 8, fontSize: 14, boxSizing: "border-box", resize: "vertical" }}
-                  />
-                </div>
-
-                {contactStatus === "error" && <div style={{ color: "#991b1b", fontSize: 13, marginBottom: 12 }}>Something went wrong. Please try again.</div>}
-
-                <button
-                  onClick={handleContactSubmit}
-                  disabled={contactStatus === "sending" || !contactForm.name || !contactForm.email || !contactForm.department || !contactForm.count}
-                  style={{ width: "100%", padding: "13px 24px", background: "#C0392B", color: "#fff", border: "none", borderRadius: 10, fontSize: 15, fontWeight: 600, cursor: "pointer", opacity: (contactStatus === "sending" || !contactForm.name || !contactForm.email || !contactForm.department || !contactForm.count) ? 0.6 : 1 }}
-                >
-                  {contactStatus === "sending" ? "Sending..." : "Send Inquiry"}
-                </button>
-              </>
-            )}
-          </div>
-        </div>
-      )}
 
       {/* FAQ */}
       <div style={{ marginTop: 40 }}>
@@ -540,7 +446,7 @@ export default function PricingPage() {
           style={{
             fontSize: 20,
             fontWeight: 700,
-            color: "#1B2A4A",
+            color: "var(--text-strong)",
             marginBottom: 20,
           }}
         >
@@ -552,13 +458,13 @@ export default function PricingPage() {
               style={{
                 fontSize: 15,
                 fontWeight: 600,
-                color: "#1B2A4A",
+                color: "var(--text-strong)",
                 marginBottom: 6,
               }}
             >
               What happens after my trial ends?
             </div>
-            <div style={{ fontSize: 14, color: "#64748b" }}>
+            <div style={{ fontSize: 14, color: "var(--text-soft)" }}>
               You'll keep limited free access: 1 study question and 1
               flashcard per day (resets at midnight Eastern). Exam Mode is for
               subscribers. Subscribe anytime to unlock everything again.
@@ -569,13 +475,13 @@ export default function PricingPage() {
               style={{
                 fontSize: 15,
                 fontWeight: 600,
-                color: "#1B2A4A",
+                color: "var(--text-strong)",
                 marginBottom: 6,
               }}
             >
               Can I cancel my monthly subscription?
             </div>
-            <div style={{ fontSize: 14, color: "#64748b" }}>
+            <div style={{ fontSize: 14, color: "var(--text-soft)" }}>
               Yes, cancel anytime. We'll save your progress for 90 days if you
               want to come back.
             </div>
@@ -585,15 +491,35 @@ export default function PricingPage() {
               style={{
                 fontSize: 15,
                 fontWeight: 600,
-                color: "#1B2A4A",
+                color: "var(--text-strong)",
                 marginBottom: 6,
               }}
             >
-              Is the Exam Prep Bundle really a better deal?
+              Which plan should I choose?
             </div>
-            <div style={{ fontSize: 14, color: "#64748b" }}>
-              Yes! 9 months of monthly = $360. Exam Prep Bundle = $300 one-time
-              through exam day. Saves you $60.
+            <div style={{ fontSize: 14, color: "var(--text-soft)" }}>
+              Monthly is $40/month and you can cancel anytime. The 6-Month plan
+              is a single $200 payment (that's $40 less than six months of
+              Monthly) and does not renew. The 1-Year Exam Prep Bundle is a
+              single $300 payment with 12 months of access ($180 less than 12
+              months of Monthly) and also does not renew.
+            </div>
+          </div>
+          <div>
+            <div
+              style={{
+                fontSize: 15,
+                fontWeight: 600,
+                color: "var(--text-strong)",
+                marginBottom: 6,
+              }}
+            >
+              Do the 6-Month and 1-Year plans renew automatically?
+            </div>
+            <div style={{ fontSize: 14, color: "var(--text-soft)" }}>
+              No. Each is one payment for a fixed period of full access (6 or
+              12 months). When it ends, your account goes back to the limited
+              free tier and you can buy again anytime.
             </div>
           </div>
         </div>

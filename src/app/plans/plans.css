@@ -14,7 +14,7 @@
 .pricing-card.recommended{border:2px solid #C0392B;box-shadow:0 20px 40px rgba(192,57,43,0.15);}
 .pricing-card-badge{position:absolute;top:-13px;left:50%;transform:translateX(-50%);padding:4px 14px;border-radius:6px;font-size:11px;font-weight:800;letter-spacing:0.05em;color:white;white-space:nowrap;}
 .pricing-card-badge.red{background:#C0392B;}
-.pricing-card-badge.gold{background:#F39C12;}
+.pricing-card-badge.gold{background:#B45309;}
 .pricing-card-name{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;color:#1B2A4A;margin-bottom:6px;}
 .pricing-card-desc{font-size:13px;color:#5a6a7a;margin-bottom:20px;}
 .pricing-card-price{margin-bottom:24px;}
@@ -23,7 +23,7 @@
 .pricing-card-price .period{font-size:15px;color:#5a6a7a;font-weight:600;margin-left:4px;}
 .pricing-card-features{display:flex;flex-direction:column;gap:10px;margin-bottom:28px;flex:1;}
 .pricing-card-features div{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:#475569;}
-.pricing-card-features span.check{color:#10b981;font-size:15px;flex-shrink:0;}
+.pricing-card-features span.check{color:#059669;font-size:15px;flex-shrink:0;}
 .pricing-card.recommended .pricing-card-features span.check{color:#C0392B;}
 .pricing-card-cta{display:block;text-align:center;width:100%;padding:13px 24px;border-radius:10px;font-size:15px;font-weight:700;text-decoration:none;margin-top:auto;transition:all 0.2s;box-sizing:border-box;}
 .pricing-card-cta.primary{background:#C0392B;color:white;}

@@ -221,10 +221,10 @@ export default function ReviewQueue({ initialQuestions }: Props) {
                   }`}
                 >
                   <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
-                    isCorrect ? 'bg-green-500 text-white' : 'border-2 border-gray-400 dark:border-gray-500 text-gray-600 dark:text-gray-400'
+                    isCorrect ? 'bg-green-600 text-white' : 'border-2 border-gray-400 dark:border-gray-500 text-gray-600 dark:text-gray-400'
                   }`}>{key}</span>
                   <span className="text-sm text-gray-800 dark:text-gray-200 flex-1">{text}</span>
-                  {isCorrect && <span className="text-xs bg-green-500 text-white px-2 py-0.5 rounded font-bold">CORRECT</span>}
+                  {isCorrect && <span className="text-xs bg-green-600 text-white px-2 py-0.5 rounded font-bold">CORRECT</span>}
                   {isFlagged && <span className="text-xs bg-red-100 dark:bg-red-950/40 text-red-600 dark:text-red-400 px-2 py-0.5 rounded font-semibold">⚠ FLAGGED</span>}
                 </div>
               )

@@ -17,6 +17,7 @@ import {
   CreditCard,
   Banknote,
   LifeBuoy,
+  Flame,
 } from "lucide-react";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
@@ -28,6 +29,7 @@ const studentNav = [
   { name: "Study", href: "/study", icon: BookOpen },
   { name: "Exam", href: "/exam", icon: FileText },
   { name: "Flashcards", href: "/flashcards", icon: CreditCard },
+  { name: "Game", href: "/game", icon: Flame },
   { name: "Progress", href: "/progress", icon: BarChart3 },
   { name: "Pricing", href: "/pricing", icon: Banknote },
   { name: "Support", href: "mailto:support@rankupfire.com", icon: LifeBuoy },

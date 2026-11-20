@@ -25,42 +25,41 @@ const TIERS = [
     ctaStyle: "secondary",
   },
   {
-    id: "exam_prep",
-    name: "Exam Prep Bundle",
-    price: "$300",
+    id: "six_month",
+    name: "6-Month Access",
+    price: "$200",
     period: "one-time",
-    description: "Best value — full access until exam day",
+    description: "Best value — full access for 6 months",
     features: [
       "Everything in Monthly",
-      "Access until exam day",
-      "No recurring charges",
-      "33% less than FiredUp",
-      "Save $60+ vs. monthly",
+      "6 months of full access",
+      "One payment, no auto-renewal",
+      "Save $40 vs. 6 months of monthly",
       "Built from the official 2027 MA reading lists",
     ],
     cta: "Get Started Free",
-    href: "/signup?plan=exam_prep",
+    href: "/signup?plan=six_month",
     ctaStyle: "primary",
     recommended: true,
     badge: "BEST VALUE",
   },
   {
-    id: "department",
-    name: "Department Rate",
-    price: "$250",
-    period: "/person",
-    description: "5+ firefighters from the same department",
+    id: "exam_prep",
+    name: "1-Year Exam Prep Bundle",
+    price: "$300",
+    period: "one-time",
+    description: "Full access for 12 months",
     features: [
-      "Everything in Exam Prep",
-      "17% discount per person",
-      "Department leaderboard",
-      "Group progress tracking",
-      "Priority support",
+      "Everything in Monthly",
+      "12 months of full access",
+      "One payment, no auto-renewal",
+      "Save $180 vs. 12 months of monthly",
+      "33% less than FiredUp",
+      "Built from the official 2027 MA reading lists",
     ],
-    cta: "Contact Us",
-    href: "mailto:support@rankupfire.com?subject=Department%20Rate%20Inquiry",
+    cta: "Get Started Free",
+    href: "/signup?plan=exam_prep",
     ctaStyle: "secondary",
-    badge: "TEAM PLAN",
   },
 ];
 
@@ -170,11 +169,14 @@ export default function PlansPage() {
           </div>
           <div className='pricing-faq-item'>
             <div className='pricing-faq-q'>
-              Is the Exam Prep Bundle really a better deal?
+              Which plan should I choose?
             </div>
             <div className='pricing-faq-a'>
-              Yes — 9 months of Monthly costs $360. The Exam Prep Bundle is
-              $300 one-time through exam day, saving you $60+.
+              Monthly is $40/month and you can cancel anytime. The 6-Month
+              plan is a single $200 payment ($40 less than six months of
+              Monthly). The 1-Year Exam Prep Bundle is a single $300 payment
+              ($180 less than twelve months of Monthly). Neither renews
+              automatically.
             </div>
           </div>
         </div>

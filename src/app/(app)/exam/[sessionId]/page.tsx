@@ -36,12 +36,19 @@ export default async function ExamSessionPage({ params }: Props) {
 
   if (!sessionQuestions || sessionQuestions.length === 0) redirect('/exam')
 
+  // Resuming should land on the first question with no saved answer, not
+  // always question 1 — computed here (server-side, re-run fresh on every
+  // request) rather than trusted to client state alone.
+  const firstUnanswered = sessionQuestions.findIndex((sq) => !sq.user_answer)
+  const initialIndex = firstUnanswered === -1 ? sessionQuestions.length - 1 : firstUnanswered
+
   return (
     <ExamSession
       sessionId={sessionId}
       timeLimitSecs={EXAM_TIME_LIMIT_SECS}
       startedAt={session.started_at}
       sessionQuestions={sessionQuestions as (ExamSessionQuestion & { question: Question })[]}
+      initialIndex={initialIndex}
     />
   )
 }
