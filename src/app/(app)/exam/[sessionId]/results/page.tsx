@@ -8,6 +8,18 @@ interface Props {
   params: Promise<{ sessionId: string }>;
 }
 
+function answerText(question: Question | undefined, letter: string | null | undefined) {
+  if (!question || !letter) return null;
+  const key = letter.trim().toUpperCase();
+  const map: Record<string, string | undefined> = {
+    A: question.answer_a,
+    B: question.answer_b,
+    C: question.answer_c,
+    D: question.answer_d,
+  };
+  return map[key] ?? null;
+}
+
 export default async function ExamResultsPage({ params }: Props) {
   const supabase = await createClient();
 
@@ -78,49 +90,56 @@ export default async function ExamResultsPage({ params }: Props) {
           <div className='border-t pt-6'>
             <h2 className='text-xl font-semibold mb-4'>Question Review</h2>
             <div className='space-y-4'>
-              {sessionQuestions?.map((sq: any, index: number) => (
-                <div
-                  key={sq.id}
-                  className={`p-4 rounded-lg border ${
-                    sq.is_correct
-                      ? "border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950/30"
-                      : "border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/30"
-                  }`}
-                >
-                  <div className='flex items-start gap-3'>
-                    {sq.is_correct ? (
-                      <CheckCircle2 className='w-5 h-5 text-green-600 dark:text-green-400 mt-1 flex-shrink-0' />
-                    ) : (
-                      <XCircle className='w-5 h-5 text-red-600 dark:text-red-400 mt-1 flex-shrink-0' />
-                    )}
-                    <div className='flex-1'>
-                      <p className='font-medium mb-2'>
-                        Question {index + 1}: {sq.question?.question_text}
-                      </p>
-                      <div className='text-sm space-y-1'>
-                        <p>
-                          <span className='font-medium'>Your answer:</span>{" "}
-                          <span
-                            className={
-                              sq.is_correct ? "text-green-700 dark:text-green-400" : "text-red-700 dark:text-red-400"
-                            }
-                          >
-                            {sq.user_answer || "Not answered"}
-                          </span>
+              {sessionQuestions?.map((sq: any, index: number) => {
+                const userText = answerText(sq.question, sq.user_answer);
+                const correctText = answerText(sq.question, sq.question?.correct_answer);
+                return (
+                  <div
+                    key={sq.id}
+                    className={`p-4 rounded-lg border ${
+                      sq.is_correct
+                        ? "border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950/30"
+                        : "border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/30"
+                    }`}
+                  >
+                    <div className='flex items-start gap-3'>
+                      {sq.is_correct ? (
+                        <CheckCircle2 className='w-5 h-5 text-green-600 dark:text-green-400 mt-1 flex-shrink-0' />
+                      ) : (
+                        <XCircle className='w-5 h-5 text-red-600 dark:text-red-400 mt-1 flex-shrink-0' />
+                      )}
+                      <div className='flex-1'>
+                        <p className='font-medium mb-2'>
+                          Question {index + 1}: {sq.question?.question_text}
                         </p>
-                        {!sq.is_correct && (
+                        <div className='text-sm space-y-1'>
                           <p>
-                            <span className='font-medium'>Correct answer:</span>{" "}
-                            <span className='text-green-700 dark:text-green-400'>
-                              {sq.question?.correct_answer}
+                            <span className='font-medium'>Your answer:</span>{" "}
+                            <span
+                              className={
+                                sq.is_correct ? "text-green-700 dark:text-green-400" : "text-red-700 dark:text-red-400"
+                              }
+                            >
+                              {sq.user_answer
+                                ? `${sq.user_answer.trim().toUpperCase()}. ${userText ?? ""}`
+                                : "Not answered"}
                             </span>
                           </p>
-                        )}
+                          {!sq.is_correct && (
+                            <p>
+                              <span className='font-medium'>Correct answer:</span>{" "}
+                              <span className='text-green-700 dark:text-green-400'>
+                                {sq.question?.correct_answer}
+                                {correctText ? `. ${correctText}` : ""}
+                              </span>
+                            </p>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>
